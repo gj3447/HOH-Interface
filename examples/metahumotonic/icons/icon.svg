@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="MetaHumotonic">
+  <rect width="512" height="512" rx="112" fill="#081719"/>
+  <path d="M115 352V160h58l83 115 83-115h58v192h-58V249l-83 112-83-112v103z" fill="#6bd7c7"/>
+  <circle cx="256" cy="256" r="214" fill="none" stroke="#315453" stroke-width="12"/>
+</svg>

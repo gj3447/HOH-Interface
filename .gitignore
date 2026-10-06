@@ -1,0 +1,8 @@
+node_modules/
+dist/
+.usl/local/
+.env
+.env.*
+.playwright-cli/
+.test-output/
+*.log

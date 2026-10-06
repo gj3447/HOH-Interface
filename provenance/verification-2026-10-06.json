@@ -1,0 +1,114 @@
+{
+  "schema": "hoh/local-verification@1",
+  "recordedAt": "2026-10-06",
+  "authority": "APPLICATION_OBSERVATION",
+  "scope": "Extract and name the shared HOH UI, connect its MetaHumotonic reference host",
+  "checks": {
+    "packageTests": {
+      "command": "npm test",
+      "passed": 3,
+      "exitCode": 0
+    },
+    "referenceHostBuild": {
+      "owner": "repository:metahumotonic_web_back",
+      "command": "bash scripts/with-node.sh npm run build",
+      "cwd": "ts",
+      "exitCode": 0
+    },
+    "referenceHostTests": {
+      "command": "bash scripts/with-node.sh npm test -- program-feed",
+      "cwd": "ts",
+      "passed": 15,
+      "files": 5,
+      "exitCode": 0
+    },
+    "rdf": {
+      "parser": "rdflib 7.2.1",
+      "triples": 74,
+      "competencyQueriesPassed": 2,
+      "remoteFetches": 0
+    },
+    "vendoredAssetReadback": {
+      "files": 15,
+      "status": "MATCH"
+    },
+    "pwaBrowser": {
+      "worker": {
+        "scope": "http://127.0.0.1:8018/feed/",
+        "active": "activated",
+        "controller": "http://127.0.0.1:8018/feed/sw.js"
+      },
+      "installActionHandled": true,
+      "installStatus": "브라우저 메뉴의 앱 설치 또는 홈 화면에 추가를 선택하세요. 지원 여부는 브라우저에 따라 다릅니다.",
+      "shellOnlyCache": true,
+      "shellCount": 12,
+      "offline": {
+        "directQueryShellServed": true,
+        "status": "연결할 수 없음",
+        "noFabricatedContent": true
+      },
+      "recovery": {
+        "reloadedOnline": true,
+        "status": "연결됨"
+      }
+    },
+    "visualReview": {
+      "screenshots": [
+        "docs/screenshots/host-1440.png",
+        "docs/screenshots/host-900.png",
+        "docs/screenshots/host-390.png",
+        "docs/screenshots/standalone-custom-900.png"
+      ],
+      "reviewed": "Root visually inspected desktop and phone; preserved interface with HOH UI branding."
+    },
+    "browser": {
+      "hostRegressionChecks": 19,
+      "hostRegressionAssertions": [
+        "default dashboard includes account settings app",
+        "default dashboard includes recommended-feed action",
+        "account settings appears once in the dashboard",
+        "recommended-feed action opens the first ranked feed item before any feed visit",
+        "saved content appears once as a dashboard favorite",
+        "dashboard favorite opens its registered content",
+        "saved favorite remains after refresh",
+        "account app opens in the same viewer",
+        "dashboard launcher is keyboard-operable",
+        "horizontal dashboard-handle drag does not open the dashboard",
+        "keyboard dashboard action still works after a cancelled pointer gesture",
+        "cancelled dashboard gesture suppresses its synthetic click",
+        "real coordinate downward dashboard-handle swipe opens the dashboard",
+        "900px dashboard has no document horizontal overflow",
+        "900px dashboard content stage has no horizontal overflow",
+        "390px dashboard has no document horizontal overflow",
+        "390px dashboard content stage has no horizontal overflow",
+        "half-chat keeps the content stage above the chat sheet",
+        "half-chat leaves a usable content area"
+      ],
+      "hohChecks": 12,
+      "hohAssertions": [
+        "host presents HOH UI name",
+        "game score updates after tile action",
+        "game reset restores score",
+        "host PWA install hook responds from account app",
+        "failed AI chat retains input draft",
+        "rapid navigation settles with a current view revision",
+        "900px host has no horizontal overflow",
+        "390px host has no horizontal overflow",
+        "custom trusted renderer executes and receives saveState",
+        "standalone fixture uses HOH UI name",
+        "destroy removes delegated UI event listeners",
+        "destroy permits a clean remount"
+      ],
+      "customAdapter": "TEST_FIXTURE_WITHOUT_NETWORK_PROVIDER",
+      "customHomeAndRenderer": "PASSED",
+      "destroyAndRemount": "PASSED"
+    }
+  },
+  "boundaries": {
+    "companyWorkIntegration": "INTENDED_NOT_PERFORMED",
+    "mmIntegration": "INTENDED_TARGET_NOT_RESOLVED",
+    "hswmConnectedExecution": "NOT_PERFORMED",
+    "remoteRepositoryPublication": "NOT_PERFORMED",
+    "kernelOrNativeStoreBuild": "NOT_PERFORMED"
+  }
+}

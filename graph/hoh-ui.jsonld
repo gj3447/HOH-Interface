@@ -1,0 +1,164 @@
+{
+  "@context": {
+    "h": "urn:hoh:gui:",
+    "prov": "http://www.w3.org/ns/prov#",
+    "skos": "http://www.w3.org/2004/02/skos/core#",
+    "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+    "rdfs": "http://www.w3.org/2000/01/rdf-schema#"
+  },
+  "@graph": [
+    {
+      "@id": "urn:hoh:gui:source/user-hoh-ui-2c9603ebd820ac38c87fe738e2d24763b4f34add994f0bbafcc6ca9d2813c082",
+      "@type": "prov:Entity",
+      "h:authority": "USER_PRIMARY",
+      "h:path": "sources/user-hoh-ui-2026-10-06.txt",
+      "h:sha256": "2c9603ebd820ac38c87fe738e2d24763b4f34add994f0bbafcc6ca9d2813c082",
+      "h:recordedAt": "2026-10-06"
+    },
+    {
+      "@id": "urn:hoh:gui:hoh-ui",
+      "@type": "skos:Concept",
+      "skos:prefLabel": "HOH UI",
+      "skos:altLabel": "HOH GUI",
+      "h:authority": "SECONDARY_AI",
+      "h:origin": "USER_EXPLICIT",
+      "h:description": "AI 네이티브 OS의 기본 GUI라는 사용자 정의. 피드로 탐색·여가, AI 프롬프트로 정밀 작업을 수행한다.",
+      "prov:wasDerivedFrom": {
+        "@id": "urn:hoh:gui:source/user-hoh-ui-2c9603ebd820ac38c87fe738e2d24763b4f34add994f0bbafcc6ca9d2813c082"
+      },
+      "h:hasComponent": [
+        {
+          "@id": "urn:hoh:gui:component/content-viewer"
+        },
+        {
+          "@id": "urn:hoh:gui:component/feed"
+        },
+        {
+          "@id": "urn:hoh:gui:component/agent"
+        },
+        {
+          "@id": "urn:hoh:gui:component/dashboard"
+        }
+      ],
+      "h:intendedHost": [
+        {
+          "@id": "urn:hoh:gui:host/metahumotonic"
+        },
+        {
+          "@id": "urn:hoh:gui:host/company-work"
+        },
+        {
+          "@id": "urn:hoh:gui:host/mm"
+        }
+      ]
+    },
+    {
+      "@id": "urn:hoh:gui:component/content-viewer",
+      "@type": "h:Component",
+      "skos:prefLabel": "프로그램 콘텐츠 뷰어",
+      "h:description": "앱과 게임도 등록된 렌더러로 실행한다.",
+      "h:authority": "SECONDARY_AI",
+      "h:origin": "IMPLEMENTATION_INTERPRETATION"
+    },
+    {
+      "@id": "urn:hoh:gui:component/feed",
+      "@type": "h:Component",
+      "skos:prefLabel": "콘텐츠 피드",
+      "h:description": "호스트가 제공한 추천 목록을 탐색한다.",
+      "h:authority": "SECONDARY_AI",
+      "h:origin": "IMPLEMENTATION_INTERPRETATION"
+    },
+    {
+      "@id": "urn:hoh:gui:component/agent",
+      "@type": "h:Component",
+      "skos:prefLabel": "AI 대화창",
+      "h:description": "현재 콘텐츠 맥락의 정밀 작업을 요청한다. 실제 제공자 연결이 필요하다.",
+      "h:authority": "SECONDARY_AI",
+      "h:origin": "IMPLEMENTATION_INTERPRETATION"
+    },
+    {
+      "@id": "urn:hoh:gui:component/dashboard",
+      "@type": "h:Component",
+      "skos:prefLabel": "앱 대시보드",
+      "h:description": "고정 앱과 저장한 콘텐츠를 열고 설정도 앱 하나로 취급한다.",
+      "h:authority": "SECONDARY_AI",
+      "h:origin": "IMPLEMENTATION_INTERPRETATION"
+    },
+    {
+      "@id": "urn:hoh:gui:host/metahumotonic",
+      "@type": "h:ApplicationHost",
+      "skos:prefLabel": "MetaHumotonic",
+      "h:status": "LOCAL_REFERENCE_INTEGRATION",
+      "h:authority": "SECONDARY_AI",
+      "prov:wasDerivedFrom": {
+        "@id": "urn:hoh:gui:source/user-hoh-ui-2c9603ebd820ac38c87fe738e2d24763b4f34add994f0bbafcc6ca9d2813c082"
+      }
+    },
+    {
+      "@id": "urn:hoh:gui:host/company-work",
+      "@type": "h:ApplicationHost",
+      "skos:prefLabel": "회사 업무 / 좋좋공 일",
+      "h:status": "INTENDED_NOT_INTEGRATED",
+      "h:authority": "SECONDARY_AI",
+      "prov:wasDerivedFrom": {
+        "@id": "urn:hoh:gui:source/user-hoh-ui-2c9603ebd820ac38c87fe738e2d24763b4f34add994f0bbafcc6ca9d2813c082"
+      }
+    },
+    {
+      "@id": "urn:hoh:gui:host/mm",
+      "@type": "h:ApplicationHost",
+      "skos:prefLabel": "MM",
+      "h:status": "INTENDED_TARGET_NOT_RESOLVED",
+      "h:authority": "SECONDARY_AI",
+      "prov:wasDerivedFrom": {
+        "@id": "urn:hoh:gui:source/user-hoh-ui-2c9603ebd820ac38c87fe738e2d24763b4f34add994f0bbafcc6ca9d2813c082"
+      }
+    },
+    {
+      "@id": "urn:hoh:gui:implementation/v0.1.0",
+      "@type": "prov:Entity",
+      "h:authority": "APPLICATION_OBSERVATION",
+      "h:path": "ui/hoh-ui.js",
+      "h:implements": {
+        "@id": "urn:hoh:gui:hoh-ui"
+      },
+      "h:runtime": "BROWSER_UI_SHELL",
+      "h:backendBoundary": "ADAPTER_OWNED_HSWM_CHU_USL",
+      "h:hswmConnectedExecution": "NOT_PERFORMED",
+      "h:externalPublication": "NOT_PERFORMED"
+    },
+    {
+      "@id": "urn:hoh:gui:hasComponent",
+      "@type": "rdf:Property",
+      "rdfs:domain": {
+        "@id": "skos:Concept"
+      },
+      "rdfs:range": {
+        "@id": "h:Component"
+      },
+      "rdfs:comment": "GUI concept to each named UI responsibility; one-to-many."
+    },
+    {
+      "@id": "urn:hoh:gui:intendedHost",
+      "@type": "rdf:Property",
+      "rdfs:domain": {
+        "@id": "skos:Concept"
+      },
+      "rdfs:range": {
+        "@id": "h:ApplicationHost"
+      },
+      "rdfs:comment": "GUI concept to an intended product/work host; one-to-many; intent is not deployment."
+    },
+    {
+      "@id": "urn:hoh:gui:implements",
+      "@type": "rdf:Property",
+      "rdfs:domain": {
+        "@id": "prov:Entity"
+      },
+      "rdfs:range": {
+        "@id": "skos:Concept"
+      },
+      "rdfs:comment": "Implementation artifact to the named GUI concept; one-to-one in this snapshot."
+    }
+  ]
+}

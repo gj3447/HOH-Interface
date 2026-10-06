@@ -1,0 +1,24 @@
+{
+  "questions": [
+    {
+      "id": "name-source",
+      "question": "누가 어떤 원문에서 HOH UI / HOH GUI와 OS GUI 방향을 명명했는가?",
+      "subject": "urn:hoh:gui:hoh-ui",
+      "predicate": "http://www.w3.org/ns/prov#wasDerivedFrom",
+      "expectedTargets": [
+        "urn:hoh:gui:source/user-hoh-ui-2c9603ebd820ac38c87fe738e2d24763b4f34add994f0bbafcc6ca9d2813c082"
+      ]
+    },
+    {
+      "id": "intended-hosts",
+      "question": "공통 UI의 적용 대상은 무엇이며 어느 호스트가 연결되었는가?",
+      "subject": "urn:hoh:gui:hoh-ui",
+      "predicate": "urn:hoh:gui:intendedHost",
+      "expectedTargets": [
+        "urn:hoh:gui:host/metahumotonic",
+        "urn:hoh:gui:host/company-work",
+        "urn:hoh:gui:host/mm"
+      ]
+    }
+  ]
+}

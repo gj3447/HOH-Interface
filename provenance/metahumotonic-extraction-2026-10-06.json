@@ -1,0 +1,57 @@
+{
+  "schema": "hoh/source-extraction@1",
+  "recordedAt": "2026-10-06",
+  "sourceRepositoryId": "repository:metahumotonic_web_back",
+  "targetRepositoryId": "repository:hoh",
+  "sourceHead": "5f8c199e7a26f5b1543a4a27aae7d1e8356218c9",
+  "sourceState": "WORKING_TREE_FILES_NOT_ALL_COMMITTED_AT_SOURCE_HEAD",
+  "sourceFiles": [
+    {
+      "path": "ts/static/program-feed/app.css",
+      "sha256": "fdf341914aac449b3d2d6c3ac1cf546199a6576113d981868b22952251ca8b2f"
+    },
+    {
+      "path": "ts/static/program-feed/app.js",
+      "sha256": "b81ef8bb894cef4a9a1f5701f3cdf3e3b5c9eb80053f7a49651f481049133775"
+    },
+    {
+      "path": "ts/static/program-feed/icons/icon-192.png",
+      "sha256": "9b96071a443512099792c7f095572de060fad7e0d9c013db6b31c725930b53b8"
+    },
+    {
+      "path": "ts/static/program-feed/icons/icon-512.png",
+      "sha256": "55510f28a5c77e3897840d673d9280c29594a33b5cdd90deb28f89dab22fdc63"
+    },
+    {
+      "path": "ts/static/program-feed/icons/icon.svg",
+      "sha256": "e536f142334fb94765b1608adbfe75ae4d5e1ee0553bd97fd787e51e560f54f2"
+    },
+    {
+      "path": "ts/static/program-feed/icons/maskable-512.png",
+      "sha256": "7286b05c55f0861fb7685965894f95dfe241816afbeed7cedaba2d4aaa8f2b0b"
+    },
+    {
+      "path": "ts/static/program-feed/icons/maskable.svg",
+      "sha256": "0912f42c151363199259825a1af5d4caa755e806487b2c6aad2ae12d1b70a3c0"
+    },
+    {
+      "path": "ts/static/program-feed/index.html",
+      "sha256": "be678a1d598f5378c77137d77010602366765097a58798cee1348a5899822b3d"
+    },
+    {
+      "path": "ts/static/program-feed/manifest.webmanifest",
+      "sha256": "6fb0102454ab30d6c97b6319cae99116c504dc136d58f2c4e48a1a14e6d78dd3"
+    },
+    {
+      "path": "ts/static/program-feed/pwa.js",
+      "sha256": "b00c9b04400ef26963837f0728690fd1399b1a142eee37e28b6197bcb2bb1f4f"
+    },
+    {
+      "path": "ts/static/program-feed/sw.js",
+      "sha256": "32eee85c2030e686aacef78d9361bf1e7184f144f2586aef58e017d5a9d0aad4"
+    }
+  ],
+  "license": "AGPL-3.0-only",
+  "privateProfileDataTransferred": false,
+  "externalPublication": "NOT_PERFORMED"
+}
