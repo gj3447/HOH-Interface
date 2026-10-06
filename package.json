@@ -5,6 +5,15 @@
   "type": "module",
   "description": "HOH Interface: a minimal AI-native interaction layer for executable content and agent-directed work.",
   "license": "AGPL-3.0-only",
+  "author": "MetaHumotonic Foundation",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gj3447/HOH-Interface.git"
+  },
+  "homepage": "https://github.com/gj3447/HOH-Interface#readme",
+  "bugs": {
+    "url": "https://github.com/gj3447/HOH-Interface/issues"
+  },
   "engines": {
     "node": ">=22.12.0"
   },

@@ -1,0 +1,12 @@
+HOH Interface
+Copyright (C) 2026 MetaHumotonic Foundation
+
+HOH Interface is free software licensed under the GNU Affero General Public
+License, version 3 only (AGPL-3.0-only). See LICENSE for the complete terms.
+
+The initial interface was adapted from MetaHumotonic Web Backend.
+Original copyright notice retained for that code:
+Copyright (C) 2026 Ra Gyeongjun (라경준)
+
+Source extraction and subsequent changes are documented in provenance/ and
+the Git history. The license document retains its own copyright notice.

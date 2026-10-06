@@ -1,5 +1,7 @@
 # HOH Interface
 
+Copyright (C) 2026 **MetaHumotonic Foundation** · [AGPL-3.0-only](LICENSE)
+
 실행 가능한 콘텐츠와 AI 명령이 하나의 작업 맥락을 공유하는,
 **최소한의 AI 네이티브 OS 인터페이스**다. 피드로 콘텐츠와 앱을 탐색하고,
 프롬프트로 정밀 작업을 요청한다. HOH UI / HOH GUI는 기존 별칭이다.
@@ -76,7 +78,17 @@ npm run export:metahumotonic -- --target /path/to/metahumotonic_web_back --write
 
 초기 UI는 MetaHumotonic Program Feed에서 추출했다. 원본 경로·바이트 해시와
 라이선스는 [추출 기록](provenance/metahumotonic-extraction-2026-10-06.json)에 있다.
-공개 원격 저장소 생성이나 업로드는 수행하지 않았다.
+공개 저장소: [gj3447/HOH-Interface](https://github.com/gj3447/HOH-Interface).
+초기 검증 기록의 공개 여부는 각 기록을 작성한 시점의 상태다.
+
+## 저작권과 라이선스
+
+HOH Interface의 저작권 표기는 **MetaHumotonic Foundation**이다.
+GNU Affero General Public License, version 3 only로 배포한다.
+원본 MetaHumotonic Web Backend 코드의 저작자 표기는 [NOTICE](NOTICE)에 보존한다.
+전체 이용 조건은 [LICENSE](LICENSE)를 따른다.
+
+## 검증 기록
 
 0.1.1의 [검증 기록](provenance/verification-interface-0.1.1.json): 패키지 검사 3개,
 참조 호스트 검사 15개와 빌드, 화면 맥락 브라우저 검사 16개, 실제 호스트 검사 8개가
