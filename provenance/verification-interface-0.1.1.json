@@ -1,0 +1,96 @@
+{
+  "schema": "hoh/local-verification@1",
+  "recordedAt": "2026-10-06",
+  "authority": "APPLICATION_OBSERVATION",
+  "version": "0.1.1",
+  "scope": "Define HOH Interface and bind renderer actions to their originating view context",
+  "source": {
+    "path": "sources/user-hoh-interface-2026-10-06.txt",
+    "sha256": "7cfaefdee533bada7cbde67ad6f3b0419cf4d1e7e9bdf143fc1b5adee0e1f9dd",
+    "authority": "USER_PRIMARY"
+  },
+  "checks": {
+    "packageTests": {
+      "command": "npm test",
+      "passed": 3,
+      "exitCode": 0
+    },
+    "referenceHostBuild": {
+      "owner": "repository:metahumotonic_web_back",
+      "command": "bash scripts/with-node.sh npm run build",
+      "cwd": "ts",
+      "exitCode": 0
+    },
+    "referenceHostTests": {
+      "command": "bash scripts/with-node.sh npm test -- program-feed",
+      "cwd": "ts",
+      "passed": 15,
+      "files": 5,
+      "exitCode": 0
+    },
+    "rdf": {
+      "parser": "rdflib 7.2.1",
+      "triples": 129,
+      "competencyQueriesPassed": 3,
+      "remoteFetches": 0
+    },
+    "vendoredAssetReadback": {
+      "files": 15,
+      "status": "MATCH"
+    },
+    "rendererContextBrowser": {
+      "script": "test/browser-context.mjs",
+      "adapter": "TEST_FIXTURE_WITHOUT_NETWORK_PROVIDER",
+      "status": "PASS",
+      "passed": 16,
+      "assertions": [
+        "open response replaces stale ranked item payload",
+        "HOH Interface brand is visible",
+        "renderer A receives an immutable captured context",
+        "A stale save is rejected without an adapter write",
+        "A stale open is rejected without navigation",
+        "stale A produced no adapter calls",
+        "stale A leaves B current",
+        "navigation aborts A render signal only",
+        "current B save applies",
+        "current B writes only B state",
+        "B capability expires after its own rerender",
+        "A to B to A does not revive the original A capability",
+        "390px fixture keeps HOH Interface and app visible before destroy",
+        "390px mounted fixture has no document horizontal overflow",
+        "destroy invalidates retained renderer actions",
+        "destroyed actions do not reach adapter"
+      ]
+    },
+    "referenceHostBrowser": {
+      "observer": "delegated browser QA",
+      "status": "PASS",
+      "passed": 8,
+      "assertions": [
+        "1440px host shows HOH Interface brand",
+        "game score increments",
+        "game score resets",
+        "fixture has a non-fixed content item for favorite readback",
+        "favorite appears once on dashboard",
+        "failed AI request retains draft",
+        "390px host shows HOH Interface brand",
+        "390px host has no horizontal overflow"
+      ]
+    },
+    "visualReview": {
+      "screenshots": [
+        "docs/screenshots/interface-0.1.1-host-1440.png",
+        "docs/screenshots/interface-0.1.1-host-390.png"
+      ],
+      "reviewed": "Delegated browser QA inspected both layouts; root also inspected the mounted phone dashboard."
+    }
+  },
+  "boundaries": {
+    "companyWorkIntegration": "INTENDED_NOT_PERFORMED",
+    "mmIntegration": "INTENDED_TARGET_NOT_RESOLVED",
+    "hswmConnectedExecution": "NOT_PERFORMED",
+    "remoteRepositoryPublication": "NOT_PERFORMED",
+    "kernelOrNativeStoreBuild": "NOT_PERFORMED",
+    "pwaInstallAndOfflineChecks": "BASELINE_0.1.0_NOT_RERUN_FOR_0.1.1"
+  }
+}

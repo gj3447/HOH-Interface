@@ -1,18 +1,19 @@
 import { shellMarkup } from './shell.js';
 
-/** Full-page HOH UI. Hosts supply trusted adapters/renderers; payloads never install code. */
-export function mountHohUI({ root, adapter, renderers = {}, workspaceName = 'HOH', homeContentId = 'dashboard-home' }) {
+/** Full-page HOH Interface. Hosts supply trusted adapters/renderers; payloads never install code. */
+export function mountHohInterface({ root, adapter, renderers = {}, workspaceName = 'HOH', homeContentId = 'dashboard-home' }) {
   if (!root || !adapter) throw new Error('HOH UI requires a root and an adapter');
   const methods = ['bootstrap', 'list', 'open', 'favorite', 'react', 'comment', 'saveState', 'chat', 'profile', 'status'];
   if (methods.some(name => typeof adapter[name] !== 'function')) throw new Error('Incomplete HOH adapter');
   const listeners = new AbortController();
+  let rendererLifetime = new AbortController(), renderGeneration = 0;
   let disposed = false;
   const listen = (target, event, handler) => target.addEventListener(event, handler, { signal: listeners.signal });
   const mutationMethods = { '/favorites': 'favorite', '/reactions': 'react', '/comments': 'comment', '/state': 'saveState', '/chat': 'chat' };
   root.innerHTML = shellMarkup;
-  root.querySelector('.brand').textContent = 'HOH UI';
+  root.querySelector('.brand').textContent = 'HOH Interface';
   root.querySelector('.brand').title = workspaceName;
-  document.title = `HOH UI · ${workspaceName}`;
+  document.title = `HOH Interface · ${workspaceName}`;
 const state = { items: [], index: -1, direct: null, lastFeedId: null, profile: {}, view: null, intent: 0, operation: Promise.resolve() };
 const $ = (selector) => root.querySelector(selector);
 const current = () => state.index >= 0 ? state.items[state.index] : state.direct;
@@ -20,6 +21,17 @@ const current = () => state.index >= 0 ? state.items[state.index] : state.direct
 function status(message, retry = false) { if (disposed) return; $('#providerStatus').textContent = message; $('#retryButton').hidden = !retry; }
 function setBusy(busy) { if (disposed) return; root.querySelectorAll('[data-save],[data-remove],[data-reaction],[data-comment],[data-share],#commentSubmit,#chatForm button,[data-check-id],[data-tile],[data-game-reset],[data-dashboard-content-id],[data-dashboard-action]').forEach((button) => { button.disabled = busy; }); }
 function payload(item) { return item?.content?.payload && typeof item.content.payload === 'object' ? item.content.payload : {}; }
+function scopedRendererActions(item) {
+  const context = Object.freeze({ contentId: item.content.id, viewRevision: state.profile.viewRevision,
+    manifestId: item.content.manifestId, manifestRevision: item.content.manifestRevision });
+  const intent = state.intent, generation = renderGeneration, signal = rendererLifetime.signal;
+  const isCurrent = () => !disposed && !signal.aborted && generation === renderGeneration && intent === state.intent
+    && current()?.content?.id === context.contentId && state.profile.viewRevision === context.viewRevision;
+  const stale = () => Promise.resolve({ applies: false, reason: 'stale_context' });
+  return { context, signal, isCurrent,
+    open: contentId => isCurrent() ? openById(contentId) : stale(),
+    saveState: next => isCurrent() ? saveState(next, context) : stale() };
+}
 function isDashboard(item = current()) { return item?.content?.id === homeContentId || item?.manifest?.kind === 'DASHBOARD'; }
 const dashboardKindLabel = { ACCOUNT: '계정 및 설정', CHECKLIST: '점검 목록', GAME: '미니 게임', ARTICLE: '읽을거리', FEED: '추천 콘텐츠' };
 const dashboardKindIcon = { ACCOUNT: '⚙', CHECKLIST: '✓', GAME: '◈', ARTICLE: '◇', FEED: '✦' };
@@ -62,7 +74,7 @@ function renderStage(item) {
   if (isDashboard(item)) return renderDashboard(item);
   const data = payload(item), kind = item.manifest?.kind || 'ARTICLE';
   if (Object.hasOwn(renderers, kind)) {
-    const node = renderers[kind]({ item, view: state.view, payload: data, open: openById, saveState });
+    const node = renderers[kind]({ item, view: state.view, payload: data, ...scopedRendererActions(item) });
     if (!(node instanceof Node)) throw new Error('HOH renderer must return a DOM Node');
     return node;
   }
@@ -108,6 +120,7 @@ function renderFavorites() {
 }
 function render() {
   if (disposed) return;
+  rendererLifetime.abort(); rendererLifetime = new AbortController(); renderGeneration += 1;
   const item = current(), view = state.view;
   const dashboard = isDashboard(item);
   $('#contentStage').classList.toggle('is-dashboard', dashboard);
@@ -119,6 +132,7 @@ function render() {
 }
 async function openById(contentId, rankedIndex = -1) {
   if (!contentId || disposed) return;
+  rendererLifetime.abort();
   const intent = ++state.intent;
   status('콘텐츠 여는 중');
   state.operation = state.operation.catch(() => {}).then(async () => {
@@ -129,7 +143,11 @@ async function openById(contentId, rankedIndex = -1) {
     if (intent !== state.intent) return;
     let index = rankedIndex >= 0 ? rankedIndex : state.items.findIndex((item) => item.content?.id === contentId);
     if (index < 0) state.direct = { content: view.content, manifest: view.manifest, reasons: [] };
-    else state.direct = null;
+    else {
+      state.direct = null;
+      // Feed entries are discovery snapshots; the opened view owns the current payload and program revision.
+      state.items[index] = { ...state.items[index], content: view.content, manifest: view.manifest };
+    }
     state.index = index;
     if (index >= 0) state.lastFeedId = contentId;
     state.view = view;
@@ -142,17 +160,19 @@ async function openById(contentId, rankedIndex = -1) {
 function mutate(path, body) {
   const capturedContentId = body.contentId;
   const capturedRevision = state.profile.viewRevision;
+  const capturedIntent = state.intent;
   setBusy(true);
   state.operation = state.operation.catch(() => {}).then(async () => {
     if (disposed) throw new Error('HOH UI is unmounted');
     const result = await adapter[mutationMethods[path]]({ ...body, viewRevision: capturedRevision });
     if (result.viewRevision !== undefined) state.profile = { ...state.profile, viewRevision: result.viewRevision };
-    return { result, applies: !disposed && current()?.content?.id === capturedContentId };
+    return { result, applies: !disposed && state.intent === capturedIntent && current()?.content?.id === capturedContentId };
   });
   return state.operation.catch((error) => { status(error.status === 503 ? '저장소 또는 제공자를 사용할 수 없습니다.' : '변경하지 못했습니다.', true); throw error; }).finally(() => setBusy(false));
 }
 async function initialize() {
   if (disposed) return;
+  rendererLifetime.abort(); state.intent += 1;
   try {
     const session = await adapter.bootstrap(); if (disposed) return; state.profile = session.profile || {};
     const feed = await adapter.list(); if (disposed) return; state.items = feed.items || [];
@@ -162,9 +182,18 @@ async function initialize() {
     $('#chatStatus').textContent = hswm?.status === 'READY' ? 'AI 채팅을 사용할 수 있습니다.' : (hswm?.reason || 'AI 제공자에 연결되지 않았습니다.');
   } catch { if (disposed) return; status('연결할 수 없음', true); $('#chatStatus').textContent = '콘텐츠 또는 AI 제공자에 연결할 수 없습니다.'; render(); }
 }
-async function saveState(next) {
-  const item = current(); if (!item) return; const active = document.activeElement?.dataset?.checkId || document.activeElement?.dataset?.tile;
-  try { const queued = await mutate('/state', { contentId: item.content.id, state: next }); if (!queued.applies) return; state.view = { ...state.view, appState: queued.result.appState || next }; render(); if (active !== undefined) root.querySelector('[data-check-id="' + active + '"]')?.focus() || root.querySelector('[data-tile="' + active + '"]')?.focus(); } catch {}
+async function saveState(next, context = null) {
+  const item = current();
+  if (disposed || !item || context && (item.content.id !== context.contentId || state.profile.viewRevision !== context.viewRevision)) return { applies: false, reason: 'stale_context' };
+  const active = document.activeElement?.dataset?.checkId || document.activeElement?.dataset?.tile;
+  try {
+    const queued = await mutate('/state', { contentId: item.content.id, state: next });
+    if (!queued.applies) return { applies: false, reason: 'context_changed' };
+    const appState = queued.result.appState || next;
+    state.view = { ...state.view, appState }; render();
+    if (active !== undefined) root.querySelector('[data-check-id="' + active + '"]')?.focus() || root.querySelector('[data-tile="' + active + '"]')?.focus();
+    return { applies: true, appState };
+  } catch { return { applies: false, reason: 'save_failed' }; }
 }
 listen(root, 'click', async (event) => {
   const b = event.target.closest('button'); if (!b) return;
@@ -218,6 +247,9 @@ listen($('.chat'), 'transitionend', placeSheetHandle);
 listen(window, 'resize', placeSheetHandle);
 installGestures();
 const ready = initialize();
-return { ready, open: openById, refresh: initialize, destroy() { disposed = true; listeners.abort(); state.intent += 1; root.replaceChildren(); } };
+return { ready, open: openById, refresh: initialize, destroy() { disposed = true; listeners.abort(); rendererLifetime.abort(); state.intent += 1; root.replaceChildren(); } };
 
 }
+
+/** Compatibility with the original @hoh/ui entry point. */
+export const mountHohUI = mountHohInterface;

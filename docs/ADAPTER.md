@@ -1,24 +1,34 @@
-# HOH UI 호스트 연결 계약
+# HOH Interface 호스트 연결 계약
 
 HOH UI는 한 문서의 전체 화면 셸이다. 동일 문서에 여러 인스턴스를 동시에
 배치하는 위젯 계약은 아니다. 새 인스턴스를 장착하기 전 기존 `destroy()`를 호출한다.
 
 ```js
-const ui = mountHohUI({
+const ui = mountHohInterface({
   root: document.querySelector('#hoh-root'),
   adapter,
   workspaceName: '제품 이름',
   homeContentId: 'dashboard-home',
-  renderers: { WORK_APP: ({ item, view, payload, open, saveState }) => node }
+  renderers: { WORK_APP: ({ item, view, payload, context, signal, isCurrent, open, saveState }) => node }
 });
 await ui.ready;
 // ui.open(contentId), ui.refresh(), ui.destroy()
 ```
 
 렌더러는 호스트 코드에 등록한 함수이며 DOM Node를 반환한다. `saveState(next)`는
-현재 앱의 상태를 어댑터에 저장한다. `open(contentId)`는 권한 검사를 거쳐 해당
-콘텐츠를 연다. 원격 콘텐츠의 문자열이나 URL을 코드로 가져오지 않는다.
+렌더러가 생성된 앱의 상태를 어댑터에 저장한다. `open(contentId)`는 권한 검사를 거쳐
+해당 콘텐츠를 연다. 원격 콘텐츠의 문자열이나 URL을 코드로 가져오지 않는다.
 기본 렌더러는 ARTICLE·CHECKLIST·GAME·ACCOUNT·DASHBOARD다.
+
+`context`는 생성 당시의 `contentId`, `viewRevision`, `manifestId`, `manifestRevision`을
+담는 읽기 전용 값이다. `isCurrent()`로 화면 맥락이 유효한지 확인할 수 있다.
+화면 이동·다시 렌더링·새로고침·해제 때 `signal`이 중단되므로 호스트는 타이머와
+구독도 정리할 수 있다. 오래된 렌더러의 `open`과 `saveState`는 어댑터를 호출하지 않고
+`{applies:false, reason:'stale_context'}`를 반환한다. 저장 성공은
+`{applies:true, appState}`이며 실패 결과를 성공으로 취급하지 않는다.
+
+피드 항목은 탐색용 스냅샷이다. 실제 화면은 `open()`이 반환한 최신 콘텐츠·프로그램
+버전·앱 상태를 사용한다. `mountHohUI`는 `mountHohInterface`의 호환 별칭이다.
 
 ## 어댑터 메서드
 

@@ -1,8 +1,9 @@
-# HOH UI / HOH GUI
+# HOH Interface
 
-콘텐츠 피드와 AI 에이전트 대화창을 중심으로 하는 공통 인터페이스다.
-피드에서 콘텐츠와 앱을 탐색하고, AI 프롬프트로 현재 맥락의 정밀 작업을 수행한다.
-사용자는 이 구조를 **AI 네이티브 OS의 기본 GUI**로 정의했다.
+실행 가능한 콘텐츠와 AI 명령이 하나의 작업 맥락을 공유하는,
+**최소한의 AI 네이티브 OS 인터페이스**다. 피드로 콘텐츠와 앱을 탐색하고,
+프롬프트로 정밀 작업을 요청한다. HOH UI / HOH GUI는 기존 별칭이다.
+[개념과 완성도 기준](docs/CONCEPT.md)에 역할·확장 원칙·현재 구현 범위를 정리했다.
 
 ## 공통 화면
 
@@ -46,8 +47,18 @@ npm run preview -- --backend http://127.0.0.1:8018
 ```
 
 미리보기는 loopback에만 바인딩하며 외부 서비스에 자동으로 연결하지 않는다.
-실제 호스트는 `mountHohUI`와 어댑터를 함께 배치한다. 연결 계약은
+실제 호스트는 `mountHohInterface`와 어댑터를 함께 배치한다.
+기존 `mountHohUI`도 호환 별칭으로 제공한다. 연결 계약은
 [어댑터 문서](docs/ADAPTER.md)에 있다.
+
+렌더러의 화면 맥락과 비동기 작업 수명은 실제 Chromium으로 검사할 수 있다.
+실행 중인 로컬 미리보기와 설치된 Playwright 모듈·브라우저 경로를 명시한다:
+
+```sh
+npm run test:browser -- --url http://127.0.0.1:8020/feed/ \
+  --playwright-module /path/to/playwright-core \
+  --browser-executable /path/to/chromium
+```
 
 MetaHumotonic 배포는 HOH 소스의 검증된 복사본을 포함한다. 실행 시 형제 저장소의
 절대경로에 의존하지 않는다. 동기화는 명시적인 내보내기로 하고, 파일 해시를 남긴다:
@@ -67,7 +78,13 @@ npm run export:metahumotonic -- --target /path/to/metahumotonic_web_back --write
 라이선스는 [추출 기록](provenance/metahumotonic-extraction-2026-10-06.json)에 있다.
 공개 원격 저장소 생성이나 업로드는 수행하지 않았다.
 
-[검증 기록](provenance/verification-2026-10-06.json): 패키지 검사 3개, 참조 호스트 검사
+0.1.1의 [검증 기록](provenance/verification-interface-0.1.1.json): 패키지 검사 3개,
+참조 호스트 검사 15개와 빌드, 화면 맥락 브라우저 검사 16개, 실제 호스트 검사 8개가
+통과했다. 이름·정의와 다섯 원칙을 출처가 있는 그래프로 연결했다.
+[현재 모바일 화면](docs/screenshots/interface-0.1.1-host-390.png),
+[현재 PC 화면](docs/screenshots/interface-0.1.1-host-1440.png)을 보관한다.
+
+초기 0.1.0 [검증 기록](provenance/verification-2026-10-06.json): 패키지 검사 3개, 참조 호스트 검사
 15개와 빌드, 기존 브라우저 동작 19개 및 HOH 재사용 검사 12개가 통과했다.
 [모바일 화면](docs/screenshots/host-390.png), [PC 화면](docs/screenshots/host-1440.png),
 [별도 어댑터·렌더러 검증 화면](docs/screenshots/standalone-custom-900.png)을 보관한다.

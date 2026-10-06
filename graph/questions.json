@@ -6,7 +6,8 @@
       "subject": "urn:hoh:gui:hoh-ui",
       "predicate": "http://www.w3.org/ns/prov#wasDerivedFrom",
       "expectedTargets": [
-        "urn:hoh:gui:source/user-hoh-ui-2c9603ebd820ac38c87fe738e2d24763b4f34add994f0bbafcc6ca9d2813c082"
+        "urn:hoh:gui:source/user-hoh-ui-2c9603ebd820ac38c87fe738e2d24763b4f34add994f0bbafcc6ca9d2813c082",
+        "urn:hoh:gui:source/user-hoh-interface-7cfaefdee533bada7cbde67ad6f3b0419cf4d1e7e9bdf143fc1b5adee0e1f9dd"
       ]
     },
     {
@@ -18,6 +19,19 @@
         "urn:hoh:gui:host/metahumotonic",
         "urn:hoh:gui:host/company-work",
         "urn:hoh:gui:host/mm"
+      ]
+    },
+    {
+      "id": "minimal-interface-invariants",
+      "question": "앱과 호스트가 늘어나도 유지해야 할 최소 인터페이스 계약은 무엇인가?",
+      "subject": "urn:hoh:gui:hoh-ui",
+      "predicate": "urn:hoh:gui:hasInvariant",
+      "expectedTargets": [
+        "urn:hoh:gui:invariant/shared-context",
+        "urn:hoh:gui:invariant/stable-shell",
+        "urn:hoh:gui:invariant/intentional-navigation",
+        "urn:hoh:gui:invariant/confirmed-results",
+        "urn:hoh:gui:invariant/same-semantics"
       ]
     }
   ]

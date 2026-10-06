@@ -1,5 +1,5 @@
 /* Only public application-shell assets may enter this cache. Profile/API responses never do. */
-const CACHE = 'mhb-feed-shell-hoh-v1';
+const CACHE = 'mhb-feed-shell-hoh-v1-1';
 const SHELL = ['/feed/', '/feed/app.css', '/feed/app.js', '/feed/hoh-ui.js', '/feed/shell.js', '/feed/program-feed-adapter.js', '/feed/pwa.js', '/feed/manifest.webmanifest',
   '/feed/icons/icon.svg', '/feed/icons/icon-192.png', '/feed/icons/icon-512.png', '/feed/icons/maskable-512.png'];
 self.addEventListener('install', (event) => {

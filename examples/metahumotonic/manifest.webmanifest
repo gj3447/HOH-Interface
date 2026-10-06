@@ -1,7 +1,7 @@
 {
   "id": "/feed/",
-  "name": "HOH UI · MetaHumotonic",
-  "short_name": "HOH UI",
+  "name": "HOH Interface · MetaHumotonic",
+  "short_name": "HOH",
   "lang": "ko",
   "start_url": "/feed/?content=dashboard-home",
   "scope": "/feed/",

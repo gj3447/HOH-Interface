@@ -18,22 +18,14 @@
     {
       "@id": "urn:hoh:gui:hoh-ui",
       "@type": "skos:Concept",
-      "skos:prefLabel": "HOH Interface",
-      "skos:altLabel": [
-        "HOH UI",
-        "HOH GUI"
-      ],
+      "skos:prefLabel": "HOH UI",
+      "skos:altLabel": "HOH GUI",
       "h:authority": "SECONDARY_AI",
       "h:origin": "USER_EXPLICIT",
-      "h:description": "사용자의 HOH Interface 명명과 최소 OS 방향을 구체화한 인터페이스 계약. 커널 구현이나 보편적인 완벽함을 주장하지 않는다.",
-      "prov:wasDerivedFrom": [
-        {
-          "@id": "urn:hoh:gui:source/user-hoh-ui-2c9603ebd820ac38c87fe738e2d24763b4f34add994f0bbafcc6ca9d2813c082"
-        },
-        {
-          "@id": "urn:hoh:gui:source/user-hoh-interface-7cfaefdee533bada7cbde67ad6f3b0419cf4d1e7e9bdf143fc1b5adee0e1f9dd"
-        }
-      ],
+      "h:description": "AI 네이티브 OS의 기본 GUI라는 사용자 정의. 피드로 탐색·여가, AI 프롬프트로 정밀 작업을 수행한다.",
+      "prov:wasDerivedFrom": {
+        "@id": "urn:hoh:gui:source/user-hoh-ui-2c9603ebd820ac38c87fe738e2d24763b4f34add994f0bbafcc6ca9d2813c082"
+      },
       "h:hasComponent": [
         {
           "@id": "urn:hoh:gui:component/content-viewer"
@@ -57,26 +49,6 @@
         },
         {
           "@id": "urn:hoh:gui:host/mm"
-        }
-      ],
-      "skos:definition": "실행 가능한 콘텐츠와 AI 명령이 하나의 작업 맥락을 공유하는 최소한의 AI 네이티브 OS 인터페이스.",
-      "h:definitionAuthority": "SECONDARY_AI",
-      "h:definitionScope": "MINIMAL_OS_INTERACTION_LAYER",
-      "h:hasInvariant": [
-        {
-          "@id": "urn:hoh:gui:invariant/shared-context"
-        },
-        {
-          "@id": "urn:hoh:gui:invariant/stable-shell"
-        },
-        {
-          "@id": "urn:hoh:gui:invariant/intentional-navigation"
-        },
-        {
-          "@id": "urn:hoh:gui:invariant/confirmed-results"
-        },
-        {
-          "@id": "urn:hoh:gui:invariant/same-semantics"
         }
       ]
     },
@@ -153,9 +125,7 @@
       "h:runtime": "BROWSER_UI_SHELL",
       "h:backendBoundary": "ADAPTER_OWNED_HSWM_CHU_USL",
       "h:hswmConnectedExecution": "NOT_PERFORMED",
-      "h:externalPublication": "NOT_PERFORMED",
-      "h:sha256": "207371c9f66a2a01a4bf51a13249fcd79805b816f10ead5a19aca36491a59f8c",
-      "h:sourceRevision": "66a933a4cfa5cbd4eebcb542e79ebe5f1cacffb4"
+      "h:externalPublication": "NOT_PERFORMED"
     },
     {
       "@id": "urn:hoh:gui:hasComponent",
@@ -189,91 +159,6 @@
         "@id": "skos:Concept"
       },
       "rdfs:comment": "Implementation artifact to the named GUI concept; one-to-one in this snapshot."
-    },
-    {
-      "@id": "urn:hoh:gui:source/user-hoh-interface-7cfaefdee533bada7cbde67ad6f3b0419cf4d1e7e9bdf143fc1b5adee0e1f9dd",
-      "@type": "prov:Entity",
-      "h:authority": "USER_PRIMARY",
-      "h:path": "sources/user-hoh-interface-2026-10-06.txt",
-      "h:sha256": "7cfaefdee533bada7cbde67ad6f3b0419cf4d1e7e9bdf143fc1b5adee0e1f9dd",
-      "h:recordedAt": "2026-10-06"
-    },
-    {
-      "@id": "urn:hoh:gui:invariant/shared-context",
-      "@type": "h:Invariant",
-      "h:authority": "SECONDARY_AI",
-      "h:status": "INTERFACE_CONTRACT",
-      "h:description": "작업을 콘텐츠와 화면 버전에 묶는다.",
-      "prov:wasDerivedFrom": {
-        "@id": "urn:hoh:gui:source/user-hoh-interface-7cfaefdee533bada7cbde67ad6f3b0419cf4d1e7e9bdf143fc1b5adee0e1f9dd"
-      }
-    },
-    {
-      "@id": "urn:hoh:gui:invariant/stable-shell",
-      "@type": "h:Invariant",
-      "h:authority": "SECONDARY_AI",
-      "h:status": "INTERFACE_CONTRACT",
-      "h:description": "새 앱은 콘텐츠 영역과 등록된 렌더러로 연결한다.",
-      "prov:wasDerivedFrom": {
-        "@id": "urn:hoh:gui:source/user-hoh-interface-7cfaefdee533bada7cbde67ad6f3b0419cf4d1e7e9bdf143fc1b5adee0e1f9dd"
-      }
-    },
-    {
-      "@id": "urn:hoh:gui:invariant/intentional-navigation",
-      "@type": "h:Invariant",
-      "h:authority": "SECONDARY_AI",
-      "h:status": "INTERFACE_CONTRACT",
-      "h:description": "추천 탐색과 고정·저장 앱 재방문을 함께 지원한다.",
-      "prov:wasDerivedFrom": {
-        "@id": "urn:hoh:gui:source/user-hoh-interface-7cfaefdee533bada7cbde67ad6f3b0419cf4d1e7e9bdf143fc1b5adee0e1f9dd"
-      }
-    },
-    {
-      "@id": "urn:hoh:gui:invariant/confirmed-results",
-      "@type": "h:Invariant",
-      "h:authority": "SECONDARY_AI",
-      "h:status": "INTERFACE_CONTRACT",
-      "h:description": "확인된 저장 결과와 실제 제공자 준비 상태를 표시한다.",
-      "prov:wasDerivedFrom": {
-        "@id": "urn:hoh:gui:source/user-hoh-interface-7cfaefdee533bada7cbde67ad6f3b0419cf4d1e7e9bdf143fc1b5adee0e1f9dd"
-      }
-    },
-    {
-      "@id": "urn:hoh:gui:invariant/same-semantics",
-      "@type": "h:Invariant",
-      "h:authority": "SECONDARY_AI",
-      "h:status": "INTERFACE_CONTRACT",
-      "h:description": "기기 배치가 바뀌어도 탐색·실행·명령의 의미를 유지한다.",
-      "prov:wasDerivedFrom": {
-        "@id": "urn:hoh:gui:source/user-hoh-interface-7cfaefdee533bada7cbde67ad6f3b0419cf4d1e7e9bdf143fc1b5adee0e1f9dd"
-      }
-    },
-    {
-      "@id": "urn:hoh:gui:hasInvariant",
-      "@type": "rdf:Property",
-      "rdfs:domain": {
-        "@id": "skos:Concept"
-      },
-      "rdfs:range": {
-        "@id": "h:Invariant"
-      },
-      "rdfs:comment": "Interface concept to its behavioral contract requirements; one-to-many. Requirements do not assert complete implementation."
-    },
-    {
-      "@id": "urn:hoh:gui:implementation/v0.1.1",
-      "@type": "prov:Entity",
-      "h:authority": "APPLICATION_OBSERVATION",
-      "h:path": "ui/hoh-ui.js",
-      "h:sha256": "08d6250536f94b4c9c4bdc42ab9d2558b75c7c6c6aadb8443e57ac18f0ea7ab7",
-      "h:implements": {
-        "@id": "urn:hoh:gui:hoh-ui"
-      },
-      "prov:wasRevisionOf": {
-        "@id": "urn:hoh:gui:implementation/v0.1.0"
-      },
-      "h:runtime": "BROWSER_UI_SHELL",
-      "h:hswmConnectedExecution": "NOT_PERFORMED",
-      "h:externalPublication": "NOT_PERFORMED"
     }
   ]
 }
