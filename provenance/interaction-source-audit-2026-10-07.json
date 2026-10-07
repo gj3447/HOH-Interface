@@ -2,22 +2,22 @@
   "schema": "hoh/source-observation@1",
   "authority": "APPLICATION_OBSERVATION",
   "recordedAt": "2026-10-07",
-  "sourceRevision": "cb8ad90b8ba72ea84a06f4c3562d8d67f4e85e53",
+  "sourceRevision": "64f7878be267c254be9a7e9d7f388e6839fe60c6",
   "method": "READ_ONLY_SOURCE_INSPECTION",
   "runtimeChanged": false,
   "runtimeConformance": "NOT_VERIFIED_FOR_NEW_PROFILE",
   "artifacts": [
     {
       "path": "ui/hoh-ui.js",
-      "sha256": "213576c3a94fc358ff79a9207d9e31c0e43472d022ba7cd22930fb47d19545a2"
+      "sha256": "5f8083f852f65a402950fee022621c760a5dfff3ffb8cefbf2891f78d7d15d63"
     },
     {
       "path": "ui/hoh-ui.css",
-      "sha256": "127a37ef7136915f9355f40eae47bb60bb13d39f63a47c54fca656db36894790"
+      "sha256": "0bc1bef61daf91eef6360ef1bfca46940f7a6d9af90b36a8ecc962ba770ea62e"
     },
     {
       "path": "ui/shell.js",
-      "sha256": "f0c06d452207d9e4d648c93622eef34a07b1fe47cfc9dd364730483d8106bf8b"
+      "sha256": "30f57e58dd9ec05b3b8835c36b6e0b3b02902ac17ec53c942a08a5b0c2ee816b"
     }
   ],
   "observations": [
@@ -35,7 +35,7 @@
       "status": "PARTIAL",
       "evidence": {
         "path": "ui/hoh-ui.js",
-        "line": 283
+        "line": 361
       },
       "finding": "Horizontal feed gesture is attached only to #feedGesture."
     },
@@ -44,7 +44,7 @@
       "status": "PARTIAL",
       "evidence": {
         "path": "ui/hoh-ui.js",
-        "line": 278
+        "line": 356
       },
       "finding": "Sheet handle supports dragging and split state; viewport-bottom origin is not implemented."
     },
@@ -53,7 +53,7 @@
       "status": "PARTIAL",
       "evidence": {
         "path": "ui/hoh-ui.js",
-        "line": 286
+        "line": 364
       },
       "finding": "Dashboard button supports downward drag; viewport-top origin is not implemented."
     },
@@ -73,14 +73,14 @@
         "path": "ui/hoh-ui.css",
         "line": 35
       },
-      "finding": "Favorites and reaction rails have translucent background, blur, borders and shadows. Since 0.3.1 a host can hide the resources a content does not accept (open() accepts)."
+      "finding": "Favorites and reaction rails have translucent background, blur, borders and shadows. Since 0.3.1 a host can hide the resources a content does not accept (open() accepts); since 0.4.0 the reaction buttons carry the host's counts."
     },
     {
       "rule": "urn:hoh:gui:interaction-rule/desktop-shortcuts",
       "status": "NOT_IMPLEMENTED",
       "evidence": {
         "path": "ui/hoh-ui.js",
-        "line": 277
+        "line": 355
       },
       "finding": "No keydown handler exists in the reviewed shell/controller files."
     },
@@ -96,5 +96,5 @@
   ],
   "bounds": "Existing source support is not a browser verification of the new edge/axis/shortcut contract. All audited UI artifact digests correspond to sourceRevision.",
   "refreshedFrom": "48e79cf4b20617f8e53775ee5567ca6b43289490",
-  "refreshNote": "Re-inspected at 0.3.1 and again at 0.3.2 (open result, badges, focusable chat list): the cited lines moved; every finding and status still holds. No keydown handler or edge-origin gesture was added."
+  "refreshNote": "Re-inspected at 0.3.1, 0.3.2 and 0.4.0 (feed continuation, comments, counts, streaming answers): the cited lines moved; every finding and status still holds. No keydown handler or edge-origin gesture was added."
 }

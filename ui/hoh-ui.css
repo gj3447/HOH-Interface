@@ -52,3 +52,16 @@ dialog { max-width:min(34rem,calc(100vw - 2rem)); padding:0; border:0; border-ra
 
 .realtime-tile figcaption { position:absolute; bottom:.5rem; left:.5rem; padding:.2rem .5rem; border-radius:.4rem; background:rgba(0,0,0,.7); color:#fff; font-size:.8rem; }.realtime-tile.is-audio video { opacity:0; }.realtime-tile.is-audio::before { content:"음성 · AUDIO"; position:absolute; inset:0; display:grid; place-items:center; color:#a9bfba; }.realtime-controls button:disabled { opacity:.5; cursor:not-allowed; }.realtime-controls button[aria-pressed="true"] { border-color:var(--teal); }.realtime-status[data-status="error"] { color:var(--red); }.content-stage.is-realtime { padding:1.2rem 5.2rem; }
 @media(max-width:760px) { .content-stage.is-realtime { padding:1rem 1rem 5.4rem; }.tile-grid { grid-template-columns:repeat(5,minmax(0,1fr)); }.realtime-tile { min-height:0; }.realtime-tile video { min-height:0; } }
+
+/* 0.4.0 — counts on reactions, comment authors and removal, the answer while it is coming */
+.action-rail button { position:relative; }
+.reaction-count { position:absolute; right:-.3rem; bottom:-.3rem; min-width:1.15rem; height:1.15rem; padding:0 .25rem; border-radius:99px; color:#fff; background:var(--teal-dark); font:700 .66rem/1.15rem "IBM Plex Sans","Noto Sans KR",sans-serif; text-align:center; }
+#commentScope { margin-left:.35rem; color:var(--muted); font-size:.8rem; font-weight:500; }
+.comment-list li { display:grid; gap:.2rem; }
+.comment-list .comment-meta { margin:0; color:var(--muted); font-size:.78rem; }
+.comment-list .comment-body { margin:0; }
+.comment-list [data-delete-comment] { justify-self:start; min-height:2.75rem; padding:0 .6rem; border:1px solid var(--line); border-radius:.6rem; background:transparent; color:var(--text); font:inherit; font-size:.8rem; }
+.messages li.answer.pending { display:grid; gap:.4rem; }
+.answer-steps { margin:0; padding-left:1.1rem; color:var(--muted); font-size:.8rem; }
+.answer-text:empty { display:none; }
+.answer-stop { justify-self:start; min-height:2.75rem; padding:0 .8rem; border:1px solid var(--line); border-radius:.6rem; background:transparent; color:var(--text); font:inherit; font-size:.82rem; }

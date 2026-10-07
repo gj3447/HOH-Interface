@@ -19,7 +19,8 @@ const ui = mountHohInterface({
   adapter,
   workspaceName: '제품 이름',
   homeContentId: 'dashboard-home',
-  renderers: { WORK_APP: ({ item, view, payload, context, signal, isCurrent, open, saveState }) => node }
+  renderers: { WORK_APP: ({ item, view, payload, context, signal, isCurrent, open, saveState }) => node },
+  renderAnswer: ({ answer, partial, ...result }) => node   // 선택: 호스트가 답을 그린다(정제한 Markdown 등)
 });
 await ui.ready;
 // ui.open(contentId, { initiator }), ui.refresh(), ui.destroy()
@@ -29,6 +30,9 @@ await ui.ready;
 새 화면에 적용되지 않는다. 호스트·에이전트가 스스로 여는 경우(CLI의 «보여 주기», 에이전트의 화면 지시)는
 `ui.open(contentId, { initiator: 'host' })`로 연다. 이 열기는 사람이 기다리는 진행 중 작업을 취소하지 않고,
 그 작업이 끝나 적용된 뒤에 연다. 그동안 사람이 직접 탐색하면 사람의 탐색이 앞선다.
+`renderAnswer`는 AI 답을 호스트가 그리는 함수다 — 흘러오는 중(`partial: true`)과 끝난 답(`chat()` 결과 전체)을 받아 **정제된** DOM Node를 돌려준다.
+HOH는 외부 라이브러리 없이 돌므로 Markdown을 직접 그리지 않는다. 없으면 답을 글자 그대로 보인다.
+
 `ui.open`은 결과를 돌려준다 — 화면에 올라오면 `{applies:true, contentId}`, 아니면 `{applies:false, reason}`
 (`superseded` 뒤의 탐색이 앞섬 · `navigation_cancelled` · `disposed` · `failed`와 `message`·`status`).
 
@@ -58,13 +62,14 @@ REALTIME의 호스트 인증·미디어 제공자·수명 계약은 [실시간 �
 | 메서드 | 입력 / 반환 |
 | --- | --- |
 | `bootstrap()` | `{profile, readiness?}`. 세션·CSRF는 어댑터 내부에서 처리한다. |
-| `list()` | `{items}`. 각 항목은 `{content, manifest, reasons?}`다. `reasons`는 호스트의 추천이 그 항목을 고른 까닭(짧은 문장 목록)이며 UI가 카드와 콘텐츠 아래에 보인다. |
-| `open({contentId, expectedViewRevision})` | `{content, manifest, viewRevision, appState?, favorite?, reaction?, comments?, accepts?, dashboard?}`. `accepts`는 셸의 호스트 자원 — `reaction`(좋아요·싫어요)·`comment`·`share`·`favorite`(저장) — 가운데 이 콘텐츠가 받는 것이다. `false`인 것은 셸이 숨기고, 적지 않은 것은 받는다. |
+| `list({cursor?})` | `{items, hasMore?, cursor?}`. 처음에는 `{}`로 부른다. 피드 끝에서 `hasMore`면 받은 `cursor`로 다음 묶음을 부르고, 없으면 처음으로 돌아간다. 각 항목은 `{content, manifest, reasons?}`다. `reasons`는 호스트의 추천이 그 항목을 고른 까닭(짧은 문장 목록)이며 UI가 카드와 콘텐츠 아래에 보인다. |
+| `open({contentId, expectedViewRevision})` | `{content, manifest, viewRevision, appState?, favorite?, reaction?, reactionCounts?, reactedBy?, comments?, commentScope?, accepts?, dashboard?}`. `reactionCounts`는 `{like, dislike}` 수(반응 단추에 보임), `reactedBy`는 `{like:[이름], dislike:[이름]}`(단추의 설명), `comments`는 `[{id?, body, author?, at?, canDelete?}]`(쓴 사람·시각, `canDelete`면 «지우기»), `commentScope`는 댓글을 누가 보는지(없으면 «나만 보기»). `accepts`는 셸의 호스트 자원 — `reaction`(좋아요·싫어요)·`comment`·`share`·`favorite`(저장) — 가운데 이 콘텐츠가 받는 것이다. `false`인 것은 셸이 숨기고, 적지 않은 것은 받는다. |
 | `favorite({contentId, favorite, viewRevision})` | 확인된 저장 결과 |
-| `react({contentId, reaction, viewRevision})` | `LIKE`, `DISLIKE`, `CLEAR`에 대한 확인된 결과 |
+| `react({contentId, reaction, viewRevision})` | `LIKE`, `DISLIKE`, `CLEAR`에 대한 확인된 결과. `reactionCounts`·`reactedBy`를 함께 돌려주면 단추의 수가 바뀐다. |
 | `comment({contentId, body, viewRevision})` | `{comments}` 또는 확인된 댓글 결과 |
+| `deleteComment({contentId, commentId, viewRevision})` | `{comments}`. 선택 메서드 — 있으면 `canDelete`인 댓글에 «지우기»가 보인다. |
 | `saveState({contentId, state, viewRevision})` | `{appState}` |
-| `chat({contentId, message, viewRevision})` | 실제 제공자의 `{answer}` 또는 오류 |
+| `chat({contentId, message, viewRevision, onProgress?, signal?})` | 실제 제공자의 `{answer, open?}` 또는 오류. 답을 받는 동안 `onProgress({step})`·`onProgress({answer})`(지금까지의 답) 또는 `onProgress({delta})`로 알리면 «받는 중» 말풍선에 단계와 답이 흐르고 «멈추기»가 `signal`을 끊는다 — 그때는 받은 만큼으로 끝내거나 `AbortError`로 거절한다. 답은 사람이 다른 화면으로 넘어가도 대화에 남는다. `open`은 답을 보인 뒤 호스트가 시작한 열기로 연다 — 그사이 사람이 화면을 옮겼으면 열지 않는다. |
 | `profile()` | `{profile}`. 즐겨찾기는 `{id,title,kind}` 목록이다. |
 | `status()` | `{readiness}`. `readiness.chat`은 AI 대화 제공자의 `{status, reason}`이다 — `READY`면 «AI 채팅을 사용할 수 있습니다», 아니면 `reason`을 보인다. 없으면 `readiness.hswm`을 같은 뜻으로 읽는다(참조 어댑터는 HSWM 채팅을 `readiness.hswm`으로 제공한다). |
 
