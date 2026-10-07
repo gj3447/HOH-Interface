@@ -1,0 +1,64 @@
+{
+ "schema": "hoh/local-verification@1",
+ "recordedAt": "2026-10-07",
+ "authority": "APPLICATION_OBSERVATION",
+ "version": "0.3.2",
+ "scope": "ui.open reports its outcome, dashboard badge counts, the scrolling chat list reachable by keyboard",
+ "checks": {
+  "packageTests": {
+   "command": "npm test",
+   "passed": 37,
+   "exitCode": 0
+  },
+  "semanticValidators": {
+   "command": "npm run check:semantic",
+   "validators": 7,
+   "status": "MATCH"
+  },
+  "semanticStandards": {
+   "command": "python3 scripts/validate-semantic-standards.py",
+   "status": "PASS"
+  },
+  "rdf": {
+   "parser": "rdflib 7.6.0",
+   "triples": {
+    "graph/hoh-ui.jsonld": 170,
+    "graph/realtime.jsonld": 299
+   },
+   "remoteFetches": 0
+  },
+  "guiBrowser": {
+   "script": "test/browser-gui.mjs",
+   "passed": 14,
+   "status": "PASS"
+  },
+  "hostBrowser": {
+   "script": "test/browser-host.mjs",
+   "url": "http://127.0.0.1:8021/host/",
+   "passed": 13,
+   "status": "PASS",
+   "added": [
+    "host counts show on the icon, capped at 99+",
+    "a count is also read out in words with the app name",
+    "ui.open says the content is on screen",
+    "ui.open says when a content could not open",
+    "the scrolling chat list is reachable by keyboard and named"
+   ]
+  },
+  "realtimeBrowser": {
+   "script": "test/browser-realtime.mjs",
+   "passed": 19,
+   "status": "PASS"
+  },
+  "semanticBrowser": {
+   "script": "test/browser-semantic.mjs",
+   "passed": 24,
+   "status": "PASS"
+  }
+ },
+ "notChecked": [
+  "referenceHostTests — the MetaHumotonic reference host is not on this machine; the program-feed adapter is unchanged"
+ ],
+ "origin": "Host requests from the MM host (gj3447/HOH-Interface#2: U4 open result, U7 badges, U13 focusable chat list), made at the owner's request.",
+ "recordedBy": "software-agent:claude-code for gj3447"
+}

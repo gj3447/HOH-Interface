@@ -29,6 +29,8 @@ await ui.ready;
 새 화면에 적용되지 않는다. 호스트·에이전트가 스스로 여는 경우(CLI의 «보여 주기», 에이전트의 화면 지시)는
 `ui.open(contentId, { initiator: 'host' })`로 연다. 이 열기는 사람이 기다리는 진행 중 작업을 취소하지 않고,
 그 작업이 끝나 적용된 뒤에 연다. 그동안 사람이 직접 탐색하면 사람의 탐색이 앞선다.
+`ui.open`은 결과를 돌려준다 — 화면에 올라오면 `{applies:true, contentId}`, 아니면 `{applies:false, reason}`
+(`superseded` 뒤의 탐색이 앞섬 · `navigation_cancelled` · `disposed` · `failed`와 `message`·`status`).
 
 렌더러는 호스트 코드에 등록한 함수이며 DOM Node를 반환한다. `saveState(next)`는
 렌더러가 생성된 앱의 상태를 어댑터에 저장한다. `open(contentId)`는 권한 검사를 거쳐
@@ -67,7 +69,7 @@ REALTIME의 호스트 인증·미디어 제공자·수명 계약은 [실시간 �
 | `status()` | `{readiness}`. `readiness.chat`은 AI 대화 제공자의 `{status, reason}`이다 — `READY`면 «AI 채팅을 사용할 수 있습니다», 아니면 `reason`을 보인다. 없으면 `readiness.hswm`을 같은 뜻으로 읽는다(참조 어댑터는 HSWM 채팅을 `readiness.hswm`으로 제공한다). |
 
 `content`는 `{id,title,payload}`, `manifest`는 `{kind}`를 포함한다.
-대시보드의 `dashboard`는 `{fixed:[{id,title,kind,icon?,description?}], favorites:[{id,title,kind,icon?}]}`다. `icon`은 호스트가 정하는 두 글자 이하의 글자 아이콘이며, 없거나 길면 종류의 기본 아이콘을 쓴다.
+대시보드의 `dashboard`는 `{fixed:[{id,title,kind,icon?,badge?,description?}], favorites:[{id,title,kind,icon?,badge?}]}`다. `icon`은 호스트가 정하는 두 글자 이하의 글자 아이콘이며, 없거나 길면 종류의 기본 아이콘을 쓴다. `badge`는 아이콘에 붙는 수(새 쪽지·답장 등, 양의 정수 — 99 넘으면 «99+»)이며 화면 읽기에는 «새 항목 N개»로 읽힌다.
 일반 피드에 어떤 앱을 포함할지는 호스트가 결정한다. UI는 대시보드에 추천 피드
 바로가기를 추가하며, 설정 앱도 호스트가 공급하는 고정 앱 목록으로 받는다.
 

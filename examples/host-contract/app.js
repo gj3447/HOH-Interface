@@ -1,7 +1,7 @@
 /* Copyright (C) 2026 MetaHumotonic Foundation. SPDX-License-Identifier: AGPL-3.0-only */
 import { mountHohInterface } from '/feed/hoh-ui.js';
 
-// A host shows what the shell leaves to it: its own dashboard icons, which host resources each content accepts,
+// A host shows what the shell leaves to it: its own dashboard icons and counts, which host resources each content accepts,
 // and opening content on its own initiative without dropping the answer a person is waiting for.
 const items = [
   { content: { id: 'note', title: '메모', payload: { body: '반응·댓글·공유·저장을 모두 받는 콘텐츠입니다.' } }, manifest: { kind: 'ARTICLE' }, reasons: ['모든 행동을 받음'] },
@@ -14,8 +14,8 @@ const find = id => items.find(item => item.content.id === id);
 const favoriteItems = () => items.filter(item => saved.has(item.content.id)).map(item => ({ id: item.content.id, title: item.content.title, kind: item.manifest.kind, icon: '★' }));
 const profile = () => ({ viewRevision: revision, favorites: favoriteItems() });
 const fixed = [
-  { id: 'note', title: '메모', kind: 'ARTICLE', icon: '✎' },
-  { id: 'tool', title: '도구 앱', kind: 'ARTICLE', icon: '⚒' },
+  { id: 'note', title: '메모', kind: 'ARTICLE', icon: '✎', badge: 3 },
+  { id: 'tool', title: '도구 앱', kind: 'ARTICLE', icon: '⚒', badge: 120 },
   { id: 'note', title: '기본 아이콘', kind: 'GAME' },
   { id: 'tool', title: '너무 긴 아이콘', kind: 'CHECKLIST', icon: '아이콘세개' }
 ];
