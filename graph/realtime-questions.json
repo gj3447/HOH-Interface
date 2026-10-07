@@ -1,0 +1,37 @@
+{
+  "questions": [
+    {
+      "id": "realtime-capabilities",
+      "question": "HOH 실시간 콘텐츠 확장이 다루는 모드는 무엇인가?",
+      "subject": "urn:hoh:gui:realtime-extension",
+      "predicate": "urn:hoh:gui:hasCapability",
+      "expectedTargets": [
+        "urn:hoh:gui:capability/audio-call",
+        "urn:hoh:gui:capability/video-call",
+        "urn:hoh:gui:capability/broadcast"
+      ]
+    },
+    {
+      "id": "host-production-layers",
+      "question": "실제 통화·방송 호스트가 제공해야 할 계층은 무엇인가?",
+      "subject": "urn:hoh:gui:realtime-extension",
+      "predicate": "urn:hoh:gui:requiresHostLayer",
+      "expectedTargets": [
+        "urn:hoh:gui:layer/authorization",
+        "urn:hoh:gui:layer/signaling",
+        "urn:hoh:gui:layer/connectivity",
+        "urn:hoh:gui:layer/media-distribution",
+        "urn:hoh:gui:layer/safety-observability"
+      ]
+    },
+    {
+      "id": "source-requirement-contract-gui",
+      "question": "사용자 원문에서 어떤 요구·세션 계약·GUI 계약으로 연결되는가?",
+      "path": [
+        { "subject": "urn:hoh:gui:realtime-extension", "predicate": "http://www.w3.org/ns/prov#wasDerivedFrom", "expectedTargets": ["urn:hoh:gui:source/user-hoh-realtime-2fc7f11a964c51ab8de7bf41ccdf23b42b099154c6d72d9b2233509278f4ad6a"] },
+        { "subject": "urn:hoh:gui:realtime-extension", "predicate": "urn:hoh:gui:requiresContract", "expectedTargets": ["urn:hoh:gui:contract/realtime-session"] },
+        { "subject": "urn:hoh:gui:realtime-extension", "predicate": "urn:hoh:gui:hasGuiContract", "expectedTargets": ["urn:hoh:gui:gui-contract/realtime-content"] }
+      ]
+    }
+  ]
+}

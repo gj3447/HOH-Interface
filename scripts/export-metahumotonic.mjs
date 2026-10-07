@@ -19,6 +19,8 @@ const files = await Promise.all(Object.entries(assets).map(async ([source, name]
 }));
 const license = await readFile(resolve(root, 'LICENSE'));
 files.push({ source: 'LICENSE', path: 'ts/vendor/hoh-ui-LICENSE', sha256: digest(license), bytes: license });
+const notice = await readFile(resolve(root, 'NOTICE'));
+files.push({ source: 'NOTICE', path: 'ts/vendor/hoh-ui-NOTICE', sha256: digest(notice), bytes: notice });
 const uiPackage = JSON.parse(await readFile(resolve(root, 'package.json'), 'utf8'));
 const manifest = {
   schema: 'hoh/vendored-ui@1', repositoryId: 'repository:hoh', package: uiPackage.name, version: uiPackage.version,

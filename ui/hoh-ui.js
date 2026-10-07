@@ -1,13 +1,25 @@
 import { shellMarkup } from './shell.js';
+import { createRealtimeSession } from './realtime-session.js';
+import { renderRealtimeView } from './realtime-view.js';
 
 /** Full-page HOH Interface. Hosts supply trusted adapters/renderers; payloads never install code. */
-export function mountHohInterface({ root, adapter, renderers = {}, workspaceName = 'HOH', homeContentId = 'dashboard-home' }) {
+export function mountHohInterface({ root, adapter, renderers = {}, realtime = null, workspaceName = 'HOH', homeContentId = 'dashboard-home' }) {
   if (!root || !adapter) throw new Error('HOH UI requires a root and an adapter');
   const methods = ['bootstrap', 'list', 'open', 'favorite', 'react', 'comment', 'saveState', 'chat', 'profile', 'status'];
   if (methods.some(name => typeof adapter[name] !== 'function')) throw new Error('Incomplete HOH adapter');
   const listeners = new AbortController();
   let rendererLifetime = new AbortController(), renderGeneration = 0;
   let disposed = false;
+  let mediaContentId = null;
+  const mediaSession = realtime?.provider && typeof realtime.authorize === 'function' ? createRealtimeSession({ provider: {
+    capabilities: realtime.provider.capabilities,
+    async connect(request) {
+      const granted = await realtime.authorize({ context: request.context, request: { mode: request.mode, role: request.role }, signal: request.signal });
+      if (request.signal.aborted) throw new DOMException('연결이 취소되었습니다.', 'AbortError');
+      if (!granted?.roomId || granted.mode !== request.mode || granted.role !== request.role) throw new Error('이 콘텐츠의 통화 권한을 확인하지 못했습니다.');
+      return realtime.provider.connect({ ...request, ...granted, signal: request.signal, onUpdate: request.onUpdate });
+    }
+  } }) : null;
   const listen = (target, event, handler) => target.addEventListener(event, handler, { signal: listeners.signal });
   const mutationMethods = { '/favorites': 'favorite', '/reactions': 'react', '/comments': 'comment', '/state': 'saveState', '/chat': 'chat' };
   root.innerHTML = shellMarkup;
@@ -33,8 +45,8 @@ function scopedRendererActions(item) {
     saveState: next => isCurrent() ? saveState(next, context) : stale() };
 }
 function isDashboard(item = current()) { return item?.content?.id === homeContentId || item?.manifest?.kind === 'DASHBOARD'; }
-const dashboardKindLabel = { ACCOUNT: '계정 및 설정', CHECKLIST: '점검 목록', GAME: '미니 게임', ARTICLE: '읽을거리', FEED: '추천 콘텐츠' };
-const dashboardKindIcon = { ACCOUNT: '⚙', CHECKLIST: '✓', GAME: '◈', ARTICLE: '◇', FEED: '✦' };
+const dashboardKindLabel = { ACCOUNT: '계정 및 설정', CHECKLIST: '점검 목록', GAME: '미니 게임', ARTICLE: '읽을거리', FEED: '추천 콘텐츠', REALTIME: '통화 및 방송' };
+const dashboardKindIcon = { ACCOUNT: '⚙', CHECKLIST: '✓', GAME: '◈', ARTICLE: '◇', FEED: '✦', REALTIME: '◉' };
 function openRecommendedFeed() {
   const previous = state.items.findIndex(item => item.content.id === state.lastFeedId);
   const index = previous >= 0 ? previous : 0;
@@ -73,6 +85,15 @@ function renderStage(item) {
   if (!item) return Object.assign(document.createElement('div'), { className: 'empty', textContent: '콘텐츠가 없습니다.' });
   if (isDashboard(item)) return renderDashboard(item);
   const data = payload(item), kind = item.manifest?.kind || 'ARTICLE';
+  if (kind === 'REALTIME') {
+    const scoped = scopedRendererActions(item);
+    return renderRealtimeView({ item, ...scoped, session: mediaSession, available: Boolean(mediaSession),
+      start(request) {
+        if (!scoped.isCurrent()) return;
+        mediaContentId = item.content.id;
+        return mediaSession.join({ ...request, context: scoped.context });
+      } });
+  }
   if (Object.hasOwn(renderers, kind)) {
     const node = renderers[kind]({ item, view: state.view, payload: data, ...scopedRendererActions(item) });
     if (!(node instanceof Node)) throw new Error('HOH renderer must return a DOM Node');
@@ -124,14 +145,20 @@ function render() {
   const item = current(), view = state.view;
   const dashboard = isDashboard(item);
   $('#contentStage').classList.toggle('is-dashboard', dashboard);
+  $('#contentStage').classList.toggle('is-realtime', item?.manifest?.kind === 'REALTIME');
   $('#viewerTitle').textContent = item?.content?.title || '콘텐츠'; $('#position').textContent = dashboard ? '앱' : (state.items.length ? (state.index + 1) + ' / ' + state.items.length : '0 / 0');
-  $('#contentStage').replaceChildren(renderStage(item)); const saved = Boolean(view?.favorite); $('[data-save]').textContent = saved ? '저장됨' : '저장'; $('[data-save]').setAttribute('aria-pressed', String(saved)); $('[data-remove]').hidden = !saved;
+  $('#contentStage').replaceChildren(renderStage(item)); const saved = Boolean(view?.favorite); $('[data-save-label]').textContent = saved ? '저장됨' : '저장'; $('[data-save]').setAttribute('aria-pressed', String(saved)); $('[data-remove]').hidden = !saved;
   for (const reaction of ['like', 'dislike']) $('[data-reaction="' + reaction + '"]').setAttribute('aria-pressed', String(view?.reaction === reaction.toUpperCase()));
   $('.action-rail').hidden = dashboard; $('.viewer-foot').hidden = dashboard;
   $('#contentMeta').textContent = (item?.reasons || []).join(' · '); $('#comments').replaceChildren(...(view?.comments || []).map((c) => Object.assign(document.createElement('li'), { textContent: c.body || '' }))); renderFavorites();
 }
 async function openById(contentId, rankedIndex = -1) {
   if (!contentId || disposed) return;
+  if (mediaSession?.isActive()) {
+    if (contentId === mediaContentId && current()?.content?.id === contentId) return;
+    if (!window.confirm('현재 통화·방송을 종료하고 다른 콘텐츠를 열까요?')) return { applies: false, reason: 'navigation_cancelled' };
+    mediaSession.leave(); mediaContentId = null;
+  }
   rendererLifetime.abort();
   const intent = ++state.intent;
   status('콘텐츠 여는 중');
@@ -172,6 +199,10 @@ function mutate(path, body) {
 }
 async function initialize() {
   if (disposed) return;
+  if (mediaSession?.isActive()) {
+    if (!window.confirm('현재 통화·방송을 종료하고 새로고침할까요?')) return;
+    mediaSession.leave(); mediaContentId = null;
+  }
   rendererLifetime.abort(); state.intent += 1;
   try {
     const session = await adapter.bootstrap(); if (disposed) return; state.profile = session.profile || {};
@@ -221,13 +252,14 @@ listen($('#chatForm'), 'submit', async (event) => {
 listen($('#commentSubmit'), 'click', async () => { const body = $('#commentInput').value.trim(), item = current(); if (!body || !item) return; try { const queued = await mutate('/comments', { contentId: item.content.id, body }); if (!queued.applies) return; state.view = { ...state.view, comments: queued.result.comments || [...(state.view?.comments || []), { body }] }; $('#commentInput').value = ''; render(); $('#commentDialog').close(); } catch {} });
 listen($('#retryButton'), 'click', initialize);
 function placeSheetHandle() { if (disposed) return; const chat = $('.chat'), handle = $('#sheetHandle'); if (innerWidth <= 760) handle.style.top = (chat.getBoundingClientRect().top - 22) + 'px'; }
-function setSheet(name, height = null) { if (disposed) return; $('.app-shell').dataset.sheet = name; $('.chat').style.height = height === null ? '' : height + 'px'; requestAnimationFrame(placeSheetHandle); }
+function syncViewport() { if (disposed) return; $('.app-shell').style.setProperty('--hoh-viewport-height', (window.visualViewport?.height || innerHeight) + 'px'); placeSheetHandle(); }
+function setSheet(name, height = null) { if (disposed) return; const shell = $('.app-shell'); shell.dataset.sheet = name; height === null ? shell.style.removeProperty('--hoh-chat-height') : shell.style.setProperty('--hoh-chat-height', height + 'px'); requestAnimationFrame(placeSheetHandle); }
 let dashboardClickSuppressed = false;
 function installGestures() {
   const sheet = $('#sheetHandle'), feed = $('#feedGesture'), dashboard = $('#dashboardGesture'); let drag = null, horizontal = null, dashboardStart = null, draggedAt = 0;
   listen(sheet, 'pointerdown', (event) => { if (innerWidth > 760) return; drag = { y: event.clientY, height: $('.chat').offsetHeight }; sheet.setPointerCapture(event.pointerId); $('.chat').classList.add('is-dragging'); });
-  listen(sheet, 'pointermove', (event) => { if (!drag) return; const max = innerHeight - 56, height = Math.max(44, Math.min(max, drag.height + drag.y - event.clientY)); setSheet('split', height); });
-  const settle = () => { if (!drag) return; const max = innerHeight - 56, height = $('.chat').offsetHeight, poses = [['chat', max], ['split', max / 2], ['content', 44]]; const next = poses.reduce((best, pose) => Math.abs(pose[1] - height) < Math.abs(best[1] - height) ? pose : best)[0]; $('.chat').classList.remove('is-dragging'); if (Math.abs(height - drag.height) > 4) draggedAt = Date.now(); setSheet(next); drag = null; };
+  listen(sheet, 'pointermove', (event) => { if (!drag) return; const max = (window.visualViewport?.height || innerHeight) - 56, height = Math.max(44, Math.min(max, drag.height + drag.y - event.clientY)); setSheet('split', height); });
+  const settle = () => { if (!drag) return; const max = (window.visualViewport?.height || innerHeight) - 56, height = $('.chat').offsetHeight, poses = [['chat', max], ['split', max / 2], ['content', 44]]; const next = poses.reduce((best, pose) => Math.abs(pose[1] - height) < Math.abs(best[1] - height) ? pose : best)[0]; $('.chat').classList.remove('is-dragging'); if (Math.abs(height - drag.height) > 4) draggedAt = Date.now(); setSheet(next); drag = null; };
   listen(sheet, 'pointerup', settle); listen(sheet, 'pointercancel', settle);
   listen(sheet, 'click', () => { if (Date.now() - draggedAt < 300) return; const name = $('.app-shell').dataset.sheet; setSheet(name === 'content' ? 'split' : name === 'split' ? 'chat' : 'content'); });
   listen(feed, 'pointerdown', (event) => { if (innerWidth <= 760) { horizontal = event.clientX; feed.setPointerCapture(event.pointerId); } });
@@ -244,10 +276,14 @@ function installGestures() {
   listen(dashboard, 'pointerup', releaseDashboard); listen(dashboard, 'pointercancel', () => { dashboardStart = null; dashboardClickSuppressed = true; });
 }
 listen($('.chat'), 'transitionend', placeSheetHandle);
-listen(window, 'resize', placeSheetHandle);
+listen(window, 'resize', syncViewport);
+if (window.visualViewport) listen(window.visualViewport, 'resize', syncViewport);
+listen(window, 'pagehide', () => mediaSession?.leave());
+listen(window, 'beforeunload', event => { if (mediaSession?.isActive()) { event.preventDefault(); event.returnValue = ''; } });
+syncViewport();
 installGestures();
 const ready = initialize();
-return { ready, open: openById, refresh: initialize, destroy() { disposed = true; listeners.abort(); rendererLifetime.abort(); state.intent += 1; root.replaceChildren(); } };
+return { ready, open: openById, refresh: initialize, realtime: mediaSession, destroy() { disposed = true; listeners.abort(); rendererLifetime.abort(); mediaSession?.close(); state.intent += 1; root.replaceChildren(); } };
 
 }
 

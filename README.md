@@ -15,6 +15,7 @@ Copyright (C) 2026 **MetaHumotonic Foundation** · [AGPL-3.0-only](LICENSE)
 - **반응과 저장**: 콘텐츠 오른쪽에 좋아요·싫어요·댓글·공유, 왼쪽에 즐겨찾기를 둔다.
 - **모바일**: 좌우 피드, 아래에서 올리는 채팅, 반화면 채팅, 위쪽 앱 손잡이를 내리는 대시보드.
 - **PC·태블릿**: 콘텐츠는 왼쪽, AI 대화는 오른쪽에 표시한다.
+- **실시간 콘텐츠**: 음성·영상 통화와 방송 발행·시청을 같은 콘텐츠 안에서 제어한다.
 
 공통 화면과 제품 연결 코드는 분리한다. 콘텐츠·앱·추천·권한·계정·AI 서비스는
 각 제품의 어댑터와 백엔드가 제공한다. 콘텐츠 데이터가 임의의 코드를 설치하거나
@@ -31,6 +32,23 @@ Copyright (C) 2026 **MetaHumotonic Foundation** · [AGPL-3.0-only](LICENSE)
 현재 산출물은 브라우저에서 실행되는 UI 셸과 연결 계약이다. 커널·드라이버·네이티브
 앱 스토어 배포는 구현 범위에 들어 있지 않다. MetaHumotonic의 HSWM 채팅은 연결 준비
 전까지 `NOT_READY`를 유지한다. CHU·USL·HSWM 실행 권한은 UI 등록에서 생기지 않는다.
+
+## 통화·영상·방송 실행 예제
+
+```sh
+npm run preview -- --port 8021
+```
+
+`http://127.0.0.1:8021/realtime/`를 같은 브라우저의 두 탭에서 열면 실제 WebRTC
+연결을 시험할 수 있다. 통화는 두 탭에서 같은 앱으로 참여하고, 방송은 발행 앱과
+시청 앱을 각각 연다. 참여 전에는 캡처하지 않고, 시청자는 마이크·카메라 권한을 요청하지 않는다.
+
+연결은 `realtime: { provider, authorize }`로 주입한다. 호스트가 방과 역할을 승인하고,
+제공자가 미디어·신호를 처리한다. 화면 갱신은 세션을 유지하고 콘텐츠 이동 시에는 종료를
+확인한다. [기술 계약·연결 예제](docs/REALTIME.md), [타입 계약](realtime/contracts.d.ts),
+[출처가 연결된 실시간 그래프](graph/realtime.jsonld)에 구현 범위와 운영 책임을 구분했다.
+이 예제는 같은 브라우저의 탭 사이에서 동작한다. 다른 기기 사이의 서비스나 대규모 방송은
+인증·신호 서버·TURN/SFU를 갖춘 호스트 제공자가 필요하다.
 
 ## 소스 사용
 
@@ -90,11 +108,25 @@ GNU Affero General Public License, version 3 only로 배포한다.
 
 ## 검증 기록
 
+0.2.0의 [검증 기록](provenance/verification-interface-0.2.0.json)은 실제 브라우저의
+음성·영상 데이터 전송, 다중 시청자, 권한 거부, 화면 공유 트랙 정리와 GUI 검사를 포함한다.
+캡처 장치는 테스트용 합성 영상·음원을 사용했으며, 실제 카메라 영상이나 개인정보를
+저장하지 않았다. [PC](docs/screenshots/interface-0.2.0-realtime-desktop.png),
+[모바일](docs/screenshots/interface-0.2.0-realtime-mobile.png),
+[라이트 모드](docs/screenshots/interface-0.2.0-light.png) 검증 화면을 보관한다.
+
+브라우저 검사는 설치된 도구 경로를 명시해서 실행한다:
+
+```sh
+npm run test:realtime -- --playwright-module /path/to/playwright-core \
+  --browser-executable /path/to/chromium --url http://127.0.0.1:8021/realtime/
+```
+
 0.1.1의 [검증 기록](provenance/verification-interface-0.1.1.json): 패키지 검사 3개,
 참조 호스트 검사 15개와 빌드, 화면 맥락 브라우저 검사 16개, 실제 호스트 검사 8개가
 통과했다. 이름·정의와 다섯 원칙을 출처가 있는 그래프로 연결했다.
-[현재 모바일 화면](docs/screenshots/interface-0.1.1-host-390.png),
-[현재 PC 화면](docs/screenshots/interface-0.1.1-host-1440.png)을 보관한다.
+[0.1.1 모바일 화면](docs/screenshots/interface-0.1.1-host-390.png),
+[0.1.1 PC 화면](docs/screenshots/interface-0.1.1-host-1440.png)을 보관한다.
 
 초기 0.1.0 [검증 기록](provenance/verification-2026-10-06.json): 패키지 검사 3개, 참조 호스트 검사
 15개와 빌드, 기존 브라우저 동작 19개 및 HOH 재사용 검사 12개가 통과했다.

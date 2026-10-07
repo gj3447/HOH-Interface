@@ -1,6 +1,6 @@
 # HOH Interface 호스트 연결 계약
 
-HOH UI는 한 문서의 전체 화면 셸이다. 동일 문서에 여러 인스턴스를 동시에
+HOH Interface는 한 문서의 전체 화면 셸이다. 동일 문서에 여러 인스턴스를 동시에
 배치하는 위젯 계약은 아니다. 새 인스턴스를 장착하기 전 기존 `destroy()`를 호출한다.
 
 ```js
@@ -18,7 +18,10 @@ await ui.ready;
 렌더러는 호스트 코드에 등록한 함수이며 DOM Node를 반환한다. `saveState(next)`는
 렌더러가 생성된 앱의 상태를 어댑터에 저장한다. `open(contentId)`는 권한 검사를 거쳐
 해당 콘텐츠를 연다. 원격 콘텐츠의 문자열이나 URL을 코드로 가져오지 않는다.
-기본 렌더러는 ARTICLE·CHECKLIST·GAME·ACCOUNT·DASHBOARD다.
+기본 렌더러는 ARTICLE·CHECKLIST·GAME·ACCOUNT·DASHBOARD·REALTIME이다.
+REALTIME의 호스트 인증·미디어 제공자·수명 계약은 [실시간 콘텐츠 문서](REALTIME.md)에 있다.
+일반 렌더러의 `signal`은 화면마다 갱신되지만, 미디어 세션은 셸이 소유하므로 같은 콘텐츠의
+좋아요·저장에 따른 재렌더링은 통화를 끊지 않는다.
 
 `context`는 생성 당시의 `contentId`, `viewRevision`, `manifestId`, `manifestRevision`을
 담는 읽기 전용 값이다. `isCurrent()`로 화면 맥락이 유효한지 확인할 수 있다.

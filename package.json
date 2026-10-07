@@ -1,6 +1,6 @@
 {
   "name": "@hoh/ui",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "private": true,
   "type": "module",
   "description": "HOH Interface: a minimal AI-native interaction layer for executable content and agent-directed work.",
@@ -20,12 +20,16 @@
   "exports": {
     ".": "./ui/hoh-ui.js",
     "./styles.css": "./ui/hoh-ui.css",
-    "./adapters/program-feed": "./adapters/program-feed.js"
+    "./adapters/program-feed": "./adapters/program-feed.js",
+    "./realtime/session": "./ui/realtime-session.js",
+    "./realtime/contracts": "./realtime/contracts.d.ts",
+    "./adapters/local-webrtc": "./adapters/local-webrtc.js"
   },
   "scripts": {
     "test": "node --test test/*.test.mjs",
     "preview": "node scripts/preview.mjs",
     "export:metahumotonic": "node scripts/export-metahumotonic.mjs",
-    "test:browser": "node test/browser-context.mjs"
+    "test:browser": "node test/browser-context.mjs",
+    "test:realtime": "node test/browser-realtime.mjs"
   }
 }

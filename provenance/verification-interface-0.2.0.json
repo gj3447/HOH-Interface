@@ -1,0 +1,120 @@
+{
+  "schema": "hoh/local-verification@1",
+  "recordedAt": "2026-10-07",
+  "authority": "APPLICATION_OBSERVATION",
+  "version": "0.2.0",
+  "scope": "Realtime content contracts, local WebRTC reference and GUI refinement",
+  "checks": {
+    "packageTests": {
+      "command": "npm test",
+      "passed": 14,
+      "exitCode": 0
+    },
+    "referenceHostBuild": {
+      "owner": "repository:metahumotonic_web_back",
+      "command": "bash scripts/with-node.sh npm run build",
+      "cwd": "ts",
+      "exitCode": 0
+    },
+    "referenceHostTests": {
+      "command": "bash scripts/with-node.sh npm test -- program-feed",
+      "cwd": "ts",
+      "passed": 15,
+      "files": 5,
+      "exitCode": 0
+    },
+    "rdf": {
+      "parser": "rdflib 7.2.1",
+      "triples": 429,
+      "competencyQueriesPassed": 6,
+      "remoteFetches": 0
+    },
+    "vendoredAssetReadback": {
+      "files": 18,
+      "status": "MATCH",
+      "copyrightNoticeIncluded": true
+    },
+    "rendererContextBrowser": {
+      "script": "test/browser-context.mjs",
+      "passed": 16,
+      "status": "PASS"
+    },
+    "realtimeBrowser": {
+      "script": "test/browser-realtime.mjs",
+      "passed": 19,
+      "status": "PASS",
+      "capture": "CHROMIUM_SYNTHETIC_DEVICES",
+      "mediaTransport": "REAL_WEBRTC",
+      "signaling": "SAME_BROWSER_BROADCAST_CHANNEL",
+      "screenCapture": "SYNTHETIC_TRACK_REPLACEMENT_NOT_OS_PICKER",
+      "assertions": [
+        "opening a live content requests no microphone or camera",
+        "two tabs exchange and decode real WebRTC video from synthetic capture devices",
+        "audio RTP bytes arrive over the peer connection",
+        "reacting and rerendering retain the same active media capture",
+        "microphone control disables actual audio tracks",
+        "screen replacement path releases synthetic display tracks on stop",
+        "cancelling navigation keeps the current call",
+        "confirming navigation ends capture before the next content",
+        "remote participant departure removes the peer without waiting for ICE timeout",
+        "broadcast viewers receive video without requesting capture devices",
+        "one publisher serves two actual local WebRTC viewers",
+        "joining during screen sharing retains both remote audio and video tracks",
+        "390px real-time content has no document horizontal overflow",
+        "mobile reaction targets are at least 44px",
+        "reduced motion removes the visible chat height transition",
+        "half chat leaves the content viewer above the chat sheet",
+        "audio calls capture no camera track",
+        "destroy ends all captured media tracks",
+        "capture permission denial shows an error and an explicit retry action"
+      ]
+    },
+    "guiBrowser": {
+      "script": "test/browser-gui.mjs",
+      "passed": 14,
+      "status": "PASS",
+      "widths": [
+        1440,
+        900,
+        390,
+        320
+      ],
+      "themes": [
+        "dark",
+        "light"
+      ],
+      "input": [
+        "keyboard",
+        "pointer drag",
+        "button"
+      ],
+      "checks": [
+        "visible content and AI regions",
+        "no horizontal document overflow",
+        "44px reaction and live controls",
+        "glass computed blur",
+        "continuous sheet drag",
+        "live content rails within stage"
+      ]
+    },
+    "visualReview": {
+      "screenshots": [
+        "docs/screenshots/interface-0.2.0-realtime-desktop.png",
+        "docs/screenshots/interface-0.2.0-realtime-mobile.png",
+        "docs/screenshots/interface-0.2.0-light.png"
+      ],
+      "observer": "root",
+      "result": "Reviewed real rendered controls and synthetic video; media controls remain before video and mobile content is wider."
+    }
+  },
+  "boundaries": {
+    "crossDeviceInternetCall": "NOT_VERIFIED",
+    "productionSignalingTURNOrSFU": "NOT_DEPLOYED",
+    "nativeIncomingCallsPushBackground": "NOT_IMPLEMENTED",
+    "hswmConnectedExecution": "NOT_PERFORMED",
+    "osScreenPicker": "NOT_VERIFIED",
+    "safariFirefoxRealHardware": "NOT_VERIFIED",
+    "fullWCAGConformance": "NOT_CLAIMED",
+    "fieldPerformance": "NOT_MEASURED"
+  }
+}

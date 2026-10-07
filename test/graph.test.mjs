@@ -28,8 +28,8 @@ test('GUI graph preserves the Korean source, defined edge endpoints, host scope 
   }
   assert.equal(indexed.get('urn:hoh:gui:host/mm')['h:status'], 'INTENDED_TARGET_NOT_RESOLVED');
   assert.equal(indexed.get('urn:hoh:gui:host/company-work')['h:status'], 'INTENDED_NOT_INTEGRATED');
-  const currentImplementation = indexed.get('urn:hoh:gui:implementation/v0.1.1');
-  assert.equal(currentImplementation['prov:wasRevisionOf']['@id'], 'urn:hoh:gui:implementation/v0.1.0');
+  const currentImplementation = indexed.get('urn:hoh:gui:implementation/v0.2.0');
+  assert.equal(currentImplementation['prov:wasRevisionOf']['@id'], 'urn:hoh:gui:implementation/v0.1.1');
   assert.equal(createHash('sha256').update(await readFile(new URL(currentImplementation['h:path'], root))).digest('hex'), currentImplementation['h:sha256']);
   const questions = JSON.parse(await readFile(new URL('graph/questions.json', root), 'utf8')).questions;
   const expanded = name => name.replace(/^h:/, 'urn:hoh:gui:').replace(/^prov:/, 'http://www.w3.org/ns/prov#');

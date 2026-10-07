@@ -273,23 +273,7 @@
       },
       "h:runtime": "BROWSER_UI_SHELL",
       "h:hswmConnectedExecution": "NOT_PERFORMED",
-      "h:externalPublication": "NOT_PERFORMED",
-      "h:sourceRevision": "8ebc1c60492af42d380cfd5355118fe0d8f30ef1"
-    },
-    {
-      "@id": "urn:hoh:gui:implementation/v0.2.0",
-      "@type": "prov:Entity",
-      "h:authority": "APPLICATION_OBSERVATION",
-      "h:path": "ui/hoh-ui.js",
-      "h:sha256": "6162dc4503dc9f1d82ac14ba590dd77f7deae14ec8fdeca026d2daf5099ffaeb",
-      "h:implements": {
-        "@id": "urn:hoh:gui:hoh-ui"
-      },
-      "prov:wasRevisionOf": {
-        "@id": "urn:hoh:gui:implementation/v0.1.1"
-      },
-      "h:runtime": "BROWSER_UI_SHELL_WITH_OPTIONAL_REALTIME",
-      "h:hswmConnectedExecution": "NOT_PERFORMED"
+      "h:externalPublication": "NOT_PERFORMED"
     }
   ]
 }

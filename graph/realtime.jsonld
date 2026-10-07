@@ -1,0 +1,678 @@
+{
+  "@context": {
+    "h": "urn:hoh:gui:",
+    "prov": "http://www.w3.org/ns/prov#",
+    "skos": "http://www.w3.org/2004/02/skos/core#",
+    "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+    "rdfs": "http://www.w3.org/2000/01/rdf-schema#"
+  },
+  "@graph": [
+    {
+      "@id": "urn:hoh:gui:source/user-hoh-realtime-2fc7f11a964c51ab8de7bf41ccdf23b42b099154c6d72d9b2233509278f4ad6a",
+      "@type": "prov:Entity",
+      "h:authority": "USER_PRIMARY",
+      "h:path": "sources/user-hoh-realtime-2026-10-06.txt",
+      "h:sha256": "2fc7f11a964c51ab8de7bf41ccdf23b42b099154c6d72d9b2233509278f4ad6a",
+      "h:recordedAt": "2026-10-06"
+    },
+    {
+      "@id": "urn:hoh:gui:realtime-extension",
+      "@type": "h:RealtimeExtension",
+      "skos:prefLabel": "HOH 실시간 콘텐츠 확장",
+      "h:authority": "SECONDARY_AI",
+      "h:origin": "USER_EXPLICIT_REQUIREMENT_INTERPRETATION",
+      "h:description": "통화·영상 통화·방송을 HOH 콘텐츠 뷰어에서 실행되는 프로그램으로 다루는 확장 계약. 실서비스 배포나 규격 적합성 인증을 뜻하지 않는다.",
+      "h:extends": {
+        "@id": "urn:hoh:gui:hoh-ui"
+      },
+      "prov:wasDerivedFrom": {
+        "@id": "urn:hoh:gui:source/user-hoh-realtime-2fc7f11a964c51ab8de7bf41ccdf23b42b099154c6d72d9b2233509278f4ad6a"
+      },
+      "h:hasCapability": [
+        {
+          "@id": "urn:hoh:gui:capability/audio-call"
+        },
+        {
+          "@id": "urn:hoh:gui:capability/video-call"
+        },
+        {
+          "@id": "urn:hoh:gui:capability/broadcast"
+        }
+      ],
+      "h:requiresContract": {
+        "@id": "urn:hoh:gui:contract/realtime-session"
+      },
+      "h:hasLifecycle": {
+        "@id": "urn:hoh:gui:lifecycle/realtime-session"
+      },
+      "h:requiresHostLayer": [
+        {
+          "@id": "urn:hoh:gui:layer/authorization"
+        },
+        {
+          "@id": "urn:hoh:gui:layer/signaling"
+        },
+        {
+          "@id": "urn:hoh:gui:layer/connectivity"
+        },
+        {
+          "@id": "urn:hoh:gui:layer/media-distribution"
+        },
+        {
+          "@id": "urn:hoh:gui:layer/safety-observability"
+        }
+      ],
+      "h:hasGuiContract": {
+        "@id": "urn:hoh:gui:gui-contract/realtime-content"
+      },
+      "h:hasArtifact": [
+        {
+          "@id": "urn:hoh:gui:artifact/realtime-session"
+        },
+        {
+          "@id": "urn:hoh:gui:artifact/realtime-contracts"
+        },
+        {
+          "@id": "urn:hoh:gui:artifact/local-webrtc-adapter"
+        },
+        {
+          "@id": "urn:hoh:gui:artifact/realtime-view"
+        },
+        {
+          "@id": "urn:hoh:gui:artifact/realtime-example"
+        },
+        {
+          "@id": "urn:hoh:gui:artifact/glass-style"
+        },
+        {
+          "@id": "urn:hoh:gui:artifact/shell-markup"
+        }
+      ]
+    },
+    {
+      "@id": "urn:hoh:gui:capability/audio-call",
+      "@type": "h:RealtimeCapability",
+      "skos:prefLabel": "음성 통화",
+      "h:authority": "SECONDARY_AI",
+      "h:requiresGuiState": [
+        "waiting",
+        "connected",
+        "error",
+        "closed"
+      ]
+    },
+    {
+      "@id": "urn:hoh:gui:capability/video-call",
+      "@type": "h:RealtimeCapability",
+      "skos:prefLabel": "영상 통화",
+      "h:authority": "SECONDARY_AI",
+      "h:requiresGuiState": [
+        "permission",
+        "waiting",
+        "connected",
+        "error",
+        "closed"
+      ]
+    },
+    {
+      "@id": "urn:hoh:gui:capability/broadcast",
+      "@type": "h:RealtimeCapability",
+      "skos:prefLabel": "방송 발행 및 시청",
+      "h:authority": "SECONDARY_AI",
+      "h:requiresGuiState": [
+        "permission",
+        "waiting",
+        "connected",
+        "error",
+        "closed"
+      ]
+    },
+    {
+      "@id": "urn:hoh:gui:contract/realtime-session",
+      "@type": "h:SessionContract",
+      "h:authority": "SECONDARY_AI",
+      "h:description": "호스트 authorize와 provider를 통해 권한 있는 방에만 연결하며, 콘텐츠 payload는 모드·역할 힌트만 제공한다.",
+      "h:operations": [
+        "getSnapshot",
+        "subscribe",
+        "isActive",
+        "join",
+        "leave",
+        "close",
+        "setMicrophone",
+        "setCamera",
+        "shareScreen",
+        "stopScreenShare"
+      ],
+      "h:snapshotFields": [
+        "status",
+        "localStream",
+        "peers",
+        "microphoneEnabled",
+        "cameraEnabled",
+        "screenSharing",
+        "error",
+        "capabilities"
+      ],
+      "h:authorizationBoundary": "HOST_AUTHORIZE_REQUIRED",
+      "h:contentRoomBinding": "HOST_ASSIGNED_ONLY",
+      "h:technicalReference": [
+        {
+          "@id": "urn:hoh:gui:external/webrtc-spec"
+        },
+        {
+          "@id": "urn:hoh:gui:external/mediacapture-streams-spec"
+        },
+        {
+          "@id": "urn:hoh:gui:external/screen-capture-spec"
+        }
+      ],
+      "rdfs:subClassOf": {
+        "@id": "h:InterfaceContract"
+      }
+    },
+    {
+      "@id": "urn:hoh:gui:gui-contract/realtime-content",
+      "@type": "h:GuiContract",
+      "h:authority": "SECONDARY_AI",
+      "h:description": "콘텐츠와 AI 두 영역을 유지한다. 좌측 즐겨찾기·우측 반응 버튼에는 유리 패널과 명확한 아이콘·44px 조작 영역을 제공하고, 모바일 채팅 높이는 하나의 상태 규칙을 사용한다. 통화·방송 상태와 참여·종료·마이크·카메라·공유 제어를 콘텐츠 안에서 제공한다.",
+      "h:retainsShell": [
+        {
+          "@id": "urn:hoh:gui:component/content-viewer"
+        },
+        {
+          "@id": "urn:hoh:gui:component/agent"
+        }
+      ],
+      "h:requiresUserGestureFor": [
+        "camera",
+        "microphone",
+        "screen-share"
+      ],
+      "h:activeNavigation": "CONFIRM_LEAVE",
+      "h:rerenderPolicy": "RETAIN_SAME_CONTENT_SESSION",
+      "h:disposePolicy": "END_MEDIA_ON_PAGEHIDE_OR_SHELL_DESTROY",
+      "rdfs:subClassOf": {
+        "@id": "h:InterfaceContract"
+      }
+    },
+    {
+      "@id": "urn:hoh:gui:lifecycle/realtime-session",
+      "@type": "h:Lifecycle",
+      "h:authority": "SECONDARY_AI",
+      "h:hasState": [
+        {
+          "@id": "urn:hoh:gui:state/idle"
+        },
+        {
+          "@id": "urn:hoh:gui:state/joining"
+        },
+        {
+          "@id": "urn:hoh:gui:state/waiting"
+        },
+        {
+          "@id": "urn:hoh:gui:state/connected"
+        },
+        {
+          "@id": "urn:hoh:gui:state/reconnecting"
+        },
+        {
+          "@id": "urn:hoh:gui:state/error"
+        },
+        {
+          "@id": "urn:hoh:gui:state/closed"
+        }
+      ]
+    },
+    {
+      "@id": "urn:hoh:gui:state/idle",
+      "@type": "h:SessionState",
+      "skos:prefLabel": "idle",
+      "h:mayTransitionTo": [
+        {
+          "@id": "urn:hoh:gui:state/joining"
+        },
+        {
+          "@id": "urn:hoh:gui:state/closed"
+        }
+      ]
+    },
+    {
+      "@id": "urn:hoh:gui:state/joining",
+      "@type": "h:SessionState",
+      "skos:prefLabel": "joining",
+      "h:mayTransitionTo": [
+        {
+          "@id": "urn:hoh:gui:state/waiting"
+        },
+        {
+          "@id": "urn:hoh:gui:state/connected"
+        },
+        {
+          "@id": "urn:hoh:gui:state/reconnecting"
+        },
+        {
+          "@id": "urn:hoh:gui:state/error"
+        },
+        {
+          "@id": "urn:hoh:gui:state/idle"
+        },
+        {
+          "@id": "urn:hoh:gui:state/closed"
+        }
+      ]
+    },
+    {
+      "@id": "urn:hoh:gui:state/waiting",
+      "@type": "h:SessionState",
+      "skos:prefLabel": "waiting",
+      "h:mayTransitionTo": [
+        {
+          "@id": "urn:hoh:gui:state/joining"
+        },
+        {
+          "@id": "urn:hoh:gui:state/connected"
+        },
+        {
+          "@id": "urn:hoh:gui:state/reconnecting"
+        },
+        {
+          "@id": "urn:hoh:gui:state/error"
+        },
+        {
+          "@id": "urn:hoh:gui:state/idle"
+        },
+        {
+          "@id": "urn:hoh:gui:state/closed"
+        }
+      ]
+    },
+    {
+      "@id": "urn:hoh:gui:state/connected",
+      "@type": "h:SessionState",
+      "skos:prefLabel": "connected",
+      "h:mayTransitionTo": [
+        {
+          "@id": "urn:hoh:gui:state/joining"
+        },
+        {
+          "@id": "urn:hoh:gui:state/waiting"
+        },
+        {
+          "@id": "urn:hoh:gui:state/reconnecting"
+        },
+        {
+          "@id": "urn:hoh:gui:state/error"
+        },
+        {
+          "@id": "urn:hoh:gui:state/idle"
+        },
+        {
+          "@id": "urn:hoh:gui:state/closed"
+        }
+      ]
+    },
+    {
+      "@id": "urn:hoh:gui:state/reconnecting",
+      "@type": "h:SessionState",
+      "skos:prefLabel": "reconnecting",
+      "h:mayTransitionTo": [
+        {
+          "@id": "urn:hoh:gui:state/joining"
+        },
+        {
+          "@id": "urn:hoh:gui:state/waiting"
+        },
+        {
+          "@id": "urn:hoh:gui:state/connected"
+        },
+        {
+          "@id": "urn:hoh:gui:state/error"
+        },
+        {
+          "@id": "urn:hoh:gui:state/idle"
+        },
+        {
+          "@id": "urn:hoh:gui:state/closed"
+        }
+      ]
+    },
+    {
+      "@id": "urn:hoh:gui:state/error",
+      "@type": "h:SessionState",
+      "skos:prefLabel": "error",
+      "h:mayTransitionTo": [
+        {
+          "@id": "urn:hoh:gui:state/joining"
+        },
+        {
+          "@id": "urn:hoh:gui:state/idle"
+        },
+        {
+          "@id": "urn:hoh:gui:state/closed"
+        }
+      ]
+    },
+    {
+      "@id": "urn:hoh:gui:state/closed",
+      "@type": "h:SessionState",
+      "skos:prefLabel": "closed",
+      "h:mayTransitionTo": []
+    },
+    {
+      "@id": "urn:hoh:gui:layer/authorization",
+      "@type": "h:HostLayer",
+      "skos:prefLabel": "권한 부여",
+      "h:authority": "SECONDARY_AI",
+      "h:hostResponsibility": "인증된 방 참여와 역할 검증"
+    },
+    {
+      "@id": "urn:hoh:gui:layer/signaling",
+      "@type": "h:HostLayer",
+      "skos:prefLabel": "신호",
+      "h:authority": "SECONDARY_AI",
+      "h:hostResponsibility": "offer/answer/ICE 전달과 재접속 정책"
+    },
+    {
+      "@id": "urn:hoh:gui:layer/connectivity",
+      "@type": "h:HostLayer",
+      "skos:prefLabel": "연결성",
+      "h:authority": "SECONDARY_AI",
+      "h:hostResponsibility": "ICE와 TURN 자격 증명의 발급·회전"
+    },
+    {
+      "@id": "urn:hoh:gui:layer/media-distribution",
+      "@type": "h:HostLayer",
+      "skos:prefLabel": "미디어 배포",
+      "h:authority": "SECONDARY_AI",
+      "h:hostResponsibility": "다자간 방송용 SFU 또는 동등 계층과 품질 정책"
+    },
+    {
+      "@id": "urn:hoh:gui:layer/safety-observability",
+      "@type": "h:HostLayer",
+      "skos:prefLabel": "보호 및 관측",
+      "h:authority": "SECONDARY_AI",
+      "h:hostResponsibility": "참가 권한·차단·신고·보관 정책·연결 품질·오류 관측"
+    },
+    {
+      "@id": "urn:hoh:gui:artifact/realtime-session",
+      "@type": "prov:Entity",
+      "h:authority": "APPLICATION_OBSERVATION",
+      "h:path": "ui/realtime-session.js",
+      "h:status": "IMPLEMENTED_LOCALLY_VERIFIED",
+      "h:realizesContract": {
+        "@id": "urn:hoh:gui:contract/realtime-session"
+      },
+      "h:sha256": "16bfeee125ae298132c7b20eaef2c67639382ca2ef527409001050640b743baf",
+      "h:recordedAt": "2026-10-07",
+      "h:validatedBy": {
+        "@id": "urn:hoh:gui:observation/interface-0.2.0"
+      }
+    },
+    {
+      "@id": "urn:hoh:gui:artifact/realtime-contracts",
+      "@type": "prov:Entity",
+      "h:authority": "APPLICATION_OBSERVATION",
+      "h:path": "realtime/contracts.d.ts",
+      "h:status": "IMPLEMENTED_LOCALLY_VERIFIED",
+      "h:realizesContract": {
+        "@id": "urn:hoh:gui:contract/realtime-session"
+      },
+      "h:sha256": "e06397e86335ab3122657ed63548f7a1ed0d691de1863968069599c8b43e711d",
+      "h:recordedAt": "2026-10-07",
+      "h:validatedBy": {
+        "@id": "urn:hoh:gui:observation/interface-0.2.0"
+      }
+    },
+    {
+      "@id": "urn:hoh:gui:artifact/local-webrtc-adapter",
+      "@type": "prov:Entity",
+      "h:authority": "APPLICATION_OBSERVATION",
+      "h:path": "adapters/local-webrtc.js",
+      "h:status": "IMPLEMENTED_LOCALLY_VERIFIED",
+      "h:realizesContract": {
+        "@id": "urn:hoh:gui:contract/realtime-session"
+      },
+      "h:scope": "LOCAL_SAME_ORIGIN_REFERENCE_ONLY",
+      "h:sha256": "be5bb09ffc04e11e4a01dc7f1de57aedb682deadce626b2d8eda4cc23995e3dd",
+      "h:recordedAt": "2026-10-07",
+      "h:validatedBy": {
+        "@id": "urn:hoh:gui:observation/interface-0.2.0"
+      }
+    },
+    {
+      "@id": "urn:hoh:gui:artifact/realtime-view",
+      "@type": "prov:Entity",
+      "h:authority": "APPLICATION_OBSERVATION",
+      "h:path": "ui/realtime-view.js",
+      "h:status": "IMPLEMENTED_LOCALLY_VERIFIED",
+      "h:realizesContract": {
+        "@id": "urn:hoh:gui:gui-contract/realtime-content"
+      },
+      "h:sha256": "94a76dbe944b3abd2105b74c99fbaa3cd52939570a2b1284f99a9203340c9fd0",
+      "h:recordedAt": "2026-10-07",
+      "h:validatedBy": {
+        "@id": "urn:hoh:gui:observation/interface-0.2.0"
+      }
+    },
+    {
+      "@id": "urn:hoh:gui:artifact/realtime-example",
+      "@type": "prov:Entity",
+      "h:authority": "APPLICATION_OBSERVATION",
+      "h:path": "examples/realtime/app.js",
+      "h:status": "IMPLEMENTED_LOCALLY_VERIFIED",
+      "h:scope": "ISOLATED_LOCAL_DEMO",
+      "h:sha256": "2a066ecacf80b5fcc42fc85071c2c6d7b1e15dafb003bf44faf98954c7a52082",
+      "h:recordedAt": "2026-10-07",
+      "h:validatedBy": {
+        "@id": "urn:hoh:gui:observation/interface-0.2.0"
+      }
+    },
+    {
+      "@id": "urn:hoh:gui:external/webrtc-spec",
+      "@type": "prov:Entity",
+      "h:authority": "EXTERNAL_REFERENCE",
+      "h:url": "https://www.w3.org/TR/webrtc/",
+      "h:role": "TECHNICAL_REFERENCE_NOT_CERTIFICATION"
+    },
+    {
+      "@id": "urn:hoh:gui:external/mediacapture-streams-spec",
+      "@type": "prov:Entity",
+      "h:authority": "EXTERNAL_REFERENCE",
+      "h:url": "https://www.w3.org/TR/mediacapture-streams/",
+      "h:role": "TECHNICAL_REFERENCE_NOT_CERTIFICATION"
+    },
+    {
+      "@id": "urn:hoh:gui:external/screen-capture-spec",
+      "@type": "prov:Entity",
+      "h:authority": "EXTERNAL_REFERENCE",
+      "h:url": "https://www.w3.org/TR/screen-capture/",
+      "h:role": "TECHNICAL_REFERENCE_NOT_CERTIFICATION"
+    },
+    {
+      "@id": "urn:hoh:gui:extends",
+      "@type": "rdf:Property",
+      "rdfs:domain": {
+        "@id": "h:RealtimeExtension"
+      },
+      "rdfs:range": {
+        "@id": "skos:Concept"
+      },
+      "rdfs:comment": "One realtime extension to one stable HOH interface concept."
+    },
+    {
+      "@id": "urn:hoh:gui:InterfaceContract",
+      "@type": "rdfs:Class",
+      "rdfs:comment": "Abstract interface contract class for session and GUI contracts."
+    },
+    {
+      "@id": "urn:hoh:gui:hasCapability",
+      "@type": "rdf:Property",
+      "rdfs:domain": {
+        "@id": "h:RealtimeExtension"
+      },
+      "rdfs:range": {
+        "@id": "h:RealtimeCapability"
+      },
+      "rdfs:comment": "Extension to one or more supported realtime capability modes."
+    },
+    {
+      "@id": "urn:hoh:gui:requiresContract",
+      "@type": "rdf:Property",
+      "rdfs:domain": {
+        "@id": "h:RealtimeExtension"
+      },
+      "rdfs:range": {
+        "@id": "h:SessionContract"
+      },
+      "rdfs:comment": "Extension to exactly one session contract."
+    },
+    {
+      "@id": "urn:hoh:gui:hasLifecycle",
+      "@type": "rdf:Property",
+      "rdfs:domain": {
+        "@id": "h:RealtimeExtension"
+      },
+      "rdfs:range": {
+        "@id": "h:Lifecycle"
+      },
+      "rdfs:comment": "Extension to exactly one explicitly enumerated session lifecycle."
+    },
+    {
+      "@id": "urn:hoh:gui:hasState",
+      "@type": "rdf:Property",
+      "rdfs:domain": {
+        "@id": "h:Lifecycle"
+      },
+      "rdfs:range": {
+        "@id": "h:SessionState"
+      },
+      "rdfs:comment": "Lifecycle to one or more named session states."
+    },
+    {
+      "@id": "urn:hoh:gui:requiresHostLayer",
+      "@type": "rdf:Property",
+      "rdfs:domain": {
+        "@id": "h:RealtimeExtension"
+      },
+      "rdfs:range": {
+        "@id": "h:HostLayer"
+      },
+      "rdfs:comment": "Extension to host-provided production responsibility layers; requirements are not supplied by a local demo."
+    },
+    {
+      "@id": "urn:hoh:gui:hasGuiContract",
+      "@type": "rdf:Property",
+      "rdfs:domain": {
+        "@id": "h:RealtimeExtension"
+      },
+      "rdfs:range": {
+        "@id": "h:GuiContract"
+      },
+      "rdfs:comment": "Extension to exactly one content-area GUI behavior contract."
+    },
+    {
+      "@id": "urn:hoh:gui:retainsShell",
+      "@type": "rdf:Property",
+      "rdfs:domain": {
+        "@id": "h:GuiContract"
+      },
+      "rdfs:range": {
+        "@id": "h:Component"
+      },
+      "rdfs:comment": "GUI contract to one or more existing HOH shell components that remain visible in meaning."
+    },
+    {
+      "@id": "urn:hoh:gui:realizesContract",
+      "@type": "rdf:Property",
+      "rdfs:domain": {
+        "@id": "prov:Entity"
+      },
+      "rdfs:range": {
+        "@id": "h:InterfaceContract"
+      },
+      "rdfs:comment": "Observed artifact to one interface contract it realizes; contract subclassing makes the endpoint explicit."
+    },
+    {
+      "@id": "urn:hoh:gui:technicalReference",
+      "@type": "rdf:Property",
+      "rdfs:domain": {
+        "@id": "h:SessionContract"
+      },
+      "rdfs:range": {
+        "@id": "prov:Entity"
+      },
+      "rdfs:comment": "Session contract to one or more external technical references; this is not a certification claim."
+    },
+    {
+      "@id": "urn:hoh:gui:hasArtifact",
+      "@type": "rdf:Property",
+      "rdfs:domain": {
+        "@id": "h:RealtimeExtension"
+      },
+      "rdfs:range": {
+        "@id": "prov:Entity"
+      },
+      "rdfs:comment": "Extension to one or more observed code or demo artifacts; status remains explicit."
+    },
+    {
+      "@id": "urn:hoh:gui:artifact/glass-style",
+      "@type": "prov:Entity",
+      "h:authority": "APPLICATION_OBSERVATION",
+      "h:path": "ui/hoh-ui.css",
+      "h:realizesContract": {
+        "@id": "urn:hoh:gui:gui-contract/realtime-content"
+      },
+      "h:sha256": "ce65b2b12b259142bd8b1a410b04925044eee1bb454244ea5c77905bba87116d",
+      "h:status": "IMPLEMENTED_LOCALLY_VERIFIED",
+      "h:recordedAt": "2026-10-07",
+      "h:validatedBy": {
+        "@id": "urn:hoh:gui:observation/interface-0.2.0"
+      }
+    },
+    {
+      "@id": "urn:hoh:gui:artifact/shell-markup",
+      "@type": "prov:Entity",
+      "h:authority": "APPLICATION_OBSERVATION",
+      "h:path": "ui/shell.js",
+      "h:realizesContract": {
+        "@id": "urn:hoh:gui:gui-contract/realtime-content"
+      },
+      "h:sha256": "a0cb1bd4719148dc7145f6f1b7745b44c50ae5fac2ac04c640af3d37dba1d2f5",
+      "h:status": "IMPLEMENTED_LOCALLY_VERIFIED",
+      "h:recordedAt": "2026-10-07",
+      "h:validatedBy": {
+        "@id": "urn:hoh:gui:observation/interface-0.2.0"
+      }
+    },
+    {
+      "@id": "urn:hoh:gui:validatedBy",
+      "@type": "rdf:Property",
+      "rdfs:domain": {
+        "@id": "prov:Entity"
+      },
+      "rdfs:range": {
+        "@id": "prov:Entity"
+      },
+      "rdfs:comment": "Artifact to one or more local verification observations, not a production readiness or user-ratification claim."
+    },
+    {
+      "@id": "urn:hoh:gui:observation/interface-0.2.0",
+      "@type": "prov:Entity",
+      "h:authority": "APPLICATION_OBSERVATION",
+      "h:path": "provenance/verification-interface-0.2.0.json",
+      "h:scope": "LOCAL_SYNTHETIC_CAPTURE_REAL_WEBRTC_NOT_PRODUCTION"
+    },
+    {
+      "@id": "urn:hoh:gui:mayTransitionTo",
+      "@type": "rdf:Property",
+      "rdfs:domain": {
+        "@id": "h:SessionState"
+      },
+      "rdfs:range": {
+        "@id": "h:SessionState"
+      },
+      "rdfs:comment": "Session state to zero or more permitted next states under provider events or explicit user intent; closed is terminal. This is the declared lifecycle contract."
+    }
+  ]
+}

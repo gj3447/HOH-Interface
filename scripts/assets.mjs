@@ -4,6 +4,8 @@ export const assets = {
   'examples/metahumotonic/app.js': 'app.js',
   'ui/hoh-ui.js': 'hoh-ui.js',
   'ui/shell.js': 'shell.js',
+  'ui/realtime-session.js': 'realtime-session.js',
+  'ui/realtime-view.js': 'realtime-view.js',
   'ui/hoh-ui.css': 'app.css',
   'adapters/program-feed.js': 'program-feed-adapter.js',
   'examples/metahumotonic/pwa.js': 'pwa.js',
