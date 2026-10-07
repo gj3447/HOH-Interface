@@ -1,6 +1,6 @@
 # HOH Interface
 
-Copyright (C) 2026 **MetaHumotonic Foundation** · [AGPL-3.0-only](LICENSE)
+Copyright (C) 2026 **MetaHumotonic Foundation** · [MetaHumotonic License 1.2](LICENSE)
 
 실행 가능한 콘텐츠와 AI 명령이 하나의 작업 맥락을 공유하는,
 **최소한의 AI 네이티브 OS 인터페이스**다. 피드로 콘텐츠와 앱을 탐색하고,
@@ -141,13 +141,17 @@ npm run export:metahumotonic -- --target /path/to/metahumotonic_web_back --write
 공개 저장소: [gj3447/HOH-Interface](https://github.com/gj3447/HOH-Interface).
 초기 검증 기록의 공개 여부는 각 기록을 작성한 시점의 상태다.
 
-## 저작권과 라이선스
+## License
 
 HOH Interface의 저작권 표기는 **MetaHumotonic Foundation**이다.
-GNU Affero General Public License, version 3 only로 배포한다.
-원본 MetaHumotonic Web Backend 코드의 저작자 표기는 [NOTICE](NOTICE)에 보존한다.
-전체 이용 조건은 [LICENSE](LICENSE)를 따른다.
-생성된 검증 코드의 제삼자 고지는 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)에 있다.
+원본 저작자 표기는 [NOTICE](NOTICE), 생성된 검증 코드의 고지는
+[THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)에 보존한다.
+
+**MetaHumotonic License 1.2** — [LICENSE](LICENSE); [scope, prior grants and third-party notices](LICENSE-NOTICE.md).
+
+지정한 하드웨어의 접근권한과 전체 관리 권한을 합의한 명세서에 따라 공유하고, **CHU의 일부가 된다**는 참여 원칙을 적용합니다. 실제 접근에는 별도 승인이 필요합니다.
+
+Source-available; not OSI-approved. Existing grants and separately licensed material remain valid.
 
 ## 검증 기록
 

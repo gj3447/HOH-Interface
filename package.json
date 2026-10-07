@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "description": "HOH Interface: a minimal AI-native interaction layer for executable content and agent-directed work.",
-  "license": "AGPL-3.0-only",
+  "license": "SEE LICENSE IN LICENSE",
   "author": "MetaHumotonic Foundation",
   "repository": {
     "type": "git",
