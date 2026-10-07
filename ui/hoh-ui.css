@@ -7,7 +7,7 @@
   --glass-shine:inset 0 1px rgba(255,255,255,.18);
 }
 @media (prefers-color-scheme:light) {
-  :root { color-scheme:light; --bg:#eef6f3; --surface:#fafffc; --surface-2:#e2f0ec; --line:#afcfca; --text:#123334; --muted:#527070; --teal:#067d75; --teal-dark:#0d968c; --green:#177b3b; --red:#b64b52; --glass:rgba(250,255,252,.72); --glass-strong:rgba(250,255,252,.9); --glass-shadow:0 1rem 2.8rem rgba(27,76,72,.14); --glass-shine:inset 0 1px rgba(255,255,255,.82); }
+  :root { color-scheme:light; --bg:#eef6f3; --surface:#fafffc; --surface-2:#e2f0ec; --line:#afcfca; --text:#123334; --muted:#527070; --teal:#05726b; --teal-dark:#0a7a72; --green:#177b3b; --red:#b64b52; --glass:rgba(250,255,252,.72); --glass-strong:rgba(250,255,252,.9); --glass-shadow:0 1rem 2.8rem rgba(27,76,72,.14); --glass-shine:inset 0 1px rgba(255,255,255,.82); }
 }
 * { box-sizing:border-box; }
 html { font-size:16px; background:var(--bg); }

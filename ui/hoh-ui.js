@@ -44,9 +44,13 @@ function scopedRendererActions(item) {
     open: contentId => isCurrent() ? openById(contentId) : stale(),
     saveState: next => isCurrent() ? saveState(next, context) : stale() };
 }
+/** Reactions, comments, sharing and favorites are host resources: the opened view may say which apply (`accepts`); unsaid means yes. */
+function accepts(resource, view = state.view) { return view?.accepts?.[resource] !== false; }
 function isDashboard(item = current()) { return item?.content?.id === homeContentId || item?.manifest?.kind === 'DASHBOARD'; }
 const dashboardKindLabel = { ACCOUNT: '계정 및 설정', CHECKLIST: '점검 목록', GAME: '미니 게임', ARTICLE: '읽을거리', FEED: '추천 콘텐츠', REALTIME: '통화 및 방송' };
 const dashboardKindIcon = { ACCOUNT: '⚙', CHECKLIST: '✓', GAME: '◈', ARTICLE: '◇', FEED: '✦', REALTIME: '◉' };
+/** A host may give each dashboard entry its own short icon (text, at most two characters); otherwise the kind's icon. */
+function dashboardIcon(entry) { const icon = typeof entry.icon === 'string' ? entry.icon.trim() : ''; return icon && graphemes(icon) <= 2 ? icon : dashboardKindIcon[entry.kind] || '◇'; }
 function openRecommendedFeed() {
   const previous = state.items.findIndex(item => item.content.id === state.lastFeedId);
   const index = previous >= 0 ? previous : 0;
@@ -71,7 +75,7 @@ function renderDashboard(item) {
       const button = document.createElement('button'); button.type = 'button';
       if (entry.action === 'feed') button.dataset.dashboardAction = 'feed'; else button.dataset.dashboardContentId = entry.id;
       button.innerHTML = '<span class="app-icon" aria-hidden="true"></span><span class="app-name"></span><span class="app-description"></span>';
-      button.children[0].textContent = dashboardKindIcon[entry.kind] || '◇';
+      button.children[0].textContent = dashboardIcon(entry);
       button.children[1].textContent = entry.title || entry.id;
       button.children[2].textContent = entry.description || dashboardKindLabel[entry.kind] || '콘텐츠 열기';
       grid.append(button);
@@ -147,13 +151,17 @@ function render() {
   $('#contentStage').classList.toggle('is-dashboard', dashboard);
   $('#contentStage').classList.toggle('is-realtime', item?.manifest?.kind === 'REALTIME');
   $('#viewerTitle').textContent = item?.content?.title || '콘텐츠'; $('#position').textContent = dashboard ? '앱' : (state.items.length ? (state.index + 1) + ' / ' + state.items.length : '0 / 0');
-  $('#contentStage').replaceChildren(renderStage(item)); const saved = Boolean(view?.favorite); $('[data-save-label]').textContent = saved ? '저장됨' : '저장'; $('[data-save]').setAttribute('aria-pressed', String(saved)); $('[data-remove]').hidden = !saved;
-  for (const reaction of ['like', 'dislike']) $('[data-reaction="' + reaction + '"]').setAttribute('aria-pressed', String(view?.reaction === reaction.toUpperCase()));
-  $('.action-rail').hidden = dashboard; $('.viewer-foot').hidden = dashboard;
+  $('#contentStage').replaceChildren(renderStage(item)); const saved = Boolean(view?.favorite); $('[data-save-label]').textContent = saved ? '저장됨' : '저장'; $('[data-save]').setAttribute('aria-pressed', String(saved));
+  for (const reaction of ['like', 'dislike']) { const button = $('[data-reaction="' + reaction + '"]'); button.setAttribute('aria-pressed', String(view?.reaction === reaction.toUpperCase())); button.hidden = !accepts('reaction'); }
+  $('[data-comment]').hidden = !accepts('comment'); $('[data-share]').hidden = !accepts('share'); $('[data-save]').hidden = !accepts('favorite'); $('[data-remove]').hidden = !saved || !accepts('favorite');
+  $('.action-rail').hidden = dashboard || !['reaction', 'comment', 'share'].some(accepts); $('.viewer-foot').hidden = dashboard;
   $('#contentMeta').textContent = (item?.reasons || []).join(' · '); $('#comments').replaceChildren(...(view?.comments || []).map((c) => Object.assign(document.createElement('li'), { textContent: c.body || '' }))); renderFavorites();
 }
-async function openById(contentId, rankedIndex = -1) {
+async function openById(contentId, rankedIndex = -1, { initiator = 'user' } = {}) {
   if (!contentId || disposed) return;
+  // A host- or agent-initiated open does not cancel what the person is waiting for (an AI answer, a save):
+  // it lets the work already in flight finish and apply, then opens. A person's own navigation still supersedes it.
+  if (initiator === 'host') for (let tail = null; tail !== state.operation;) { tail = state.operation; await tail.catch(() => {}); if (disposed) return; }
   if (mediaSession?.isActive()) {
     if (contentId === mediaContentId && current()?.content?.id === contentId) return;
     if (!window.confirm('현재 통화·방송을 종료하고 다른 콘텐츠를 열까요?')) return { applies: false, reason: 'navigation_cancelled' };
@@ -236,6 +244,7 @@ listen(root, 'click', async (event) => {
   if (b.matches('[data-dashboard-content-id]')) return openById(b.dataset.dashboardContentId); if (b.matches('[data-favorite]')) return openById(b.dataset.favorite); if (b.matches('[data-sheet-close]')) return setSheet('content');
   const item = current(); if (!item) return;
   if (isDashboard(item)) return;
+  if ((b.matches('[data-save]') || b.matches('[data-remove]')) && !accepts('favorite') || b.dataset.reaction && !accepts('reaction') || b.matches('[data-comment]') && !accepts('comment') || b.matches('[data-share]') && !accepts('share')) return;
   if (b.matches('[data-save]') || b.matches('[data-remove]')) { const favorite = b.matches('[data-save]') ? !state.view?.favorite : false; try { const queued = await mutate('/favorites', { contentId: item.content.id, favorite }); if (!queued.applies) return; state.view = { ...state.view, favorite }; const profile = await adapter.profile(); if (disposed) return; state.profile = profile.profile || profile; render(); } catch {} }
   if (b.dataset.reaction) { const wanted = b.dataset.reaction.toUpperCase(), reaction = state.view?.reaction === wanted ? 'CLEAR' : wanted; try { const queued = await mutate('/reactions', { contentId: item.content.id, reaction }); if (!queued.applies) return; state.view = { ...state.view, reaction }; render(); } catch {} }
   if (b.matches('[data-comment]')) $('#commentDialog').showModal();
@@ -283,9 +292,11 @@ listen(window, 'beforeunload', event => { if (mediaSession?.isActive()) { event.
 syncViewport();
 installGestures();
 const ready = initialize();
-return { ready, open: openById, refresh: initialize, realtime: mediaSession, destroy() { disposed = true; listeners.abort(); rendererLifetime.abort(); mediaSession?.close(); state.intent += 1; root.replaceChildren(); } };
+return { ready, open: (contentId, options = {}) => openById(contentId, -1, options), refresh: initialize, realtime: mediaSession, destroy() { disposed = true; listeners.abort(); rendererLifetime.abort(); mediaSession?.close(); state.intent += 1; root.replaceChildren(); } };
 
 }
+
+function graphemes(text) { return typeof Intl?.Segmenter === 'function' ? [...new Intl.Segmenter(undefined, { granularity: 'grapheme' }).segment(text)].length : [...text].length; }
 
 /** Compatibility with the original @hoh/ui entry point. */
 export const mountHohUI = mountHohInterface;

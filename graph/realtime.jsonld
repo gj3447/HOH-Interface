@@ -623,11 +623,11 @@
       "h:realizesContract": {
         "@id": "urn:hoh:gui:gui-contract/realtime-content"
       },
-      "h:sha256": "ce65b2b12b259142bd8b1a410b04925044eee1bb454244ea5c77905bba87116d",
+      "h:sha256": "53e0157ffc08d8310cad7d44252145139b95cfadd88d156db4285d9ac2999e89",
       "h:status": "IMPLEMENTED_LOCALLY_VERIFIED",
       "h:recordedAt": "2026-10-07",
       "h:validatedBy": {
-        "@id": "urn:hoh:gui:observation/interface-0.2.0"
+        "@id": "urn:hoh:gui:observation/interface-0.3.1"
       }
     },
     {
@@ -673,6 +673,13 @@
         "@id": "h:SessionState"
       },
       "rdfs:comment": "Session state to zero or more permitted next states under provider events or explicit user intent; closed is terminal. This is the declared lifecycle contract."
+    },
+    {
+      "@id": "urn:hoh:gui:observation/interface-0.3.1",
+      "@type": "prov:Entity",
+      "h:authority": "APPLICATION_OBSERVATION",
+      "h:path": "provenance/verification-interface-0.3.1.json",
+      "h:scope": "LOCAL_BROWSER_PREVIEW_NOT_PRODUCTION"
     }
   ]
 }

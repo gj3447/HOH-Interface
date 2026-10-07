@@ -22,8 +22,13 @@ const ui = mountHohInterface({
   renderers: { WORK_APP: ({ item, view, payload, context, signal, isCurrent, open, saveState }) => node }
 });
 await ui.ready;
-// ui.open(contentId), ui.refresh(), ui.destroy()
+// ui.open(contentId, { initiator }), ui.refresh(), ui.destroy()
 ```
+
+`ui.open(contentId)`은 사람이 시작한 탐색과 같다 — 진행 중이던 작업(AI 답·저장)의 늦은 결과는
+새 화면에 적용되지 않는다. 호스트·에이전트가 스스로 여는 경우(CLI의 «보여 주기», 에이전트의 화면 지시)는
+`ui.open(contentId, { initiator: 'host' })`로 연다. 이 열기는 사람이 기다리는 진행 중 작업을 취소하지 않고,
+그 작업이 끝나 적용된 뒤에 연다. 그동안 사람이 직접 탐색하면 사람의 탐색이 앞선다.
 
 렌더러는 호스트 코드에 등록한 함수이며 DOM Node를 반환한다. `saveState(next)`는
 렌더러가 생성된 앱의 상태를 어댑터에 저장한다. `open(contentId)`는 권한 검사를 거쳐
@@ -52,7 +57,7 @@ REALTIME의 호스트 인증·미디어 제공자·수명 계약은 [실시간 �
 | --- | --- |
 | `bootstrap()` | `{profile, readiness?}`. 세션·CSRF는 어댑터 내부에서 처리한다. |
 | `list()` | `{items}`. 각 항목은 `{content, manifest, reasons?}`다. `reasons`는 호스트의 추천이 그 항목을 고른 까닭(짧은 문장 목록)이며 UI가 카드와 콘텐츠 아래에 보인다. |
-| `open({contentId, expectedViewRevision})` | `{content, manifest, viewRevision, appState?, favorite?, reaction?, comments?, dashboard?}` |
+| `open({contentId, expectedViewRevision})` | `{content, manifest, viewRevision, appState?, favorite?, reaction?, comments?, accepts?, dashboard?}`. `accepts`는 셸의 호스트 자원 — `reaction`(좋아요·싫어요)·`comment`·`share`·`favorite`(저장) — 가운데 이 콘텐츠가 받는 것이다. `false`인 것은 셸이 숨기고, 적지 않은 것은 받는다. |
 | `favorite({contentId, favorite, viewRevision})` | 확인된 저장 결과 |
 | `react({contentId, reaction, viewRevision})` | `LIKE`, `DISLIKE`, `CLEAR`에 대한 확인된 결과 |
 | `comment({contentId, body, viewRevision})` | `{comments}` 또는 확인된 댓글 결과 |
@@ -62,7 +67,7 @@ REALTIME의 호스트 인증·미디어 제공자·수명 계약은 [실시간 �
 | `status()` | `{readiness}`. `readiness.chat`은 AI 대화 제공자의 `{status, reason}`이다 — `READY`면 «AI 채팅을 사용할 수 있습니다», 아니면 `reason`을 보인다. 없으면 `readiness.hswm`을 같은 뜻으로 읽는다(참조 어댑터는 HSWM 채팅을 `readiness.hswm`으로 제공한다). |
 
 `content`는 `{id,title,payload}`, `manifest`는 `{kind}`를 포함한다.
-대시보드의 `dashboard`는 `{fixed:[{id,title,kind}], favorites:[{id,title,kind}]}`다.
+대시보드의 `dashboard`는 `{fixed:[{id,title,kind,icon?,description?}], favorites:[{id,title,kind,icon?}]}`다. `icon`은 호스트가 정하는 두 글자 이하의 글자 아이콘이며, 없거나 길면 종류의 기본 아이콘을 쓴다.
 일반 피드에 어떤 앱을 포함할지는 호스트가 결정한다. UI는 대시보드에 추천 피드
 바로가기를 추가하며, 설정 앱도 호스트가 공급하는 고정 앱 목록으로 받는다.
 

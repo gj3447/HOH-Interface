@@ -98,6 +98,9 @@ npm test
 npm run preview
 ```
 
+호스트 연결 예제(`/host/`)는 백엔드 없이 호스트가 정하는 것 — 대시보드 아이콘, 콘텐츠마다 받는 반응·댓글·공유·저장(`accepts`),
+사람이 기다리는 AI 답을 지우지 않는 호스트의 열기(`initiator: 'host'`) — 을 보인다. 브라우저 확인: `npm run test:host -- --playwright-module PATH --browser-executable PATH`.
+
 기본 미리보기는 로컬 셸을 제공하고 백엔드 미연결 상태를 표시한다. 실행 중인
 MetaHumotonic 로컬 백엔드를 명시적으로 연결하려면:
 
