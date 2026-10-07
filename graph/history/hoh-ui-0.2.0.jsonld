@@ -126,29 +126,20 @@
       "@id": "urn:hoh:gui:host/company-work",
       "@type": "h:ApplicationHost",
       "skos:prefLabel": "회사 업무 / 좋좋공 일",
-      "h:status": "INTEGRATED_THROUGH_HOST",
+      "h:status": "INTENDED_NOT_INTEGRATED",
       "h:authority": "SECONDARY_AI",
       "prov:wasDerivedFrom": {
         "@id": "urn:hoh:gui:source/user-hoh-ui-2c9603ebd820ac38c87fe738e2d24763b4f34add994f0bbafcc6ca9d2813c082"
-      },
-      "h:integratedVia": {
-        "@id": "urn:hoh:gui:host/mm"
-      },
-      "h:observedIn": {
-        "@id": "urn:hoh:gui:observation/host-mm-2026-10-07"
       }
     },
     {
       "@id": "urn:hoh:gui:host/mm",
       "@type": "h:ApplicationHost",
       "skos:prefLabel": "MM",
-      "h:status": "INTEGRATED_EXTERNAL_HOST",
+      "h:status": "INTENDED_TARGET_NOT_RESOLVED",
       "h:authority": "SECONDARY_AI",
       "prov:wasDerivedFrom": {
         "@id": "urn:hoh:gui:source/user-hoh-ui-2c9603ebd820ac38c87fe738e2d24763b4f34add994f0bbafcc6ca9d2813c082"
-      },
-      "h:observedIn": {
-        "@id": "urn:hoh:gui:observation/host-mm-2026-10-07"
       }
     },
     {
@@ -296,29 +287,6 @@
       },
       "prov:wasRevisionOf": {
         "@id": "urn:hoh:gui:implementation/v0.1.1"
-      },
-      "h:runtime": "BROWSER_UI_SHELL_WITH_OPTIONAL_REALTIME",
-      "h:hswmConnectedExecution": "NOT_PERFORMED"
-    },
-    {
-      "@id": "urn:hoh:gui:observation/host-mm-2026-10-07",
-      "@type": "prov:Entity",
-      "h:authority": "APPLICATION_OBSERVATION",
-      "h:path": "provenance/host-mm-2026-10-07.json",
-      "h:sha256": "456704a4974ff65a5bfbc2accdbca477cd61e82a17e85e375e76603e3303e2c8",
-      "h:hswmConnectedExecution": "NOT_PERFORMED"
-    },
-    {
-      "@id": "urn:hoh:gui:implementation/v0.2.1",
-      "@type": "prov:Entity",
-      "h:authority": "APPLICATION_OBSERVATION",
-      "h:path": "ui/hoh-ui.js",
-      "h:sha256": "3cc306ec2f889d6535362f337300c63f326ddec76b008da1497b6403315607a1",
-      "h:implements": {
-        "@id": "urn:hoh:gui:hoh-ui"
-      },
-      "prov:wasRevisionOf": {
-        "@id": "urn:hoh:gui:implementation/v0.2.0"
       },
       "h:runtime": "BROWSER_UI_SHELL_WITH_OPTIONAL_REALTIME",
       "h:hswmConnectedExecution": "NOT_PERFORMED"
