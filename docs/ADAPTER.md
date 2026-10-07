@@ -9,6 +9,10 @@
 HOH Interface는 한 문서의 전체 화면 셸이다. 동일 문서에 여러 인스턴스를 동시에
 배치하는 위젯 계약은 아니다. 새 인스턴스를 장착하기 전 기존 `destroy()`를 호출한다.
 
+[입력 프로파일 초안](INTERACTION_PROFILE.md)은 렌더러의 세로 전용 스크롤과 셸의
+가로 피드·경계 제스처·단축키 책임을 정의한다. 새 정책은 아직 전체 런타임에 적용되지
+않았으며, 여기서 선언한 의미적 셸 명령을 기존 어댑터 메서드와 혼동하지 않는다.
+
 ```js
 const ui = mountHohInterface({
   root: document.querySelector('#hoh-root'),

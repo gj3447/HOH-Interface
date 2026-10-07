@@ -1,0 +1,519 @@
+{
+  "@context": {
+    "h": "urn:hoh:gui:",
+    "prov": "http://www.w3.org/ns/prov#",
+    "skos": "http://www.w3.org/2004/02/skos/core#",
+    "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+    "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+    "xsd": "http://www.w3.org/2001/XMLSchema#"
+  },
+  "@graph": [
+    {
+      "@id": "urn:hoh:gui:source/user-hoh-interaction-224832972605dd38116048037824500a391fadf911bcd998ffe5aaa47010698e",
+      "@type": "prov:Entity",
+      "h:authority": "USER_PRIMARY",
+      "h:path": "sources/user-hoh-interaction-2026-10-07.txt",
+      "h:sha256": "224832972605dd38116048037824500a391fadf911bcd998ffe5aaa47010698e",
+      "h:recordedAt": "2026-10-07"
+    },
+    {
+      "@id": "urn:hoh:gui:interaction-profile/v0.1-draft",
+      "@type": "h:InteractionProfile",
+      "skos:prefLabel": "HOH Interaction Profile 0.1 draft",
+      "h:authority": "SECONDARY_AI",
+      "h:status": "SPECIFIED_NOT_FULLY_IMPLEMENTED",
+      "prov:wasDerivedFrom": {
+        "@id": "urn:hoh:gui:source/user-hoh-interaction-224832972605dd38116048037824500a391fadf911bcd998ffe5aaa47010698e"
+      },
+      "h:forInterface": {
+        "@id": "urn:hoh:gui:hoh-ui"
+      },
+      "h:contentProtocol": {
+        "@id": "urn:hoh:gui:semantic-content-protocol/v0.1-draft"
+      },
+      "h:interactionDocument": {
+        "@id": "urn:hoh:gui:artifact/interaction-profile-document"
+      },
+      "h:interactionObservation": {
+        "@id": "urn:hoh:gui:observation/interaction-source-audit-2026-10-07"
+      },
+      "h:interactionRule": [
+        {
+          "@id": "urn:hoh:gui:interaction-rule/content-vertical"
+        },
+        {
+          "@id": "urn:hoh:gui:interaction-rule/feed-horizontal"
+        },
+        {
+          "@id": "urn:hoh:gui:interaction-rule/bottom-edge-agent"
+        },
+        {
+          "@id": "urn:hoh:gui:interaction-rule/top-edge-dashboard"
+        },
+        {
+          "@id": "urn:hoh:gui:interaction-rule/dashboard-grid"
+        },
+        {
+          "@id": "urn:hoh:gui:interaction-rule/reaction-glass"
+        },
+        {
+          "@id": "urn:hoh:gui:interaction-rule/desktop-shortcuts"
+        },
+        {
+          "@id": "urn:hoh:gui:interaction-rule/desktop-glass-controls"
+        }
+      ]
+    },
+    {
+      "@id": "urn:hoh:gui:artifact/interaction-profile-document",
+      "@type": "prov:Entity",
+      "h:authority": "SECONDARY_AI",
+      "h:path": "docs/INTERACTION_PROFILE.md",
+      "h:sha256": "769560ed553a9b1c67f437be558abcd189a8226655d2052ebf8a07166cf1ecfb",
+      "prov:wasDerivedFrom": {
+        "@id": "urn:hoh:gui:source/user-hoh-interaction-224832972605dd38116048037824500a391fadf911bcd998ffe5aaa47010698e"
+      }
+    },
+    {
+      "@id": "urn:hoh:gui:observation/interaction-source-audit-2026-10-07",
+      "@type": "prov:Entity",
+      "h:authority": "APPLICATION_OBSERVATION",
+      "h:path": "provenance/interaction-source-audit-2026-10-07.json",
+      "h:sha256": "3bebda9142960240837d8768b0b9496f0283000db477f8075ee14a6474ecc27b",
+      "h:sourceRevision": "48e79cf4b20617f8e53775ee5567ca6b43289490",
+      "h:status": "SOURCE_OBSERVATION_NOT_RUNTIME_CONFORMANCE"
+    },
+    {
+      "@id": "urn:hoh:gui:shell-intent/content.scrollVertical",
+      "@type": "h:ShellIntent",
+      "skos:prefLabel": "현재 콘텐츠 세로 스크롤",
+      "h:authority": "SECONDARY_AI",
+      "h:status": "DESIGN_IDENTIFIER_NOT_PUBLIC_RUNTIME_API"
+    },
+    {
+      "@id": "urn:hoh:gui:shell-intent/feed.previous",
+      "@type": "h:ShellIntent",
+      "skos:prefLabel": "이전 피드 콘텐츠",
+      "h:authority": "SECONDARY_AI",
+      "h:status": "DESIGN_IDENTIFIER_NOT_PUBLIC_RUNTIME_API"
+    },
+    {
+      "@id": "urn:hoh:gui:shell-intent/feed.next",
+      "@type": "h:ShellIntent",
+      "skos:prefLabel": "다음 피드 콘텐츠",
+      "h:authority": "SECONDARY_AI",
+      "h:status": "DESIGN_IDENTIFIER_NOT_PUBLIC_RUNTIME_API"
+    },
+    {
+      "@id": "urn:hoh:gui:shell-intent/agent.open",
+      "@type": "h:ShellIntent",
+      "skos:prefLabel": "AI 창 열기 또는 입력 포커스",
+      "h:authority": "SECONDARY_AI",
+      "h:status": "DESIGN_IDENTIFIER_NOT_PUBLIC_RUNTIME_API"
+    },
+    {
+      "@id": "urn:hoh:gui:shell-intent/dashboard.open",
+      "@type": "h:ShellIntent",
+      "skos:prefLabel": "앱 그리드 대시보드 열기",
+      "h:authority": "SECONDARY_AI",
+      "h:status": "DESIGN_IDENTIFIER_NOT_PUBLIC_RUNTIME_API"
+    },
+    {
+      "@id": "urn:hoh:gui:shell-intent/reaction.like",
+      "@type": "h:ShellIntent",
+      "skos:prefLabel": "좋아요",
+      "h:authority": "SECONDARY_AI",
+      "h:status": "DESIGN_IDENTIFIER_NOT_PUBLIC_RUNTIME_API"
+    },
+    {
+      "@id": "urn:hoh:gui:shell-intent/reaction.dislike",
+      "@type": "h:ShellIntent",
+      "skos:prefLabel": "싫어요",
+      "h:authority": "SECONDARY_AI",
+      "h:status": "DESIGN_IDENTIFIER_NOT_PUBLIC_RUNTIME_API"
+    },
+    {
+      "@id": "urn:hoh:gui:shell-intent/comments.open",
+      "@type": "h:ShellIntent",
+      "skos:prefLabel": "댓글 열기",
+      "h:authority": "SECONDARY_AI",
+      "h:status": "DESIGN_IDENTIFIER_NOT_PUBLIC_RUNTIME_API"
+    },
+    {
+      "@id": "urn:hoh:gui:shell-intent/share.open",
+      "@type": "h:ShellIntent",
+      "skos:prefLabel": "공유 열기",
+      "h:authority": "SECONDARY_AI",
+      "h:status": "DESIGN_IDENTIFIER_NOT_PUBLIC_RUNTIME_API"
+    },
+    {
+      "@id": "urn:hoh:gui:interaction-rule/content-vertical",
+      "@type": "h:InteractionRule",
+      "h:authority": "SECONDARY_AI",
+      "h:status": "USER_REQUIREMENT_INTERPRETATION",
+      "prov:wasDerivedFrom": {
+        "@id": "urn:hoh:gui:source/user-hoh-interaction-224832972605dd38116048037824500a391fadf911bcd998ffe5aaa47010698e"
+      },
+      "h:description": "콘텐츠 내부와 중첩 콘텐츠는 세로 스크롤만 제공하며 가로 스크롤로 피드 제스처를 점유하지 않는다.",
+      "h:interactionComponent": {
+        "@id": "urn:hoh:gui:component/content-viewer"
+      },
+      "h:interactionIntent": [
+        {
+          "@id": "urn:hoh:gui:shell-intent/content.scrollVertical"
+        }
+      ],
+      "h:scrollAxes": "Y_ONLY",
+      "h:gestureOrigin": "CONTENT_INTERIOR",
+      "h:gestureDirection": "UP_OR_DOWN"
+    },
+    {
+      "@id": "urn:hoh:gui:interaction-rule/feed-horizontal",
+      "@type": "h:InteractionRule",
+      "h:authority": "SECONDARY_AI",
+      "h:status": "USER_REQUIREMENT_INTERPRETATION",
+      "prov:wasDerivedFrom": {
+        "@id": "urn:hoh:gui:source/user-hoh-interaction-224832972605dd38116048037824500a391fadf911bcd998ffe5aaa47010698e"
+      },
+      "h:description": "가로 스와이프는 셸의 피드 탐색이며 내부 콘텐츠 페이지 넘김이 아니다.",
+      "h:interactionComponent": {
+        "@id": "urn:hoh:gui:component/feed"
+      },
+      "h:interactionIntent": [
+        {
+          "@id": "urn:hoh:gui:shell-intent/feed.previous"
+        },
+        {
+          "@id": "urn:hoh:gui:shell-intent/feed.next"
+        }
+      ],
+      "h:gestureOrigin": "UNCLAIMED_CONTENT_NAVIGATION_AREA",
+      "h:gestureDirection": "LEFT_OR_RIGHT"
+    },
+    {
+      "@id": "urn:hoh:gui:interaction-rule/bottom-edge-agent",
+      "@type": "h:InteractionRule",
+      "h:authority": "SECONDARY_AI",
+      "h:status": "USER_REQUIREMENT_INTERPRETATION",
+      "prov:wasDerivedFrom": {
+        "@id": "urn:hoh:gui:source/user-hoh-interaction-224832972605dd38116048037824500a391fadf911bcd998ffe5aaa47010698e"
+      },
+      "h:description": "가시 화면 하단에서 위로 끌어 AI를 열고 현재 콘텐츠를 유지한다. 콘텐츠 스크롤 끝 도달은 조건이 아니다.",
+      "h:interactionComponent": {
+        "@id": "urn:hoh:gui:component/agent"
+      },
+      "h:interactionIntent": [
+        {
+          "@id": "urn:hoh:gui:shell-intent/agent.open"
+        }
+      ],
+      "h:gestureOrigin": "VIEWPORT_BOTTOM_EDGE",
+      "h:gestureDirection": "UP",
+      "h:scrollBoundaryRequired": false
+    },
+    {
+      "@id": "urn:hoh:gui:interaction-rule/top-edge-dashboard",
+      "@type": "h:InteractionRule",
+      "h:authority": "SECONDARY_AI",
+      "h:status": "USER_REQUIREMENT_INTERPRETATION",
+      "prov:wasDerivedFrom": {
+        "@id": "urn:hoh:gui:source/user-hoh-interaction-224832972605dd38116048037824500a391fadf911bcd998ffe5aaa47010698e"
+      },
+      "h:description": "가시 화면 상단에서 아래로 끌어 앱 메인 대시보드를 연다. 콘텐츠 스크롤 시작 도달은 조건이 아니다.",
+      "h:interactionComponent": {
+        "@id": "urn:hoh:gui:component/dashboard"
+      },
+      "h:interactionIntent": [
+        {
+          "@id": "urn:hoh:gui:shell-intent/dashboard.open"
+        }
+      ],
+      "h:gestureOrigin": "VIEWPORT_TOP_EDGE",
+      "h:gestureDirection": "DOWN",
+      "h:scrollBoundaryRequired": false
+    },
+    {
+      "@id": "urn:hoh:gui:interaction-rule/dashboard-grid",
+      "@type": "h:InteractionRule",
+      "h:authority": "SECONDARY_AI",
+      "h:status": "USER_REQUIREMENT_INTERPRETATION",
+      "prov:wasDerivedFrom": {
+        "@id": "urn:hoh:gui:source/user-hoh-interaction-224832972605dd38116048037824500a391fadf911bcd998ffe5aaa47010698e"
+      },
+      "h:description": "고정 앱과 즐겨찾기를 앱 아이콘 그리드로 표시하고 설정을 고정 앱에 포함한다.",
+      "h:interactionComponent": {
+        "@id": "urn:hoh:gui:component/dashboard"
+      },
+      "h:interactionIntent": [
+        {
+          "@id": "urn:hoh:gui:shell-intent/dashboard.open"
+        }
+      ],
+      "h:gridGroup": [
+        "FIXED_APPS",
+        "FAVORITES"
+      ],
+      "h:settingsPlacement": "APP_IN_FIXED_APPS",
+      "h:scrollAxes": "Y_ONLY"
+    },
+    {
+      "@id": "urn:hoh:gui:interaction-rule/reaction-glass",
+      "@type": "h:InteractionRule",
+      "h:authority": "SECONDARY_AI",
+      "h:status": "USER_REQUIREMENT_INTERPRETATION",
+      "prov:wasDerivedFrom": {
+        "@id": "urn:hoh:gui:source/user-hoh-interaction-224832972605dd38116048037824500a391fadf911bcd998ffe5aaa47010698e"
+      },
+      "h:description": "좋아요·싫어요·댓글·공유는 콘텐츠 위에 떠 있는 글래스 UI다.",
+      "h:interactionComponent": {
+        "@id": "urn:hoh:gui:component/content-viewer"
+      },
+      "h:interactionIntent": [
+        {
+          "@id": "urn:hoh:gui:shell-intent/reaction.like"
+        },
+        {
+          "@id": "urn:hoh:gui:shell-intent/reaction.dislike"
+        },
+        {
+          "@id": "urn:hoh:gui:shell-intent/comments.open"
+        },
+        {
+          "@id": "urn:hoh:gui:shell-intent/share.open"
+        }
+      ],
+      "h:visualTreatment": "GLASSMORPHISM_OVERLAY"
+    },
+    {
+      "@id": "urn:hoh:gui:interaction-rule/desktop-shortcuts",
+      "@type": "h:InteractionRule",
+      "h:authority": "SECONDARY_AI",
+      "h:status": "USER_REQUIREMENT_INTERPRETATION",
+      "prov:wasDerivedFrom": {
+        "@id": "urn:hoh:gui:source/user-hoh-interaction-224832972605dd38116048037824500a391fadf911bcd998ffe5aaa47010698e"
+      },
+      "h:description": "웹은 제스처 없이 단축키로 같은 탐색·AI·대시보드 동작에 접근한다. 구체적 키 조합은 사용자 원문에 없다.",
+      "h:interactionComponent": {
+        "@id": "urn:hoh:gui:component/content-viewer"
+      },
+      "h:interactionIntent": [
+        {
+          "@id": "urn:hoh:gui:shell-intent/feed.previous"
+        },
+        {
+          "@id": "urn:hoh:gui:shell-intent/feed.next"
+        },
+        {
+          "@id": "urn:hoh:gui:shell-intent/agent.open"
+        },
+        {
+          "@id": "urn:hoh:gui:shell-intent/dashboard.open"
+        }
+      ],
+      "h:inputRoute": "CONFIGURABLE_KEYBOARD_SHORTCUTS"
+    },
+    {
+      "@id": "urn:hoh:gui:interaction-rule/desktop-glass-controls",
+      "@type": "h:InteractionRule",
+      "h:authority": "SECONDARY_AI",
+      "h:status": "USER_REQUIREMENT_INTERPRETATION",
+      "prov:wasDerivedFrom": {
+        "@id": "urn:hoh:gui:source/user-hoh-interaction-224832972605dd38116048037824500a391fadf911bcd998ffe5aaa47010698e"
+      },
+      "h:description": "넓은 화면은 AI 호출과 대시보드 열기를 명시적 글래스 버튼으로 제공한다.",
+      "h:interactionComponent": {
+        "@id": "urn:hoh:gui:component/content-viewer"
+      },
+      "h:interactionIntent": [
+        {
+          "@id": "urn:hoh:gui:shell-intent/agent.open"
+        },
+        {
+          "@id": "urn:hoh:gui:shell-intent/dashboard.open"
+        }
+      ],
+      "h:inputRoute": "VISIBLE_BUTTONS",
+      "h:visualTreatment": "GLASSMORPHISM_OVERLAY"
+    },
+    {
+      "@id": "urn:hoh:gui:InteractionProfile",
+      "@type": "rdfs:Class",
+      "rdfs:subClassOf": {
+        "@id": "urn:hoh:gui:InteractionModel"
+      }
+    },
+    {
+      "@id": "urn:hoh:gui:InteractionRule",
+      "@type": "rdfs:Class"
+    },
+    {
+      "@id": "urn:hoh:gui:ShellIntent",
+      "@type": "rdfs:Class"
+    },
+    {
+      "@id": "urn:hoh:gui:forInterface",
+      "@type": "rdf:Property",
+      "rdfs:domain": {
+        "@id": "urn:hoh:gui:InteractionProfile"
+      },
+      "rdfs:range": {
+        "@id": "skos:Concept"
+      },
+      "rdfs:comment": "Profile to the existing HOH concept; exactly one; identity is reused, not re-created."
+    },
+    {
+      "@id": "urn:hoh:gui:contentProtocol",
+      "@type": "rdf:Property",
+      "rdfs:domain": {
+        "@id": "urn:hoh:gui:InteractionProfile"
+      },
+      "rdfs:range": {
+        "@id": "urn:hoh:gui:SemanticContentProtocol"
+      },
+      "rdfs:comment": "Profile to the content action contract; exactly one; navigation does not grant mutation permission."
+    },
+    {
+      "@id": "urn:hoh:gui:interactionRule",
+      "@type": "rdf:Property",
+      "rdfs:domain": {
+        "@id": "urn:hoh:gui:InteractionProfile"
+      },
+      "rdfs:range": {
+        "@id": "urn:hoh:gui:InteractionRule"
+      },
+      "rdfs:comment": "Profile to its eight interpreted requirements; one-to-many, exactly eight in draft 0.1."
+    },
+    {
+      "@id": "urn:hoh:gui:interactionDocument",
+      "@type": "rdf:Property",
+      "rdfs:domain": {
+        "@id": "urn:hoh:gui:InteractionProfile"
+      },
+      "rdfs:range": {
+        "@id": "prov:Entity"
+      },
+      "rdfs:comment": "Profile to its source-pinned specification; exactly one."
+    },
+    {
+      "@id": "urn:hoh:gui:interactionObservation",
+      "@type": "rdf:Property",
+      "rdfs:domain": {
+        "@id": "urn:hoh:gui:InteractionProfile"
+      },
+      "rdfs:range": {
+        "@id": "prov:Entity"
+      },
+      "rdfs:comment": "Profile to a separately attributed source audit; exactly one; not runtime conformance."
+    },
+    {
+      "@id": "urn:hoh:gui:interactionComponent",
+      "@type": "rdf:Property",
+      "rdfs:domain": {
+        "@id": "urn:hoh:gui:InteractionRule"
+      },
+      "rdfs:range": {
+        "@id": "urn:hoh:gui:Component"
+      },
+      "rdfs:comment": "Rule to its primary existing UI responsibility; exactly one."
+    },
+    {
+      "@id": "urn:hoh:gui:interactionIntent",
+      "@type": "rdf:Property",
+      "rdfs:domain": {
+        "@id": "urn:hoh:gui:InteractionRule"
+      },
+      "rdfs:range": {
+        "@id": "urn:hoh:gui:ShellIntent"
+      },
+      "rdfs:comment": "Rule to the semantic intents it permits or presents; one-to-many, 1..4 in this profile."
+    },
+    {
+      "@id": "urn:hoh:gui:scrollAxes",
+      "@type": "rdf:Property",
+      "rdfs:domain": {
+        "@id": "urn:hoh:gui:InteractionRule"
+      },
+      "rdfs:range": {
+        "@id": "xsd:string"
+      },
+      "rdfs:comment": "Rule to allowed content scrolling axes; optional single Y_ONLY, not program control degrees of freedom."
+    },
+    {
+      "@id": "urn:hoh:gui:gestureOrigin",
+      "@type": "rdf:Property",
+      "rdfs:domain": {
+        "@id": "urn:hoh:gui:InteractionRule"
+      },
+      "rdfs:range": {
+        "@id": "xsd:string"
+      },
+      "rdfs:comment": "Rule to the pointer start region; optional single value; viewport boundary is independent of document scroll position."
+    },
+    {
+      "@id": "urn:hoh:gui:gestureDirection",
+      "@type": "rdf:Property",
+      "rdfs:domain": {
+        "@id": "urn:hoh:gui:InteractionRule"
+      },
+      "rdfs:range": {
+        "@id": "xsd:string"
+      },
+      "rdfs:comment": "Rule to recognized movement direction; optional single value; does not change start region."
+    },
+    {
+      "@id": "urn:hoh:gui:scrollBoundaryRequired",
+      "@type": "rdf:Property",
+      "rdfs:domain": {
+        "@id": "urn:hoh:gui:InteractionRule"
+      },
+      "rdfs:range": {
+        "@id": "xsd:boolean"
+      },
+      "rdfs:comment": "Edge rule to whether content scroll position gates invocation; exactly false for both viewport-edge rules."
+    },
+    {
+      "@id": "urn:hoh:gui:gridGroup",
+      "@type": "rdf:Property",
+      "rdfs:domain": {
+        "@id": "urn:hoh:gui:InteractionRule"
+      },
+      "rdfs:range": {
+        "@id": "xsd:string"
+      },
+      "rdfs:comment": "Dashboard rule to groups; exactly FIXED_APPS and FAVORITES for this draft."
+    },
+    {
+      "@id": "urn:hoh:gui:settingsPlacement",
+      "@type": "rdf:Property",
+      "rdfs:domain": {
+        "@id": "urn:hoh:gui:InteractionRule"
+      },
+      "rdfs:range": {
+        "@id": "xsd:string"
+      },
+      "rdfs:comment": "Dashboard rule to settings membership; exactly APP_IN_FIXED_APPS."
+    },
+    {
+      "@id": "urn:hoh:gui:visualTreatment",
+      "@type": "rdf:Property",
+      "rdfs:domain": {
+        "@id": "urn:hoh:gui:InteractionRule"
+      },
+      "rdfs:range": {
+        "@id": "xsd:string"
+      },
+      "rdfs:comment": "Rule to its visual treatment; optional single GLASSMORPHISM_OVERLAY."
+    },
+    {
+      "@id": "urn:hoh:gui:inputRoute",
+      "@type": "rdf:Property",
+      "rdfs:domain": {
+        "@id": "urn:hoh:gui:InteractionRule"
+      },
+      "rdfs:range": {
+        "@id": "xsd:string"
+      },
+      "rdfs:comment": "Rule to desktop invocation modality; optional single value; key combinations remain implementation proposals."
+    }
+  ]
+}

@@ -1,0 +1,98 @@
+{
+  "schema": "hoh/source-observation@1",
+  "authority": "APPLICATION_OBSERVATION",
+  "recordedAt": "2026-10-07",
+  "sourceRevision": "48e79cf4b20617f8e53775ee5567ca6b43289490",
+  "method": "READ_ONLY_SOURCE_INSPECTION",
+  "runtimeChanged": false,
+  "runtimeConformance": "NOT_VERIFIED_FOR_NEW_PROFILE",
+  "artifacts": [
+    {
+      "path": "ui/hoh-ui.js",
+      "sha256": "3cc306ec2f889d6535362f337300c63f326ddec76b008da1497b6403315607a1"
+    },
+    {
+      "path": "ui/hoh-ui.css",
+      "sha256": "ce65b2b12b259142bd8b1a410b04925044eee1bb454244ea5c77905bba87116d"
+    },
+    {
+      "path": "ui/shell.js",
+      "sha256": "a0cb1bd4719148dc7145f6f1b7745b44c50ae5fac2ac04c640af3d37dba1d2f5"
+    }
+  ],
+  "observations": [
+    {
+      "rule": "urn:hoh:gui:interaction-rule/content-vertical",
+      "status": "PARTIAL",
+      "evidence": {
+        "path": "ui/hoh-ui.css",
+        "line": 32
+      },
+      "finding": "Content stage uses overflow:auto; vertical-only nested renderer policy is not enforced."
+    },
+    {
+      "rule": "urn:hoh:gui:interaction-rule/feed-horizontal",
+      "status": "PARTIAL",
+      "evidence": {
+        "path": "ui/hoh-ui.js",
+        "line": 265
+      },
+      "finding": "Horizontal feed gesture is attached only to #feedGesture."
+    },
+    {
+      "rule": "urn:hoh:gui:interaction-rule/bottom-edge-agent",
+      "status": "PARTIAL",
+      "evidence": {
+        "path": "ui/hoh-ui.js",
+        "line": 260
+      },
+      "finding": "Sheet handle supports dragging and split state; viewport-bottom origin is not implemented."
+    },
+    {
+      "rule": "urn:hoh:gui:interaction-rule/top-edge-dashboard",
+      "status": "PARTIAL",
+      "evidence": {
+        "path": "ui/hoh-ui.js",
+        "line": 268
+      },
+      "finding": "Dashboard button supports downward drag; viewport-top origin is not implemented."
+    },
+    {
+      "rule": "urn:hoh:gui:interaction-rule/dashboard-grid",
+      "status": "PRESENT_IN_SOURCE_HOST_DEPENDENT",
+      "evidence": {
+        "path": "ui/hoh-ui.js",
+        "line": 57
+      },
+      "finding": "Fixed and favorite app groups exist; settings is supplied by the host."
+    },
+    {
+      "rule": "urn:hoh:gui:interaction-rule/reaction-glass",
+      "status": "PRESENT_IN_SOURCE",
+      "evidence": {
+        "path": "ui/hoh-ui.css",
+        "line": 35
+      },
+      "finding": "Favorites and reaction rails have translucent background, blur, borders and shadows."
+    },
+    {
+      "rule": "urn:hoh:gui:interaction-rule/desktop-shortcuts",
+      "status": "NOT_IMPLEMENTED",
+      "evidence": {
+        "path": "ui/hoh-ui.js",
+        "line": 259
+      },
+      "finding": "No keydown handler exists in the reviewed shell/controller files."
+    },
+    {
+      "rule": "urn:hoh:gui:interaction-rule/desktop-glass-controls",
+      "status": "PARTIAL",
+      "evidence": {
+        "path": "ui/shell.js",
+        "line": 20
+      },
+      "finding": "Dashboard entry exists; dedicated desktop AI invocation and shared glass entry controls are absent."
+    }
+  ],
+  "bounds": "Existing source support is not a browser verification of the new edge/axis/shortcut contract. All audited UI artifact digests correspond to sourceRevision."
+}

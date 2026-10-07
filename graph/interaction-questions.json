@@ -1,0 +1,221 @@
+{
+  "questions": [
+    {
+      "id": "profile-owner",
+      "question": "어느 기존 HOH와 콘텐츠 계약을 구체화하는가?",
+      "path": [
+        {
+          "subject": "urn:hoh:gui:interaction-profile/v0.1-draft",
+          "predicate": "urn:hoh:gui:forInterface",
+          "expectedTargets": [
+            "urn:hoh:gui:hoh-ui"
+          ]
+        },
+        {
+          "subject": "urn:hoh:gui:interaction-profile/v0.1-draft",
+          "predicate": "urn:hoh:gui:contentProtocol",
+          "expectedTargets": [
+            "urn:hoh:gui:semantic-content-protocol/v0.1-draft"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "content-axis",
+      "question": "콘텐츠 자체는 어떤 축으로 스크롤하는가?",
+      "path": [
+        {
+          "subject": "urn:hoh:gui:interaction-rule/content-vertical",
+          "predicate": "urn:hoh:gui:scrollAxes",
+          "expectedValues": [
+            "Y_ONLY"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "horizontal-feed",
+      "question": "가로 스와이프가 실행하는 것은 무엇인가?",
+      "path": [
+        {
+          "subject": "urn:hoh:gui:interaction-rule/feed-horizontal",
+          "predicate": "urn:hoh:gui:interactionIntent",
+          "expectedTargets": [
+            "urn:hoh:gui:shell-intent/feed.previous",
+            "urn:hoh:gui:shell-intent/feed.next"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "bottom-edge-agent",
+      "question": "어느 경계에서 어느 방향으로 시작하며 콘텐츠 스크롤 끝 조건이 필요한가?",
+      "path": [
+        {
+          "subject": "urn:hoh:gui:interaction-rule/bottom-edge-agent",
+          "predicate": "urn:hoh:gui:gestureOrigin",
+          "expectedValues": [
+            "VIEWPORT_BOTTOM_EDGE"
+          ]
+        },
+        {
+          "subject": "urn:hoh:gui:interaction-rule/bottom-edge-agent",
+          "predicate": "urn:hoh:gui:gestureDirection",
+          "expectedValues": [
+            "UP"
+          ]
+        },
+        {
+          "subject": "urn:hoh:gui:interaction-rule/bottom-edge-agent",
+          "predicate": "urn:hoh:gui:scrollBoundaryRequired",
+          "expectedValues": [
+            false
+          ]
+        },
+        {
+          "subject": "urn:hoh:gui:interaction-rule/bottom-edge-agent",
+          "predicate": "urn:hoh:gui:interactionIntent",
+          "expectedTargets": [
+            "urn:hoh:gui:shell-intent/agent.open"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "top-edge-dashboard",
+      "question": "어느 경계에서 어느 방향으로 시작하며 콘텐츠 스크롤 끝 조건이 필요한가?",
+      "path": [
+        {
+          "subject": "urn:hoh:gui:interaction-rule/top-edge-dashboard",
+          "predicate": "urn:hoh:gui:gestureOrigin",
+          "expectedValues": [
+            "VIEWPORT_TOP_EDGE"
+          ]
+        },
+        {
+          "subject": "urn:hoh:gui:interaction-rule/top-edge-dashboard",
+          "predicate": "urn:hoh:gui:gestureDirection",
+          "expectedValues": [
+            "DOWN"
+          ]
+        },
+        {
+          "subject": "urn:hoh:gui:interaction-rule/top-edge-dashboard",
+          "predicate": "urn:hoh:gui:scrollBoundaryRequired",
+          "expectedValues": [
+            false
+          ]
+        },
+        {
+          "subject": "urn:hoh:gui:interaction-rule/top-edge-dashboard",
+          "predicate": "urn:hoh:gui:interactionIntent",
+          "expectedTargets": [
+            "urn:hoh:gui:shell-intent/dashboard.open"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "app-grid",
+      "question": "대시보드 그룹과 설정의 위치는 무엇인가?",
+      "path": [
+        {
+          "subject": "urn:hoh:gui:interaction-rule/dashboard-grid",
+          "predicate": "urn:hoh:gui:gridGroup",
+          "expectedValues": [
+            "FIXED_APPS",
+            "FAVORITES"
+          ]
+        },
+        {
+          "subject": "urn:hoh:gui:interaction-rule/dashboard-grid",
+          "predicate": "urn:hoh:gui:settingsPlacement",
+          "expectedValues": [
+            "APP_IN_FIXED_APPS"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "glass-reactions",
+      "question": "어떤 반응을 글래스 UI로 제공하는가?",
+      "path": [
+        {
+          "subject": "urn:hoh:gui:interaction-rule/reaction-glass",
+          "predicate": "urn:hoh:gui:interactionIntent",
+          "expectedTargets": [
+            "urn:hoh:gui:shell-intent/reaction.like",
+            "urn:hoh:gui:shell-intent/reaction.dislike",
+            "urn:hoh:gui:shell-intent/comments.open",
+            "urn:hoh:gui:shell-intent/share.open"
+          ]
+        },
+        {
+          "subject": "urn:hoh:gui:interaction-rule/reaction-glass",
+          "predicate": "urn:hoh:gui:visualTreatment",
+          "expectedValues": [
+            "GLASSMORPHISM_OVERLAY"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "web-equivalence",
+      "question": "웹 단축키와 버튼은 어떤 공통 명령으로 이어지는가?",
+      "path": [
+        {
+          "subject": "urn:hoh:gui:interaction-rule/desktop-shortcuts",
+          "predicate": "urn:hoh:gui:interactionIntent",
+          "expectedTargets": [
+            "urn:hoh:gui:shell-intent/feed.previous",
+            "urn:hoh:gui:shell-intent/feed.next",
+            "urn:hoh:gui:shell-intent/agent.open",
+            "urn:hoh:gui:shell-intent/dashboard.open"
+          ]
+        },
+        {
+          "subject": "urn:hoh:gui:interaction-rule/desktop-glass-controls",
+          "predicate": "urn:hoh:gui:interactionIntent",
+          "expectedTargets": [
+            "urn:hoh:gui:shell-intent/agent.open",
+            "urn:hoh:gui:shell-intent/dashboard.open"
+          ]
+        },
+        {
+          "subject": "urn:hoh:gui:interaction-rule/desktop-glass-controls",
+          "predicate": "urn:hoh:gui:visualTreatment",
+          "expectedValues": [
+            "GLASSMORPHISM_OVERLAY"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "evidence-boundary",
+      "question": "설계 문서와 실제 소스 관찰은 분리되어 있는가?",
+      "path": [
+        {
+          "subject": "urn:hoh:gui:interaction-profile/v0.1-draft",
+          "predicate": "urn:hoh:gui:interactionDocument",
+          "expectedTargets": [
+            "urn:hoh:gui:artifact/interaction-profile-document"
+          ]
+        },
+        {
+          "subject": "urn:hoh:gui:interaction-profile/v0.1-draft",
+          "predicate": "urn:hoh:gui:interactionObservation",
+          "expectedTargets": [
+            "urn:hoh:gui:observation/interaction-source-audit-2026-10-07"
+          ]
+        },
+        {
+          "subject": "urn:hoh:gui:interaction-profile/v0.1-draft",
+          "predicate": "urn:hoh:gui:status",
+          "expectedValues": [
+            "SPECIFIED_NOT_FULLY_IMPLEMENTED"
+          ]
+        }
+      ]
+    }
+  ]
+}

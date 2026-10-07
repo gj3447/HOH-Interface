@@ -1,0 +1,76 @@
+@prefix h: <urn:hoh:gui:> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+h:InteractionProfileShape a sh:NodeShape ;
+  sh:targetClass h:InteractionProfile ;
+  sh:property [ sh:path h:authority ; sh:hasValue "SECONDARY_AI" ; sh:minCount 1 ; sh:maxCount 1 ] ;
+  sh:property [ sh:path h:status ; sh:hasValue "SPECIFIED_NOT_FULLY_IMPLEMENTED" ; sh:minCount 1 ; sh:maxCount 1 ] ;
+  sh:property [ sh:path prov:wasDerivedFrom ; sh:class prov:Entity ; sh:node h:InteractionSourceShape ; sh:minCount 1 ; sh:maxCount 1 ] ;
+  sh:property [ sh:path h:forInterface ; sh:class skos:Concept ; sh:hasValue <urn:hoh:gui:hoh-ui> ; sh:minCount 1 ; sh:maxCount 1 ] ;
+  sh:property [ sh:path h:contentProtocol ; sh:class h:SemanticContentProtocol ; sh:minCount 1 ; sh:maxCount 1 ] ;
+  sh:property [ sh:path h:interactionRule ; sh:class h:InteractionRule ; sh:minCount 8 ; sh:maxCount 8 ] ;
+  sh:property [ sh:path h:interactionDocument ; sh:class prov:Entity ; sh:node h:InteractionDocumentShape ; sh:minCount 1 ; sh:maxCount 1 ] ;
+  sh:property [ sh:path h:interactionObservation ; sh:class prov:Entity ; sh:node h:InteractionObservationShape ; sh:minCount 1 ; sh:maxCount 1 ] .
+
+h:InteractionSourceShape a sh:NodeShape ;
+  sh:property [ sh:path h:authority ; sh:hasValue "USER_PRIMARY" ; sh:minCount 1 ; sh:maxCount 1 ] ;
+  sh:property [ sh:path h:path ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+  sh:property [ sh:path h:sha256 ; sh:pattern "^[0-9a-f]{64}$" ; sh:minCount 1 ; sh:maxCount 1 ] .
+
+h:InteractionDocumentShape a sh:NodeShape ;
+  sh:property [ sh:path h:authority ; sh:hasValue "SECONDARY_AI" ; sh:minCount 1 ; sh:maxCount 1 ] ;
+  sh:property [ sh:path h:path ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+  sh:property [ sh:path h:sha256 ; sh:pattern "^[0-9a-f]{64}$" ; sh:minCount 1 ; sh:maxCount 1 ] .
+
+h:InteractionObservationShape a sh:NodeShape ;
+  sh:property [ sh:path h:authority ; sh:hasValue "APPLICATION_OBSERVATION" ; sh:minCount 1 ; sh:maxCount 1 ] ;
+  sh:property [ sh:path h:status ; sh:hasValue "SOURCE_OBSERVATION_NOT_RUNTIME_CONFORMANCE" ; sh:minCount 1 ; sh:maxCount 1 ] ;
+  sh:property [ sh:path h:path ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+  sh:property [ sh:path h:sha256 ; sh:pattern "^[0-9a-f]{64}$" ; sh:minCount 1 ; sh:maxCount 1 ] .
+
+h:InteractionRuleShape a sh:NodeShape ;
+  sh:targetClass h:InteractionRule ;
+  sh:property [ sh:path h:authority ; sh:hasValue "SECONDARY_AI" ; sh:minCount 1 ; sh:maxCount 1 ] ;
+  sh:property [ sh:path h:status ; sh:hasValue "USER_REQUIREMENT_INTERPRETATION" ; sh:minCount 1 ; sh:maxCount 1 ] ;
+  sh:property [ sh:path prov:wasDerivedFrom ; sh:node h:InteractionSourceShape ; sh:minCount 1 ; sh:maxCount 1 ] ;
+  sh:property [ sh:path h:description ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+  sh:property [ sh:path h:interactionComponent ; sh:class h:Component ; sh:minCount 1 ; sh:maxCount 1 ] ;
+  sh:property [ sh:path h:interactionIntent ; sh:class h:ShellIntent ; sh:minCount 1 ; sh:maxCount 4 ] ;
+  sh:property [ sh:path h:gestureOrigin ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+  sh:property [ sh:path h:gestureDirection ; sh:datatype xsd:string ; sh:maxCount 1 ] ;
+  sh:property [ sh:path h:scrollBoundaryRequired ; sh:datatype xsd:boolean ; sh:maxCount 1 ] ;
+  sh:property [ sh:path h:visualTreatment ; sh:in ( "GLASSMORPHISM_OVERLAY" ) ; sh:maxCount 1 ] ;
+  sh:property [ sh:path h:inputRoute ; sh:in ( "CONFIGURABLE_KEYBOARD_SHORTCUTS" "VISIBLE_BUTTONS" ) ; sh:maxCount 1 ] ;
+  sh:property [ sh:path h:scrollAxes ; sh:in ( "Y_ONLY" ) ; sh:maxCount 1 ] .
+
+h:ShellIntentShape a sh:NodeShape ;
+  sh:targetClass h:ShellIntent ;
+  sh:property [ sh:path h:authority ; sh:hasValue "SECONDARY_AI" ; sh:minCount 1 ; sh:maxCount 1 ] ;
+  sh:property [ sh:path h:status ; sh:hasValue "DESIGN_IDENTIFIER_NOT_PUBLIC_RUNTIME_API" ; sh:minCount 1 ; sh:maxCount 1 ] .
+
+h:BottomEdgeShape a sh:NodeShape ;
+  sh:targetNode <urn:hoh:gui:interaction-rule/bottom-edge-agent> ;
+  sh:property [ sh:path h:gestureOrigin ; sh:hasValue "VIEWPORT_BOTTOM_EDGE" ; sh:minCount 1 ; sh:maxCount 1 ] ;
+  sh:property [ sh:path h:gestureDirection ; sh:hasValue "UP" ; sh:minCount 1 ; sh:maxCount 1 ] ;
+  sh:property [ sh:path h:scrollBoundaryRequired ; sh:hasValue false ; sh:minCount 1 ; sh:maxCount 1 ] ;
+  sh:property [ sh:path h:interactionIntent ; sh:hasValue <urn:hoh:gui:shell-intent/agent.open> ; sh:minCount 1 ; sh:maxCount 1 ] .
+
+h:TopEdgeShape a sh:NodeShape ;
+  sh:targetNode <urn:hoh:gui:interaction-rule/top-edge-dashboard> ;
+  sh:property [ sh:path h:gestureOrigin ; sh:hasValue "VIEWPORT_TOP_EDGE" ; sh:minCount 1 ; sh:maxCount 1 ] ;
+  sh:property [ sh:path h:gestureDirection ; sh:hasValue "DOWN" ; sh:minCount 1 ; sh:maxCount 1 ] ;
+  sh:property [ sh:path h:scrollBoundaryRequired ; sh:hasValue false ; sh:minCount 1 ; sh:maxCount 1 ] ;
+  sh:property [ sh:path h:interactionIntent ; sh:hasValue <urn:hoh:gui:shell-intent/dashboard.open> ; sh:minCount 1 ; sh:maxCount 1 ] .
+
+h:DashboardGridShape a sh:NodeShape ;
+  sh:targetNode <urn:hoh:gui:interaction-rule/dashboard-grid> ;
+  sh:property [ sh:path h:gridGroup ; sh:hasValue "FIXED_APPS", "FAVORITES" ; sh:minCount 2 ; sh:maxCount 2 ] ;
+  sh:property [ sh:path h:settingsPlacement ; sh:hasValue "APP_IN_FIXED_APPS" ; sh:minCount 1 ; sh:maxCount 1 ] ;
+  sh:property [ sh:path h:scrollAxes ; sh:hasValue "Y_ONLY" ; sh:minCount 1 ; sh:maxCount 1 ] .
+
+h:ContentVerticalShape a sh:NodeShape ;
+  sh:targetNode <urn:hoh:gui:interaction-rule/content-vertical> ;
+  sh:property [ sh:path h:scrollAxes ; sh:hasValue "Y_ONLY" ; sh:minCount 1 ; sh:maxCount 1 ] .
