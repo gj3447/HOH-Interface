@@ -10,7 +10,7 @@
   "checks": {
     "packageTests": {
       "command": "npm test",
-      "passed": 36,
+      "passed": 37,
       "exitCode": 0
     },
     "generatedValidators": {
@@ -26,7 +26,7 @@
       "script": "scripts/validate-semantic-standards.py",
       "dependencies": "scripts/requirements-semantic.txt",
       "status": "PASS",
-      "engineeringTriples": 717,
+      "engineeringTriples": 733,
       "contentTriples": 54,
       "competencyQuestions": 6,
       "shaclPositive": true,
@@ -97,5 +97,6 @@
     "modelReasoningQuality": "NOT_MEASURED",
     "fullWCAGConformance": "NOT_CLAIMED",
     "independentImplementationConformance": "NOT_VERIFIED"
-  }
+  },
+  "integratedBaseline": "bbca10c: preserved upstream MM host observation and generic chat readiness support"
 }

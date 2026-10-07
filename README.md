@@ -59,8 +59,8 @@ npm run preview -- --port 8022
 | 호스트 | 현재 상태 |
 | --- | --- |
 | MetaHumotonic | 첫 적용 대상. Program Feed 백엔드 어댑터와 로컬 실행 검증을 제공한다. |
-| 회사 업무 / 좋좋공 일 | 같은 UI 적용 방향을 기록했다. 업무 시스템 연결은 후속 작업이다. |
-| MM | 사용자 지정 적용 대상. 약어의 의미와 대상 저장소는 아직 정하지 않았다. |
+| 회사 업무 / 좋좋공 일 | 좋좋공은 MM 안의 범위로 같은 화면을 쓴다(보이는 자료·조작만 좁다). 회사 업무는 MM을 통해 연결한다. |
+| MM | 연구 서버 프로그램(metahumo_manufacture, 비공개 저장소). 고치지 않은 사본과 자체 어댑터·렌더러로 연결해 기본 화면으로 운영한다(2026-10-07, [관측 기록](provenance/host-mm-2026-10-07.json)). AI 대화는 호스트의 제공자이며 `readiness.chat`으로 알린다 — HSWM 연결이 아니다. |
 
 현재 산출물은 브라우저에서 실행되는 UI 셸과 연결 계약이다. 커널·드라이버·네이티브
 앱 스토어 배포는 구현 범위에 들어 있지 않다. MetaHumotonic의 HSWM 채팅은 연결 준비
@@ -143,7 +143,7 @@ GNU Affero General Public License, version 3 only로 배포한다.
 ## 검증 기록
 
 0.3.0 / Content Contract 0.1의 [검증 기록](provenance/verification-content-0.1.json):
-패키지 검사 36개, 브라우저 검사 24개, 생성 검증기 7개 일치 확인을 통과했다.
+패키지 검사 37개, 브라우저 검사 24개, 생성 검증기 7개 일치 확인을 통과했다.
 JSON-LD를 실제 RDF로 파싱하고 SHACL의 정상·거절 사례와 질의 6개를 검사했다.
 사람과 채팅의 동일 콘텐츠 조작, 충돌·확인·취소, 키보드와 모바일 화면을 검증했다.
 [PC](docs/screenshots/content-0.1-desktop.png),
