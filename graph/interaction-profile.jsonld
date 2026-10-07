@@ -69,7 +69,7 @@
       "@type": "prov:Entity",
       "h:authority": "SECONDARY_AI",
       "h:path": "docs/INTERACTION_PROFILE.md",
-      "h:sha256": "4454b17e4b20b880b56920c278616552099b61541659e50e6be6a79d26636df3",
+      "h:sha256": "eb1027f6e8f0f1ba912f98f091688bf95b34f32e34fd3c8d41ba5137f22a73b7",
       "prov:wasDerivedFrom": {
         "@id": "urn:hoh:gui:source/user-hoh-interaction-224832972605dd38116048037824500a391fadf911bcd998ffe5aaa47010698e"
       }
@@ -79,8 +79,8 @@
       "@type": "prov:Entity",
       "h:authority": "APPLICATION_OBSERVATION",
       "h:path": "provenance/interaction-source-audit-2026-10-07.json",
-      "h:sha256": "a72fe2832973e797670efd1bb2a698059af9f84917f0249c4133511fbf1b844e",
-      "h:sourceRevision": "52260883e6c9e91f7ebc6b178baf2697d3edd924",
+      "h:sha256": "eb7d57ea6bd5a17b4829caa2c6506cfc67ac22681d0525f8abe90e333529a9d3",
+      "h:sourceRevision": "cb8ad90b8ba72ea84a06f4c3562d8d67f4e85e53",
       "h:status": "SOURCE_OBSERVATION_NOT_RUNTIME_CONFORMANCE"
     },
     {
