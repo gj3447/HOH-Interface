@@ -1,0 +1,17 @@
+{
+  "schema": "usl-resource-bindings/v1",
+  "resources": [
+    {
+      "id": "repository:hoh",
+      "representations": [
+        { "id": "hoh-interface-working-copy", "relation": "working-copy", "kind": "workspace", "workspace": "hoh", "path": "." }
+      ]
+    },
+    {
+      "id": "repository:company-backend",
+      "representations": [
+        { "id": "hoh-backend-working-copy", "relation": "working-copy", "kind": "workspace", "workspace": "hoh", "path": "backend" }
+      ]
+    }
+  ]
+}

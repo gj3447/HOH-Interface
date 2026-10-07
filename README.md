@@ -7,6 +7,10 @@ Copyright (C) 2026 **MetaHumotonic Foundation** · [AGPL-3.0-only](LICENSE)
 프롬프트로 정밀 작업을 요청한다. HOH UI / HOH GUI는 기존 별칭이다.
 [개념과 완성도 기준](docs/CONCEPT.md)에 역할·확장 원칙·현재 구현 범위를 정리했다.
 
+로컬 **HOH 작업공간**은 이 인터페이스와 `backend/`에 옮긴 기존 웹백 전체를 함께 둔다.
+백엔드는 자신의 Git 이력과 미커밋 자료를 보존하는 독립 checkout이며, 이 공개 UI 저장소에
+자동 포함되지 않는다. 새 작업 경로와 실행 방법은 [작업공간 안내](docs/WORKSPACE.md)를 따른다.
+
 ## 공통 화면
 
 - **콘텐츠 뷰어**: 글, 작업 앱, 게임 등 등록된 프로그램과 데이터를 같은 자리에 표시한다.

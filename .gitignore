@@ -6,3 +6,5 @@ dist/
 .playwright-cli/
 .test-output/
 *.log
+# Local backend checkout; retains its own Git history and private working data.
+/backend/
