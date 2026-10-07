@@ -86,6 +86,17 @@ try {
   await page.locator('#viewerTitle', { hasText: '도구 앱' }).waitFor({ timeout: 5000 });
   check((await page.locator('#messages li').allTextContents()).includes('답: 도구 열어줘'), 'an answer can open a content after it is shown');
 
+  // a short conversation pane, so that it scrolls: following the newest answer at the end, staying put when scrolled up
+  await page.locator('#messages').evaluate(list => { list.style.maxHeight = '140px'; list.style.flex = 'none'; list.scrollTop = list.scrollHeight; });
+  const gap = () => page.locator('#messages').evaluate(list => list.scrollHeight - list.scrollTop - list.clientHeight);
+  await page.locator('#chatInput').fill('길게 따라가'); await page.locator('#chatInput').press('Enter');
+  await page.locator('#messages li.answer:not(.pending)', { hasText: '답: 길게 따라가' }).waitFor({ timeout: 6000 });
+  check(await gap() < 2, 'the conversation follows the newest answer while the person is at its end');
+  await page.locator('#messages').evaluate(list => { list.scrollTop = 0; });
+  await page.locator('#chatInput').fill('위를 읽는 중'); await page.locator('#chatInput').press('Enter');
+  await page.locator('#messages li.answer:not(.pending)', { hasText: '답: 위를 읽는 중' }).waitFor({ timeout: 5000 });
+  check(await page.locator('#messages').evaluate(list => list.scrollTop) === 0 && await gap() > 100, 'scrolled up to read back, it stays put');
+  await page.locator('#messages').evaluate(list => { list.style.maxHeight = ''; list.style.flex = ''; });
   await page.locator('#chatInput').fill('넘겨도 남아'); await page.locator('#chatInput').press('Enter');
   await page.locator('[data-next]').click();
   await page.locator('#messages li.answer', { hasText: '답: 넘겨도 남아' }).waitFor({ timeout: 5000 });
