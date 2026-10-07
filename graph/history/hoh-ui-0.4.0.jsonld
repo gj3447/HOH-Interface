@@ -367,21 +367,6 @@
       },
       "h:runtime": "BROWSER_UI_SHELL_WITH_OPTIONAL_REALTIME",
       "h:hswmConnectedExecution": "NOT_PERFORMED"
-    },
-    {
-      "@id": "urn:hoh:gui:implementation/v0.4.1",
-      "@type": "prov:Entity",
-      "h:authority": "APPLICATION_OBSERVATION",
-      "h:path": "ui/hoh-ui.js",
-      "h:sha256": "0867c84eecb63322f54e99b685e55291e5a139c6ba7953ae7c8d0af41d3970fc",
-      "h:implements": {
-        "@id": "urn:hoh:gui:hoh-ui"
-      },
-      "prov:wasRevisionOf": {
-        "@id": "urn:hoh:gui:implementation/v0.4.0"
-      },
-      "h:runtime": "BROWSER_UI_SHELL_WITH_OPTIONAL_REALTIME",
-      "h:hswmConnectedExecution": "NOT_PERFORMED"
     }
   ]
 }

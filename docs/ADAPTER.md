@@ -69,7 +69,7 @@ REALTIME의 호스트 인증·미디어 제공자·수명 계약은 [실시간 �
 | `comment({contentId, body, viewRevision})` | `{comments}` 또는 확인된 댓글 결과 |
 | `deleteComment({contentId, commentId, viewRevision})` | `{comments}`. 선택 메서드 — 있으면 `canDelete`인 댓글에 «지우기»가 보인다. |
 | `saveState({contentId, state, viewRevision})` | `{appState}` |
-| `chat({contentId, message, viewRevision, onProgress?, signal?})` | 실제 제공자의 `{answer, open?}` 또는 오류. 답을 받는 동안 `onProgress({step})`·`onProgress({answer})`(지금까지의 답) 또는 `onProgress({delta})`로 알리면 «받는 중» 말풍선에 단계와 답이 흐르고 «멈추기»가 `signal`을 끊는다 — 그때는 받은 만큼으로 끝내거나 `AbortError`로 거절한다. 답은 사람이 다른 화면으로 넘어가도 대화에 남는다. `open`은 답을 보인 뒤 호스트가 시작한 열기로 연다 — 그사이 사람이 화면을 옮겼으면 열지 않는다. |
+| `chat({contentId, message, viewRevision, onProgress?, signal?})` | 실제 제공자의 `{answer, open?}` 또는 오류. 답을 받는 동안 `onProgress({step})`·`onProgress({answer})`(지금까지의 답) 또는 `onProgress({delta})`로 알리면 «받는 중» 말풍선에 단계와 답이 흐르고 «멈추기»가 `signal`을 끊는다 — 그때는 받은 만큼으로 끝내거나 `AbortError`로 거절한다. 답은 사람이 다른 화면으로 넘어가도 대화에 남는다. 대화창은 사람이 끝을 읽는 동안 새 답을 따라 내려가고, 위로 올려 읽는 중이면 그대로 둔다. `open`은 답을 보인 뒤 호스트가 시작한 열기로 연다 — 그사이 사람이 화면을 옮겼으면 열지 않는다. |
 | `profile()` | `{profile}`. 즐겨찾기는 `{id,title,kind}` 목록이다. |
 | `status()` | `{readiness}`. `readiness.chat`은 AI 대화 제공자의 `{status, reason}`이다 — `READY`면 «AI 채팅을 사용할 수 있습니다», 아니면 `reason`을 보인다. 없으면 `readiness.hswm`을 같은 뜻으로 읽는다(참조 어댑터는 HSWM 채팅을 `readiness.hswm`으로 제공한다). |
 

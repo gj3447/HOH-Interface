@@ -302,6 +302,8 @@ listen(root, 'click', async (event) => {
   if (b.dataset.checkId) { const checked = new Set(state.view?.appState?.checked || []); checked.has(b.dataset.checkId) ? checked.delete(b.dataset.checkId) : checked.add(b.dataset.checkId); await saveState({ checked: [...checked] }); }
   if (b.dataset.tile !== undefined) await saveState({ score: Number(state.view?.appState?.score || 0) + 1 }); if (b.matches('[data-game-reset]')) await saveState({ score: 0 });
 });
+/** The conversation follows what is newest while the person reads at its end (within 260px); scrolled up to read back, it stays put. */
+function follow(update) { const list = $('#messages'), atEnd = list.scrollHeight - list.scrollTop - list.clientHeight < 260; update(); if (atEnd) list.scrollTop = list.scrollHeight; }
 /** An answer as the host draws it (renderAnswer → a sanitized Node, e.g. Markdown) or as plain text. */
 function drawAnswer(target, result) {
   if (typeof renderAnswer === 'function') { try { const node = renderAnswer(result); if (node instanceof Node) { target.replaceChildren(node); return; } } catch {} }
@@ -316,22 +318,26 @@ function pendingAnswer() {
   listen(stop, 'click', () => { pending.stopped = true; controller.abort(); });
   pending.progress = (update = {}) => {
     if (disposed || !node.isConnected || !node.classList.contains('pending')) return;
-    if (typeof update.step === 'string' && update.step) { steps.append(Object.assign(document.createElement('li'), { textContent: update.step })); while (steps.children.length > 4) steps.firstElementChild.remove(); }
-    if (typeof update.answer === 'string') pending.partial = update.answer; else if (typeof update.delta === 'string') pending.partial += update.delta; else return;
-    drawAnswer(text, { answer: pending.partial, partial: true });
+    follow(() => {
+      if (typeof update.step === 'string' && update.step) { steps.append(Object.assign(document.createElement('li'), { textContent: update.step })); while (steps.children.length > 4) steps.firstElementChild.remove(); }
+      if (typeof update.answer === 'string') pending.partial = update.answer; else if (typeof update.delta === 'string') pending.partial += update.delta; else return;
+      drawAnswer(text, { answer: pending.partial, partial: true });
+    });
   };
   pending.finish = (result = {}) => {
     const said = typeof result.answer === 'string' ? result.answer : typeof result.message === 'string' ? result.message : pending.partial;
     if (!said && !pending.stopped) { node.remove(); return; }
-    node.className = 'answer'; node.removeAttribute('aria-busy'); node.replaceChildren();
-    drawAnswer(node, { ...result, answer: pending.stopped && typeof result.answer !== 'string' ? `${said}${said ? '\n\n' : ''}(응답을 멈췄습니다)` : said, partial: false });
+    follow(() => {
+      node.className = 'answer'; node.removeAttribute('aria-busy'); node.replaceChildren();
+      drawAnswer(node, { ...result, answer: pending.stopped && typeof result.answer !== 'string' ? `${said}${said ? '\n\n' : ''}(응답을 멈췄습니다)` : said, partial: false });
+    });
   };
   return pending;
 }
 listen($('#chatForm'), 'submit', async (event) => {
   event.preventDefault(); const input = $('#chatInput'), message = input.value.trim(), item = current(); if (!message || !item) return;
-  const bubble = Object.assign(document.createElement('li'), { className: 'user', textContent: message }); $('#messages').append(bubble);
-  const pending = pendingAnswer(); $('#messages').append(pending.node);
+  const bubble = Object.assign(document.createElement('li'), { className: 'user', textContent: message }), pending = pendingAnswer();
+  follow(() => $('#messages').append(bubble, pending.node));
   try {
     const queued = await mutate('/chat', { message, contentId: item.content.id, onProgress: pending.progress, signal: pending.signal });
     if (input.value.trim() === message) input.value = '';

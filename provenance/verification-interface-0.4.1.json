@@ -1,0 +1,56 @@
+{
+ "schema": "hoh/local-verification@1",
+ "recordedAt": "2026-10-07",
+ "authority": "APPLICATION_OBSERVATION",
+ "version": "0.4.1",
+ "scope": "The conversation follows the newest message while the person reads at its end; scrolled up, it stays put",
+ "checks": {
+  "packageTests": {
+   "command": "npm test",
+   "passed": 37,
+   "exitCode": 0
+  },
+  "semanticValidators": {
+   "command": "npm run check:semantic",
+   "validators": 7,
+   "status": "MATCH"
+  },
+  "semanticStandards": {
+   "command": "python3 scripts/validate-semantic-standards.py",
+   "status": "PASS"
+  },
+  "rdf": {
+   "parser": "rdflib 7.6.0",
+   "triples": {
+    "graph/hoh-ui.jsonld": 186
+   },
+   "remoteFetches": 0
+  },
+  "guiBrowser": {
+   "script": "test/browser-gui.mjs",
+   "passed": 14,
+   "status": "PASS"
+  },
+  "hostBrowser": {
+   "script": "test/browser-host.mjs",
+   "passed": 28,
+   "status": "PASS",
+   "added": [
+    "the conversation follows the newest answer while the person is at its end",
+    "scrolled up to read back, it stays put"
+   ]
+  },
+  "realtimeBrowser": {
+   "script": "test/browser-realtime.mjs",
+   "passed": 19,
+   "status": "PASS"
+  },
+  "semanticBrowser": {
+   "script": "test/browser-semantic.mjs",
+   "passed": 24,
+   "status": "PASS"
+  }
+ },
+ "origin": "Found while moving the MM host's streaming answer into the shell (U3): the host's bubble used to follow the answer.",
+ "recordedBy": "software-agent:claude-code for gj3447"
+}
