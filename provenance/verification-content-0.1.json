@@ -1,0 +1,101 @@
+{
+  "schema": "hoh/local-verification@1",
+  "recordedAt": "2026-10-07",
+  "authority": "APPLICATION_OBSERVATION",
+  "version": "0.3.0",
+  "protocolVersion": "0.1",
+  "protocolStatus": "DRAFT_NOT_STANDARD",
+  "scope": "Semantic content contract, local runtime, shared human/agent board and in-process MCP payload mapping",
+  "sourceIdentity": "Git commit containing this record; protocol artifact byte hashes are pinned in graph/semantic-content.jsonld",
+  "checks": {
+    "packageTests": {
+      "command": "npm test",
+      "passed": 36,
+      "exitCode": 0
+    },
+    "generatedValidators": {
+      "command": "npm run check:semantic",
+      "matched": 7,
+      "status": "MATCH"
+    },
+    "typeDeclarations": {
+      "command": "tsc --noEmit --strict --lib es2022,dom protocol/contracts.d.ts",
+      "exitCode": 0
+    },
+    "semanticStandards": {
+      "script": "scripts/validate-semantic-standards.py",
+      "dependencies": "scripts/requirements-semantic.txt",
+      "status": "PASS",
+      "engineeringTriples": 717,
+      "contentTriples": 54,
+      "competencyQuestions": 6,
+      "shaclPositive": true,
+      "shaclNegativeRejected": true,
+      "jsonSchemaDraft": "2020-12",
+      "remoteContextFetches": 0
+    },
+    "browser": {
+      "script": "test/browser-semantic.mjs",
+      "status": "PASS",
+      "passed": 24,
+      "engine": "Chromium",
+      "widths": [
+        1440,
+        390,
+        320
+      ],
+      "themes": [
+        "dark",
+        "light"
+      ],
+      "checks": [
+        "content and adjacent chat are visible",
+        "demo clearly identifies deterministic planner and disconnected HSWM",
+        "visiting content does not mutate its state",
+        "human form commits through the runtime",
+        "chat command changes the same visible content",
+        "receipts distinguish human and agent origin",
+        "agent command toggles a human-visible task",
+        "human can change a task after the agent",
+        "destructive proposal is not executed before confirmation",
+        "cancelling a proposal preserves content",
+        "stale confirmed agent proposal cannot overwrite a human edit",
+        "revision conflict is visible and recoverable",
+        "fresh confirmed action commits once",
+        "unsupported natural language produces help rather than fake execution",
+        "every board domain action has a visible human control",
+        "navigation cancels a pending agent proposal",
+        "cancelled navigation proposal causes no reset",
+        "390px has no document horizontal overflow",
+        "390px content actions meet 44px targets",
+        "320px has no document horizontal overflow",
+        "320px content actions meet 44px targets",
+        "mobile supports shared content and half-height chat",
+        "keyboard-only title editing works",
+        "no browser runtime errors"
+      ],
+      "errors": []
+    },
+    "visualReview": {
+      "observer": "root",
+      "result": "Reviewed rendered desktop and mobile split-chat layouts using synthetic task data.",
+      "screenshots": [
+        "docs/screenshots/content-0.1-desktop.png",
+        "docs/screenshots/content-0.1-mobile.png"
+      ]
+    }
+  },
+  "boundaries": {
+    "planner": "DETERMINISTIC_COMMAND_EXAMPLE_NOT_LLM",
+    "storage": "IN_MEMORY_SINGLE_RUNTIME_NOT_DISTRIBUTED",
+    "idempotency": "BOUNDED_MEMORY_CACHE_NOT_DURABLE_EXACTLY_ONCE",
+    "hswmConnectedExecution": "NOT_PERFORMED_NOT_READY",
+    "mcp": "IN_PROCESS_PAYLOAD_MAPPING_NOT_NETWORK_SERVER_OR_MCP_APPS",
+    "legacyContentMigration": "NOT_COMPLETE_NEW_REFERENCE_BOARD_ONLY",
+    "externalEffects": "REJECTED_BY_LOCAL_RUNTIME",
+    "crossDeviceOrProduction": "NOT_VERIFIED",
+    "modelReasoningQuality": "NOT_MEASURED",
+    "fullWCAGConformance": "NOT_CLAIMED",
+    "independentImplementationConformance": "NOT_VERIFIED"
+  }
+}

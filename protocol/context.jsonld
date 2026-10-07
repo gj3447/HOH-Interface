@@ -1,0 +1,52 @@
+{
+  "@context": {
+    "@version": 1.1,
+    "@protected": true,
+    "h": "urn:hoh:content:",
+    "schema": "https://schema.org/",
+    "id": {
+      "@id": "@id",
+      "@protected": false
+    },
+    "title": "schema:name",
+    "description": "schema:description",
+    "protocolVersion": "h:protocolVersion",
+    "descriptorRevision": "h:descriptorRevision",
+    "stateSchema": {
+      "@id": "h:stateSchema",
+      "@type": "@json"
+    },
+    "actions": {
+      "@id": "h:actions",
+      "@container": "@set",
+      "@context": {
+        "@protected": true,
+        "id": "h:actionId",
+        "inputSchema": {
+          "@id": "h:inputSchema",
+          "@type": "@json"
+        },
+        "outputSchema": {
+          "@id": "h:outputSchema",
+          "@type": "@json"
+        },
+        "effect": "h:effect",
+        "requiresConfirmation": "h:requiresConfirmation",
+        "gestureRequired": "h:gestureRequired"
+      }
+    },
+    "profiles": {
+      "@id": "h:profiles",
+      "@container": "@set"
+    },
+    "events": {
+      "@id": "h:events",
+      "@container": "@set"
+    },
+    "links": {
+      "@id": "h:links",
+      "@type": "@id",
+      "@container": "@set"
+    }
+  }
+}

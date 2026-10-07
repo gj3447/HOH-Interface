@@ -11,6 +11,35 @@ Copyright (C) 2026 **MetaHumotonic Foundation** · [AGPL-3.0-only](LICENSE)
 백엔드는 자신의 Git 이력과 미커밋 자료를 보존하는 독립 checkout이며, 이 공개 UI 저장소에
 자동 포함되지 않는다. 새 작업 경로와 실행 방법은 [작업공간 안내](docs/WORKSPACE.md)를 따른다.
 
+## Semantic content · draft 0.1
+
+**HOH의 핵심은 사람이 직접 편집하고, AI도 같은 의미·상태·행동 계약으로 조작하는 콘텐츠다.**
+새 `HOH Content Contract`는 `describe → read → invoke → subscribe` 네 가지 연산을
+정의한다. 명령은 현재 콘텐츠·상태 버전·권한·입출력 스키마를 검사한 뒤 실행하고,
+실제 결과와 실행 기록을 돌려준다.
+
+**HOH content is a semantic resource with observable state and declared actions.
+People and agents operate it through the same host-owned interface.**
+
+- [Specification](docs/CONTENT_CONTRACT.md) · [JSON Schema](protocol/descriptor.schema.json) · [Type contract](protocol/contracts.d.ts)
+- [Build a content app](docs/BUILD_CONTENT.md) · [Reference board](examples/semantic/model.js)
+- [Standards research](docs/research/SEMANTIC_CONTENT_2026-10-07.md) · [HSWM profile](docs/HSWM_CONTENT_PROFILE.md)
+- [Conformance and examples](docs/CONFORMANCE.md) · [Adoption plan](docs/ADOPTION.md) · [Provenance graph](graph/semantic-content.jsonld)
+
+```sh
+npm ci
+npm run preview -- --port 8022
+# http://127.0.0.1:8022/semantic/
+```
+
+예제 보드에서 제목·할 일을 직접 바꾸거나 옆의 채팅에 `추가: 회의 준비`, `완료 1`을
+입력한다. 다섯 가지 콘텐츠 조작 모두 같은 dispatcher를 사용한다. 삭제·초기화는
+확인 후 적용하고, 사람이 먼저 변경한 상태를 오래된 AI 제안이 덮어쓰면 거절한다.
+이 데모의 명령 해석은 **규칙 기반**이고 LLM·HSWM은 연결되지 않았다. 실제 모델은
+호스트 `planner`에 주입한다. MCP는 도구·자원 payload 매핑까지만 제공한다.
+
+공개 초안이며 업계 표준 채택·독립 인증·모든 기존 콘텐츠의 전환을 주장하지 않는다.
+
 ## 공통 화면
 
 - **콘텐츠 뷰어**: 글, 작업 앱, 게임 등 등록된 프로그램과 데이터를 같은 자리에 표시한다.
@@ -109,8 +138,17 @@ HOH Interface의 저작권 표기는 **MetaHumotonic Foundation**이다.
 GNU Affero General Public License, version 3 only로 배포한다.
 원본 MetaHumotonic Web Backend 코드의 저작자 표기는 [NOTICE](NOTICE)에 보존한다.
 전체 이용 조건은 [LICENSE](LICENSE)를 따른다.
+생성된 검증 코드의 제삼자 고지는 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)에 있다.
 
 ## 검증 기록
+
+0.3.0 / Content Contract 0.1의 [검증 기록](provenance/verification-content-0.1.json):
+패키지 검사 36개, 브라우저 검사 24개, 생성 검증기 7개 일치 확인을 통과했다.
+JSON-LD를 실제 RDF로 파싱하고 SHACL의 정상·거절 사례와 질의 6개를 검사했다.
+사람과 채팅의 동일 콘텐츠 조작, 충돌·확인·취소, 키보드와 모바일 화면을 검증했다.
+[PC](docs/screenshots/content-0.1-desktop.png),
+[모바일 반화면 채팅](docs/screenshots/content-0.1-mobile.png)을 보관한다.
+예제는 규칙 기반 명령과 메모리 상태를 사용하며, 외부 AI·HSWM·MCP 서버 연동 검증은 아니다.
 
 0.2.0의 [검증 기록](provenance/verification-interface-0.2.0.json)은 실제 브라우저의
 음성·영상 데이터 전송, 다중 시청자, 권한 거부, 화면 공유 트랙 정리와 GUI 검사를 포함한다.

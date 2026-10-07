@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:hoh:schema:invoke:0.1",
+  "type": "object",
+  "required": [
+    "contentId",
+    "descriptorRevision",
+    "actionId",
+    "input",
+    "expectedStateRevision",
+    "idempotencyKey"
+  ],
+  "properties": {
+    "contentId": {
+      "type": "string",
+      "pattern": "^[A-Za-z][A-Za-z0-9+.-]*:.+$"
+    },
+    "descriptorRevision": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "actionId": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9]*(?:[A-Z][a-z0-9]*)*$"
+    },
+    "input": {},
+    "expectedStateRevision": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "idempotencyKey": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128
+    }
+  },
+  "additionalProperties": false
+}

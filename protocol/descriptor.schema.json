@@ -1,0 +1,243 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:hoh:schema:content-descriptor:0.1",
+  "title": "HOH Content Descriptor draft 0.1",
+  "type": "object",
+  "required": [
+    "@context",
+    "id",
+    "title",
+    "description",
+    "protocolVersion",
+    "descriptorRevision",
+    "stateSchema",
+    "actions"
+  ],
+  "properties": {
+    "@context": {
+      "type": "object",
+      "required": [
+        "@version",
+        "@protected",
+        "h",
+        "schema",
+        "id",
+        "title",
+        "description",
+        "protocolVersion",
+        "descriptorRevision",
+        "stateSchema",
+        "actions",
+        "profiles",
+        "events",
+        "links"
+      ],
+      "properties": {
+        "@version": {
+          "const": 1.1
+        },
+        "@protected": {
+          "const": true
+        },
+        "h": {
+          "const": "urn:hoh:content:"
+        },
+        "schema": {
+          "const": "https://schema.org/"
+        },
+        "id": {
+          "const": {
+            "@id": "@id",
+            "@protected": false
+          }
+        },
+        "title": {
+          "const": "schema:name"
+        },
+        "description": {
+          "const": "schema:description"
+        },
+        "protocolVersion": {
+          "const": "h:protocolVersion"
+        },
+        "descriptorRevision": {
+          "const": "h:descriptorRevision"
+        },
+        "stateSchema": {
+          "const": {
+            "@id": "h:stateSchema",
+            "@type": "@json"
+          }
+        },
+        "actions": {
+          "const": {
+            "@id": "h:actions",
+            "@container": "@set",
+            "@context": {
+              "@protected": true,
+              "id": "h:actionId",
+              "inputSchema": {
+                "@id": "h:inputSchema",
+                "@type": "@json"
+              },
+              "outputSchema": {
+                "@id": "h:outputSchema",
+                "@type": "@json"
+              },
+              "effect": "h:effect",
+              "requiresConfirmation": "h:requiresConfirmation",
+              "gestureRequired": "h:gestureRequired"
+            }
+          }
+        },
+        "profiles": {
+          "const": {
+            "@id": "h:profiles",
+            "@container": "@set"
+          }
+        },
+        "events": {
+          "const": {
+            "@id": "h:events",
+            "@container": "@set"
+          }
+        },
+        "links": {
+          "const": {
+            "@id": "h:links",
+            "@type": "@id",
+            "@container": "@set"
+          }
+        }
+      },
+      "additionalProperties": true
+    },
+    "@type": {
+      "const": "h:Content"
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^[A-Za-z][A-Za-z0-9+.-]*:.+$"
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1
+    },
+    "description": {
+      "type": "string",
+      "minLength": 1
+    },
+    "protocolVersion": {
+      "const": "0.1"
+    },
+    "descriptorRevision": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "stateSchema": {
+      "anyOf": [
+        {
+          "type": "object"
+        },
+        {
+          "type": "boolean"
+        }
+      ]
+    },
+    "actions": {
+      "type": "array",
+      "maxItems": 128,
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "title",
+          "description",
+          "inputSchema",
+          "outputSchema",
+          "effect",
+          "requiresConfirmation",
+          "gestureRequired"
+        ],
+        "properties": {
+          "@id": {
+            "type": "string",
+            "pattern": "^[A-Za-z][A-Za-z0-9+.-]*:.+$"
+          },
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9]*(?:[A-Z][a-z0-9]*)*$"
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1
+          },
+          "description": {
+            "type": "string",
+            "minLength": 1
+          },
+          "inputSchema": {
+            "anyOf": [
+              {
+                "type": "object"
+              },
+              {
+                "type": "boolean"
+              }
+            ]
+          },
+          "outputSchema": {
+            "anyOf": [
+              {
+                "type": "object"
+              },
+              {
+                "type": "boolean"
+              }
+            ]
+          },
+          "effect": {
+            "enum": [
+              "read",
+              "write",
+              "external"
+            ]
+          },
+          "requiresConfirmation": {
+            "type": "boolean"
+          },
+          "gestureRequired": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "profiles": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[A-Za-z][A-Za-z0-9+.-]*:.+$"
+      },
+      "uniqueItems": true
+    },
+    "events": {
+      "type": "array",
+      "items": {
+        "enum": [
+          "stateChanged"
+        ]
+      },
+      "uniqueItems": true
+    },
+    "links": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[A-Za-z][A-Za-z0-9+.-]*:.+$"
+      },
+      "uniqueItems": true
+    }
+  },
+  "additionalProperties": false
+}

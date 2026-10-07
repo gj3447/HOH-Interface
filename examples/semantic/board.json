@@ -1,0 +1,308 @@
+{
+  "@context": {
+    "@version": 1.1,
+    "@protected": true,
+    "h": "urn:hoh:content:",
+    "schema": "https://schema.org/",
+    "id": {
+      "@id": "@id",
+      "@protected": false
+    },
+    "title": "schema:name",
+    "description": "schema:description",
+    "protocolVersion": "h:protocolVersion",
+    "descriptorRevision": "h:descriptorRevision",
+    "stateSchema": {
+      "@id": "h:stateSchema",
+      "@type": "@json"
+    },
+    "actions": {
+      "@id": "h:actions",
+      "@container": "@set",
+      "@context": {
+        "@protected": true,
+        "id": "h:actionId",
+        "inputSchema": {
+          "@id": "h:inputSchema",
+          "@type": "@json"
+        },
+        "outputSchema": {
+          "@id": "h:outputSchema",
+          "@type": "@json"
+        },
+        "effect": "h:effect",
+        "requiresConfirmation": "h:requiresConfirmation",
+        "gestureRequired": "h:gestureRequired"
+      }
+    },
+    "profiles": {
+      "@id": "h:profiles",
+      "@container": "@set"
+    },
+    "events": {
+      "@id": "h:events",
+      "@container": "@set"
+    },
+    "links": {
+      "@id": "h:links",
+      "@type": "@id",
+      "@container": "@set"
+    }
+  },
+  "@type": "h:Content",
+  "id": "urn:hoh:example:board",
+  "title": "함께 만드는 보드",
+  "description": "사람의 직접 편집과 채팅 명령이 같은 행동 계약으로 조작하는 메모리 내 예제입니다.",
+  "protocolVersion": "0.1",
+  "descriptorRevision": 1,
+  "stateSchema": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "urn:hoh:example:board:schema:state",
+    "type": "object",
+    "properties": {
+      "title": {
+        "type": "string",
+        "pattern": "^[^\\r\\n]{1,120}$"
+      },
+      "tasks": {
+        "type": "array",
+        "maxItems": 30,
+        "items": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "pattern": "^task-[0-9]+$"
+            },
+            "label": {
+              "type": "string",
+              "pattern": "^[^\\r\\n]{1,120}$"
+            },
+            "done": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "id",
+            "label",
+            "done"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "nextId": {
+        "type": "integer",
+        "minimum": 1
+      }
+    },
+    "required": [
+      "title",
+      "tasks",
+      "nextId"
+    ],
+    "additionalProperties": false
+  },
+  "actions": [
+    {
+      "@id": "urn:hoh:example:board:action:setTitle",
+      "id": "setTitle",
+      "title": "제목 변경",
+      "description": "현재 보드의 제목을 바꿉니다.",
+      "inputSchema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "urn:hoh:example:board:schema:setTitle",
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "pattern": "^[^\\r\\n]{1,120}$"
+          }
+        },
+        "required": [
+          "title"
+        ],
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "urn:hoh:example:board:schema:output",
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "pattern": "^[^\\r\\n]{1,240}$"
+          }
+        },
+        "required": [
+          "message"
+        ],
+        "additionalProperties": false
+      },
+      "effect": "write",
+      "requiresConfirmation": false,
+      "gestureRequired": false
+    },
+    {
+      "@id": "urn:hoh:example:board:action:addTask",
+      "id": "addTask",
+      "title": "할 일 추가",
+      "description": "현재 보드에 할 일을 추가합니다. 최대 30개입니다.",
+      "inputSchema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "urn:hoh:example:board:schema:addTask",
+        "type": "object",
+        "properties": {
+          "label": {
+            "type": "string",
+            "pattern": "^[^\\r\\n]{1,120}$"
+          }
+        },
+        "required": [
+          "label"
+        ],
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "urn:hoh:example:board:schema:output",
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "pattern": "^[^\\r\\n]{1,240}$"
+          }
+        },
+        "required": [
+          "message"
+        ],
+        "additionalProperties": false
+      },
+      "effect": "write",
+      "requiresConfirmation": false,
+      "gestureRequired": false
+    },
+    {
+      "@id": "urn:hoh:example:board:action:setTaskDone",
+      "id": "setTaskDone",
+      "title": "완료 상태 변경",
+      "description": "할 일 ID를 지정해 완료 또는 미완료로 바꿉니다.",
+      "inputSchema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "urn:hoh:example:board:schema:setTaskDone",
+        "type": "object",
+        "properties": {
+          "taskId": {
+            "type": "string",
+            "pattern": "^task-[0-9]+$"
+          },
+          "done": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "taskId",
+          "done"
+        ],
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "urn:hoh:example:board:schema:output",
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "pattern": "^[^\\r\\n]{1,240}$"
+          }
+        },
+        "required": [
+          "message"
+        ],
+        "additionalProperties": false
+      },
+      "effect": "write",
+      "requiresConfirmation": false,
+      "gestureRequired": false
+    },
+    {
+      "@id": "urn:hoh:example:board:action:removeTask",
+      "id": "removeTask",
+      "title": "할 일 삭제",
+      "description": "지정한 할 일을 삭제합니다.",
+      "inputSchema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "urn:hoh:example:board:schema:removeTask",
+        "type": "object",
+        "properties": {
+          "taskId": {
+            "type": "string",
+            "pattern": "^task-[0-9]+$"
+          }
+        },
+        "required": [
+          "taskId"
+        ],
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "urn:hoh:example:board:schema:output",
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "pattern": "^[^\\r\\n]{1,240}$"
+          }
+        },
+        "required": [
+          "message"
+        ],
+        "additionalProperties": false
+      },
+      "effect": "write",
+      "requiresConfirmation": true,
+      "gestureRequired": false
+    },
+    {
+      "@id": "urn:hoh:example:board:action:resetBoard",
+      "id": "resetBoard",
+      "title": "보드 초기화",
+      "description": "제목과 할 일을 처음 상태로 되돌립니다.",
+      "inputSchema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "urn:hoh:example:board:schema:resetBoard",
+        "type": "object",
+        "properties": {},
+        "required": [],
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "urn:hoh:example:board:schema:output",
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "pattern": "^[^\\r\\n]{1,240}$"
+          }
+        },
+        "required": [
+          "message"
+        ],
+        "additionalProperties": false
+      },
+      "effect": "write",
+      "requiresConfirmation": true,
+      "gestureRequired": false
+    }
+  ],
+  "profiles": [
+    "urn:hoh:profile:core:0.1"
+  ],
+  "events": [
+    "stateChanged"
+  ],
+  "links": [
+    "https://github.com/gj3447/HOH-Interface"
+  ]
+}

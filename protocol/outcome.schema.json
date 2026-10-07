@@ -1,0 +1,130 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:hoh:schema:outcome:0.1",
+  "type": "object",
+  "properties": {
+    "ok": {
+      "const": true
+    },
+    "snapshot": {
+      "type": "object",
+      "properties": {
+        "contentId": {
+          "type": "string",
+          "pattern": "^[A-Za-z][A-Za-z0-9+.-]*:.+$"
+        },
+        "descriptorRevision": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "stateRevision": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "state": {}
+      },
+      "required": [
+        "contentId",
+        "descriptorRevision",
+        "stateRevision",
+        "state"
+      ],
+      "additionalProperties": false
+    },
+    "output": {},
+    "receipt": {
+      "type": "object",
+      "properties": {
+        "contentId": {
+          "type": "string",
+          "pattern": "^[A-Za-z][A-Za-z0-9+.-]*:.+$"
+        },
+        "descriptorRevision": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "beforeStateRevision": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "stateRevision": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "actor": {
+          "type": "object",
+          "required": [
+            "principalId"
+          ],
+          "properties": {
+            "principalId": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        "actionId": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9]*(?:[A-Z][a-z0-9]*)*$"
+        },
+        "input": {},
+        "idempotencyKey": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "confirmed": {
+          "type": "boolean"
+        },
+        "userGesture": {
+          "type": "boolean"
+        },
+        "recordedAt": {
+          "type": "string",
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T"
+        },
+        "provenance": {
+          "type": "object",
+          "properties": {
+            "protocolVersion": {
+              "const": "0.1"
+            },
+            "effect": {
+              "enum": [
+                "read",
+                "write"
+              ]
+            }
+          },
+          "required": [
+            "protocolVersion",
+            "effect"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "contentId",
+        "descriptorRevision",
+        "beforeStateRevision",
+        "stateRevision",
+        "actor",
+        "actionId",
+        "input",
+        "idempotencyKey",
+        "confirmed",
+        "userGesture",
+        "recordedAt",
+        "provenance"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "ok",
+    "snapshot",
+    "output",
+    "receipt"
+  ],
+  "additionalProperties": false
+}

@@ -1,0 +1,63 @@
+{
+  "questions": [
+    {
+      "id": "source-to-protocol",
+      "question": "어느 사용자 원문이 semantic content protocol 초안으로 해석되었는가?",
+      "subject": "urn:hoh:gui:semantic-content-protocol/v0.1-draft",
+      "predicate": "http://www.w3.org/ns/prov#wasDerivedFrom",
+      "expectedTargets": ["urn:hoh:gui:source/user-hoh-semantic-content-918a2adc46488a8cf1d17209b62b659f3f30abd93ba2f4b30150d6ca64a64afc"]
+    },
+    {
+      "id": "six-requirements",
+      "question": "초안이 명시하는 여섯 가지 콘텐츠 조작 요구는 무엇인가?",
+      "subject": "urn:hoh:gui:semantic-content-protocol/v0.1-draft",
+      "predicate": "urn:hoh:gui:hasRequirement",
+      "expectedTargets": [
+        "urn:hoh:gui:requirement/semantic-identity",
+        "urn:hoh:gui:requirement/observable-state",
+        "urn:hoh:gui:requirement/discoverable-typed-actions",
+        "urn:hoh:gui:requirement/shared-human-ai-dispatch",
+        "urn:hoh:gui:requirement/outcome-provenance",
+        "urn:hoh:gui:requirement/human-control"
+      ]
+    },
+    {
+      "id": "same-dispatcher",
+      "question": "사람과 AI는 어떤 공통 실행 경로를 사용하는가?",
+      "path": [
+        { "subject": "urn:hoh:gui:semantic-content-protocol/v0.1-draft", "predicate": "urn:hoh:gui:hasInteractionModel", "expectedTargets": ["urn:hoh:gui:model/shared-dispatch"] },
+        { "subject": "urn:hoh:gui:model/shared-dispatch", "predicate": "urn:hoh:gui:hasParticipant", "expectedTargets": ["urn:hoh:gui:participant/human", "urn:hoh:gui:participant/ai-agent"] },
+        { "subject": "urn:hoh:gui:model/shared-dispatch", "predicate": "urn:hoh:gui:usesDispatcher", "expectedTargets": ["urn:hoh:gui:dispatcher/content-action"] }
+      ]
+    },
+    {
+      "id": "outcome-path",
+      "question": "공통 디스패처는 무엇을 검증하고 어떤 결과와 이벤트를 만드는가?",
+      "path": [
+        { "subject": "urn:hoh:gui:dispatcher/content-action", "predicate": "urn:hoh:gui:validatesAgainst", "expectedTargets": ["urn:hoh:gui:contract/invoke-request"] },
+        { "subject": "urn:hoh:gui:dispatcher/content-action", "predicate": "urn:hoh:gui:producesOutcome", "expectedTargets": ["urn:hoh:gui:contract/action-outcome"] },
+        { "subject": "urn:hoh:gui:dispatcher/content-action", "predicate": "urn:hoh:gui:emitsEvent", "expectedTargets": ["urn:hoh:gui:event/content-changed"] }
+      ]
+    },
+    {
+      "id": "requirement-to-contract",
+      "question": "각 요구사항은 어떤 명시적 계약으로 충족되는가?",
+      "path": [
+        { "subject": "urn:hoh:gui:requirement/semantic-identity", "predicate": "urn:hoh:gui:satisfiedBy", "expectedTargets": ["urn:hoh:gui:contract/content-descriptor"] },
+        { "subject": "urn:hoh:gui:requirement/observable-state", "predicate": "urn:hoh:gui:satisfiedBy", "expectedTargets": ["urn:hoh:gui:contract/runtime-methods"] },
+        { "subject": "urn:hoh:gui:requirement/discoverable-typed-actions", "predicate": "urn:hoh:gui:satisfiedBy", "expectedTargets": ["urn:hoh:gui:contract/content-descriptor"] },
+        { "subject": "urn:hoh:gui:requirement/shared-human-ai-dispatch", "predicate": "urn:hoh:gui:satisfiedBy", "expectedTargets": ["urn:hoh:gui:contract/invoke-request", "urn:hoh:gui:contract/runtime-methods"] },
+        { "subject": "urn:hoh:gui:requirement/outcome-provenance", "predicate": "urn:hoh:gui:satisfiedBy", "expectedTargets": ["urn:hoh:gui:contract/action-outcome"] },
+        { "subject": "urn:hoh:gui:requirement/human-control", "predicate": "urn:hoh:gui:satisfiedBy", "expectedTargets": ["urn:hoh:gui:contract/runtime-methods"] }
+      ]
+    },
+    {
+      "id": "optional-bridges",
+      "question": "HSWM 투영과 MCP 매핑은 현재 어떤 상태로 모델링되는가?",
+      "path": [
+        { "subject": "urn:hoh:gui:semantic-content-protocol/v0.1-draft", "predicate": "urn:hoh:gui:supportsProfile", "expectedTargets": ["urn:hoh:gui:profile/hswm-optional"] },
+        { "subject": "urn:hoh:gui:semantic-content-protocol/v0.1-draft", "predicate": "urn:hoh:gui:mapsToBridge", "expectedTargets": ["urn:hoh:gui:bridge/mcp-in-process"] }
+      ]
+    }
+  ]
+}

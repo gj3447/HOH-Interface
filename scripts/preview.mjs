@@ -21,7 +21,10 @@ routes.set('/feed/', 'examples/metahumotonic/index.html');
 routes.set('/realtime/', 'examples/realtime/index.html');
 routes.set('/realtime/app.js', 'examples/realtime/app.js');
 routes.set('/realtime/local-webrtc.js', 'adapters/local-webrtc.js');
-const types = { html: 'text/html; charset=utf-8', js: 'text/javascript; charset=utf-8', css: 'text/css; charset=utf-8', svg: 'image/svg+xml', png: 'image/png', webmanifest: 'application/manifest+json' };
+routes.set('/semantic/', 'examples/semantic/index.html');
+for (const file of ['app.js', 'model.js', 'validators.js', 'style.css', 'board.json']) routes.set(`/semantic/${file}`, `examples/semantic/${file}`);
+for (const file of ['runtime.js', 'agent-session.js', 'mcp-mapping.js', 'outcome.schema.json']) routes.set(`/protocol/${file}`, `protocol/${file}`);
+const types = { html: 'text/html; charset=utf-8', js: 'text/javascript; charset=utf-8', json: 'application/json; charset=utf-8', css: 'text/css; charset=utf-8', svg: 'image/svg+xml', png: 'image/png', webmanifest: 'application/manifest+json' };
 const unavailable = response => { response.writeHead(503, { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' }); response.end(JSON.stringify({ reason: 'HOH 미리보기 백엔드가 연결되지 않았습니다.' })); };
 const server = createServer(async (request, response) => {
   try {
@@ -41,7 +44,7 @@ const server = createServer(async (request, response) => {
       request.on('aborted', () => upstream.destroy());
       request.pipe(upstream); return;
     }
-    if (url.pathname === '/' || url.pathname === '/feed' || url.pathname === '/realtime') { response.writeHead(302, { Location: url.pathname === '/realtime' ? '/realtime/' : '/feed/' }); response.end(); return; }
+    if (url.pathname === '/' || ['/feed', '/realtime', '/semantic'].includes(url.pathname)) { response.writeHead(302, { Location: url.pathname === '/' ? '/feed/' : url.pathname + '/' }); response.end(); return; }
     const source = routes.get(url.pathname);
     if (!source || request.method !== 'GET') { response.writeHead(404); response.end(); return; }
     const bytes = await readFile(resolve(root, source));

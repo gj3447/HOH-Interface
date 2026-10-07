@@ -1,0 +1,45 @@
+@prefix h: <urn:hoh:gui:> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+h:SemanticContentProtocolShape a sh:NodeShape ;
+  sh:targetClass h:SemanticContentProtocol ;
+  sh:property [ sh:path h:authority ; sh:hasValue "SECONDARY_AI" ; sh:minCount 1 ; sh:maxCount 1 ] ;
+  sh:property [ sh:path h:status ; sh:hasValue "DRAFT_NOT_STANDARD" ; sh:minCount 1 ; sh:maxCount 1 ] ;
+  sh:property [ sh:path prov:wasDerivedFrom ; sh:class prov:Entity ; sh:minCount 1 ; sh:maxCount 1 ] ;
+  sh:property [ sh:path h:hasRequirement ; sh:class h:Requirement ; sh:minCount 6 ; sh:maxCount 6 ] ;
+  sh:property [ sh:path h:definesContract ; sh:class h:SemanticContentContract ; sh:minCount 4 ; sh:maxCount 4 ] ;
+  sh:property [ sh:path h:hasInteractionModel ; sh:class h:InteractionModel ; sh:minCount 1 ; sh:maxCount 1 ] ;
+  sh:property [ sh:path h:supportsProfile ; sh:class h:SemanticProfile ; sh:minCount 1 ; sh:maxCount 1 ] ;
+  sh:property [ sh:path h:mapsToBridge ; sh:class h:BridgeMapping ; sh:minCount 1 ; sh:maxCount 1 ] ;
+  sh:property [ sh:path h:hasArtifact ; sh:class prov:Entity ; sh:minCount 11 ; sh:maxCount 11 ] .
+
+h:SharedDispatchShape a sh:NodeShape ;
+  sh:targetNode <urn:hoh:gui:model/shared-dispatch> ;
+  sh:property [ sh:path h:hasParticipant ; sh:class h:Participant ; sh:minCount 2 ; sh:maxCount 2 ] ;
+  sh:property [ sh:path h:usesDispatcher ; sh:class h:ActionDispatcher ; sh:minCount 1 ; sh:maxCount 1 ] .
+
+h:ActionDispatcherShape a sh:NodeShape ;
+  sh:targetClass h:ActionDispatcher ;
+  sh:property [ sh:path h:validatesAgainst ; sh:class h:SemanticContentContract ; sh:minCount 1 ; sh:maxCount 1 ] ;
+  sh:property [ sh:path h:producesOutcome ; sh:class h:SemanticContentContract ; sh:minCount 1 ; sh:maxCount 1 ] ;
+  sh:property [ sh:path h:emitsEvent ; sh:class h:ContentEvent ; sh:minCount 1 ] .
+
+h:InvokeRequestContractShape a sh:NodeShape ;
+  sh:targetNode <urn:hoh:gui:contract/invoke-request> ;
+  sh:property [ sh:path h:fields ; sh:minCount 6 ; sh:maxCount 6 ] .
+
+h:RequirementSatisfactionShape a sh:NodeShape ;
+  sh:targetClass h:Requirement ;
+  sh:property [ sh:path h:satisfiedBy ; sh:class h:SemanticContentContract ; sh:minCount 1 ] ;
+  sh:property [ sh:path h:satisfactionMeaning ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] .
+
+h:ArtifactShape a sh:NodeShape ;
+  sh:targetSubjectsOf h:implementationStatus ;
+  sh:property [ sh:path h:path ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ] ;
+  sh:or (
+    [ sh:property [ sh:path h:implementationStatus ; sh:hasValue "PLANNED_ARTIFACT_UNPINNED" ; sh:minCount 1 ; sh:maxCount 1 ] ]
+    [ sh:property [ sh:path h:implementationStatus ; sh:hasValue "IMPLEMENTED_ARTIFACT_HASH_PINNED" ; sh:minCount 1 ; sh:maxCount 1 ] ;
+      sh:property [ sh:path h:sha256 ; sh:pattern "^[0-9a-f]{64}$" ; sh:minCount 1 ; sh:maxCount 1 ] ]
+  ) .

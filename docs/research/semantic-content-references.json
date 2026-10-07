@@ -1,0 +1,169 @@
+{
+  "generatedAt": "2026-10-07",
+  "scope": "Research inputs for an HOH semantic content-interface proposal; sources are not endorsements or execution authority.",
+  "sources": [
+    {
+      "id": "mcp-versioning-2026-07-28",
+      "title": "Model Context Protocol — Versioning",
+      "url": "https://modelcontextprotocol.io/docs/2026-07-28/learn/versioning",
+      "publisher": "Model Context Protocol",
+      "version": "2026-07-28",
+      "status": "Current MCP revision; accessed page identifies 2025-11-25 and earlier as handshake compatibility revisions",
+      "accessed": "2026-10-07",
+      "use": "Per-request protocol version metadata and server/discover mapping."
+    },
+    {
+      "id": "mcp-tools-2026-07-28",
+      "title": "Model Context Protocol — Tools",
+      "url": "https://modelcontextprotocol.io/specification/2026-07-28/server/tools",
+      "publisher": "Model Context Protocol",
+      "version": "2026-07-28",
+      "status": "Current specification page",
+      "accessed": "2026-10-07",
+      "use": "Discoverable tools, JSON Schema I/O, per-request metadata, human-in-the-loop guidance."
+    },
+    {
+      "id": "mcp-resources-2025-11-25",
+      "title": "Model Context Protocol — Resources",
+      "url": "https://modelcontextprotocol.io/specification/2025-11-25/server/resources",
+      "publisher": "Model Context Protocol",
+      "version": "2025-11-25",
+      "status": "Final compatibility revision",
+      "accessed": "2026-10-07",
+      "use": "URI-identified resources, subscriptions and resource templates."
+    },
+    {
+      "id": "mcp-apps",
+      "title": "MCP Apps",
+      "url": "https://modelcontextprotocol.io/extensions/apps/overview",
+      "publisher": "Model Context Protocol",
+      "status": "Official extension documentation",
+      "accessed": "2026-10-07",
+      "use": "Optional embedded interactive-renderer integration."
+    },
+    {
+      "id": "wot-td-1-1",
+      "title": "Web of Things (WoT) Thing Description 1.1",
+      "url": "https://www.w3.org/TR/wot-thing-description11/",
+      "publisher": "W3C",
+      "version": "1.1",
+      "status": "W3C Recommendation",
+      "accessed": "2026-10-07",
+      "use": "Properties/actions/events affordance model and JSON-LD extension pattern."
+    },
+    {
+      "id": "json-ld-1-1",
+      "title": "JSON-LD 1.1",
+      "url": "https://www.w3.org/TR/json-ld11/",
+      "publisher": "W3C",
+      "version": "1.1 (Recommendation 2020-07-16)",
+      "status": "W3C Recommendation",
+      "accessed": "2026-10-07",
+      "use": "Linked-data serialization and stable vocabulary/context use."
+    },
+    {
+      "id": "json-schema-2020-12",
+      "title": "JSON Schema Core 2020-12",
+      "url": "https://json-schema.org/draft/2020-12/json-schema-core",
+      "publisher": "JSON Schema project",
+      "version": "2020-12",
+      "status": "Published JSON Schema release; linked Internet-Draft is expired and is not an IETF RFC",
+      "accessed": "2026-10-07",
+      "use": "Content and action input/output validation."
+    },
+    {
+      "id": "shacl",
+      "title": "Shapes Constraint Language (SHACL)",
+      "url": "https://www.w3.org/TR/shacl/",
+      "publisher": "W3C",
+      "status": "W3C Recommendation",
+      "accessed": "2026-10-07",
+      "use": "Optional RDF graph-shape validation."
+    },
+    {
+      "id": "prov-o",
+      "title": "PROV-O: The PROV Ontology",
+      "url": "https://www.w3.org/TR/prov-o/",
+      "publisher": "W3C",
+      "status": "W3C Recommendation",
+      "accessed": "2026-10-07",
+      "use": "Execution and evidence provenance vocabulary."
+    },
+    {
+      "id": "a2ui-v1",
+      "title": "A2UI Protocol v1.0",
+      "url": "https://github.com/a2ui-project/a2ui/blob/main/specification/v1_0/docs/a2ui_protocol.md",
+      "publisher": "a2ui-project",
+      "version": "1.0",
+      "status": "Candidate; repository navigation lists v0.9.1 as current",
+      "accessed": "2026-10-07",
+      "use": "Optional streamed, schema-validated generative UI binding."
+    },
+    {
+      "id": "ag-ui",
+      "title": "AG-UI protocol repository",
+      "url": "https://github.com/ag-ui-protocol/ag-ui",
+      "publisher": "AG-UI project",
+      "status": "Project protocol; no standards-body status assumed",
+      "accessed": "2026-10-07",
+      "use": "Optional agent-to-frontend transport research."
+    },
+    {
+      "id": "webmcp-draft-2026-10-02",
+      "title": "WebMCP",
+      "url": "https://webmachinelearning.github.io/webmcp/",
+      "publisher": "Web Machine Learning Community Group",
+      "version": "Draft Community Group Report, 2026-10-02",
+      "status": "Explicitly not a W3C Standard and not on the W3C Standards Track",
+      "accessed": "2026-10-07",
+      "use": "Optional browser-native tool-adapter research; not an HCC core dependency."
+    },
+    {
+      "id": "chrome-webmcp-early-preview",
+      "title": "WebMCP is available for early preview",
+      "url": "https://developer.chrome.com/blog/webmcp-epp",
+      "publisher": "Chrome for Developers",
+      "version": "Published 2026-02-10",
+      "status": "Early preview program announcement",
+      "accessed": "2026-10-07",
+      "use": "Browser deployment maturity boundary for an optional adapter."
+    },
+    {
+      "id": "arm-systemready",
+      "title": "Arm SystemReady Compliance Program",
+      "url": "https://www.arm.com/architecture/system-architectures/systemready-compliance-program",
+      "publisher": "Arm",
+      "status": "Arm compliance program",
+      "accessed": "2026-10-07",
+      "use": "Analogy for profiles, requirements, self-checking suites and declarations; not a HOH certification."
+    },
+    {
+      "id": "hswm-constitution-local",
+      "title": "HSWM Constitution — living token neural world model",
+      "publisher": "HSWM repository",
+      "revision": "HSWM git f2de5c0c830fd9e5d8642d6bf41f01445cdc0518",
+      "sha256": "cf43bc034a64d8db54b3444b7eba9ea02c8c5d9e252e14f157637401c68c3373",
+      "authority": "MIXED_EXPLICIT: USER_PRIMARY target core plus SECONDARY_AI interpretation/formalization",
+      "status": "Canonical target identity with UNJUDGED scientific state; fixed H/W/A/F/Π partition retired by current canon",
+      "accessed": "2026-10-07",
+      "use": "Declared source for optional HSWM projection boundary only; no live query or HSWM execution was performed.",
+      "resourceId": "sym:Repository:hswm",
+      "relativePath": "docs/canon/HSWM_CONSTITUTION_2026-08-20.md",
+      "sourceLocation": "Selected local HSWM checkout; local root is not published"
+    },
+    {
+      "id": "hswm-user-primary-hypergraph-neural-ai-local",
+      "title": "HSWM basic identity — one hypergraph neural AI using LLM computation",
+      "publisher": "HSWM repository",
+      "revision": "HSWM git f2de5c0c830fd9e5d8642d6bf41f01445cdc0518",
+      "sha256": "007344028c946737fa53033cdaf43e14a2850c5d4c4e2ac4e72c940c0c487ce6",
+      "authority": "USER_PRIMARY_TARGET_IDENTITY_REAFFIRMATION; detailed semantic linkage is separately labeled SECONDARY_AI",
+      "status": "Declared canonical source, not a live HSWM query result",
+      "accessed": "2026-10-07",
+      "use": "Source authority/provenance boundary for optional HSWM projection only.",
+      "resourceId": "sym:Repository:hswm",
+      "relativePath": "docs/canon/USER_PRIMARY_HSWM_HYPERGRAPH_NEURAL_AI_2026-09-14.md",
+      "sourceLocation": "Selected local HSWM checkout; local root is not published"
+    }
+  ]
+}

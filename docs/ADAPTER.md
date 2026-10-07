@@ -1,5 +1,11 @@
 # HOH Interface 호스트 연결 계약
 
+시맨틱 콘텐츠의 공통 조작 계약은 [HOH Content Contract](CONTENT_CONTRACT.md)를 따른다.
+`renderers.SEMANTIC` 예제는 기존 렌더러 확장 지점에서 동작하며, 직접 편집과 `chat()`의
+호스트 planner가 같은 `runtime.invoke()`를 호출한다. `saveState()`를 AI에 무제한
+노출하는 방식으로 바꾸지 않는다. 기존 어댑터는 계속 사용할 수 있지만 새 계약의
+적합성이 자동으로 부여되지는 않는다.
+
 HOH Interface는 한 문서의 전체 화면 셸이다. 동일 문서에 여러 인스턴스를 동시에
 배치하는 위젯 계약은 아니다. 새 인스턴스를 장착하기 전 기존 `destroy()`를 호출한다.
 

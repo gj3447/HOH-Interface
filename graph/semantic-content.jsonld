@@ -1,0 +1,672 @@
+{
+  "@context": {
+    "h": "urn:hoh:gui:",
+    "prov": "http://www.w3.org/ns/prov#",
+    "skos": "http://www.w3.org/2004/02/skos/core#",
+    "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+    "rdfs": "http://www.w3.org/2000/01/rdf-schema#"
+  },
+  "@graph": [
+    {
+      "@id": "urn:hoh:gui:source/user-hoh-semantic-content-918a2adc46488a8cf1d17209b62b659f3f30abd93ba2f4b30150d6ca64a64afc",
+      "@type": "prov:Entity",
+      "h:authority": "USER_PRIMARY",
+      "h:path": "sources/user-hoh-semantic-content-2026-10-07.txt",
+      "h:sha256": "918a2adc46488a8cf1d17209b62b659f3f30abd93ba2f4b30150d6ca64a64afc",
+      "h:recordedAt": "2026-10-07"
+    },
+    {
+      "@id": "urn:hoh:gui:semantic-content-protocol/v0.1-draft",
+      "@type": "h:SemanticContentProtocol",
+      "skos:prefLabel": "HOH Semantic Content Protocol 0.1 draft",
+      "h:authority": "SECONDARY_AI",
+      "h:origin": "USER_EXPLICIT_REQUIREMENT_INTERPRETATION",
+      "h:status": "DRAFT_NOT_STANDARD",
+      "h:description": "콘텐츠 기술자와 동일 디스패처를 통해 의미·상태·조작을 기계가 읽게 하는 HOH 인터페이스 초안. 사람과 AI는 같은 권한·검증·결과 경로를 사용하며 actor는 호스트 문맥에서만 주입된다.",
+      "h:extends": {
+        "@id": "urn:hoh:gui:hoh-ui"
+      },
+      "prov:wasDerivedFrom": {
+        "@id": "urn:hoh:gui:source/user-hoh-semantic-content-918a2adc46488a8cf1d17209b62b659f3f30abd93ba2f4b30150d6ca64a64afc"
+      },
+      "h:hasRequirement": [
+        {
+          "@id": "urn:hoh:gui:requirement/semantic-identity"
+        },
+        {
+          "@id": "urn:hoh:gui:requirement/observable-state"
+        },
+        {
+          "@id": "urn:hoh:gui:requirement/discoverable-typed-actions"
+        },
+        {
+          "@id": "urn:hoh:gui:requirement/shared-human-ai-dispatch"
+        },
+        {
+          "@id": "urn:hoh:gui:requirement/outcome-provenance"
+        },
+        {
+          "@id": "urn:hoh:gui:requirement/human-control"
+        }
+      ],
+      "h:definesContract": [
+        {
+          "@id": "urn:hoh:gui:contract/content-descriptor"
+        },
+        {
+          "@id": "urn:hoh:gui:contract/invoke-request"
+        },
+        {
+          "@id": "urn:hoh:gui:contract/runtime-methods"
+        },
+        {
+          "@id": "urn:hoh:gui:contract/action-outcome"
+        }
+      ],
+      "h:hasInteractionModel": {
+        "@id": "urn:hoh:gui:model/shared-dispatch"
+      },
+      "h:supportsProfile": {
+        "@id": "urn:hoh:gui:profile/hswm-optional"
+      },
+      "h:mapsToBridge": {
+        "@id": "urn:hoh:gui:bridge/mcp-in-process"
+      },
+      "h:hasArtifact": [
+        {
+          "@id": "urn:hoh:gui:artifact/semantic-runtime"
+        },
+        {
+          "@id": "urn:hoh:gui:artifact/semantic-contract-types"
+        },
+        {
+          "@id": "urn:hoh:gui:artifact/semantic-descriptor-schema"
+        },
+        {
+          "@id": "urn:hoh:gui:artifact/semantic-invoke-schema"
+        },
+        {
+          "@id": "urn:hoh:gui:artifact/semantic-context"
+        },
+        {
+          "@id": "urn:hoh:gui:artifact/semantic-mcp-mapping"
+        },
+        {
+          "@id": "urn:hoh:gui:artifact/semantic-board-model"
+        },
+        {
+          "@id": "urn:hoh:gui:artifact/semantic-board"
+        },
+        {
+          "@id": "urn:hoh:gui:artifact/semantic-demo-app"
+        },
+        {
+          "@id": "urn:hoh:gui:artifact/semantic-agent-session"
+        },
+        {
+          "@id": "urn:hoh:gui:artifact/semantic-outcome-schema"
+        }
+      ]
+    },
+    {
+      "@id": "urn:hoh:gui:requirement/semantic-identity",
+      "@type": "h:Requirement",
+      "h:authority": "SECONDARY_AI",
+      "skos:prefLabel": "stable semantic identity and meaning",
+      "h:description": "콘텐츠마다 안정 식별자, 제목·설명, 프로토콜 버전과 descriptor revision을 제공한다.",
+      "h:satisfiedBy": {
+        "@id": "urn:hoh:gui:contract/content-descriptor"
+      },
+      "h:satisfactionMeaning": "descriptor identity, description and revision fields"
+    },
+    {
+      "@id": "urn:hoh:gui:requirement/observable-state",
+      "@type": "h:Requirement",
+      "h:authority": "SECONDARY_AI",
+      "skos:prefLabel": "observable state",
+      "h:description": "read와 subscribe로 콘텐츠 상태 및 state revision을 명시적으로 관찰 가능하게 한다.",
+      "h:satisfiedBy": {
+        "@id": "urn:hoh:gui:contract/runtime-methods"
+      },
+      "h:satisfactionMeaning": "read and subscribe methods expose current state and changes"
+    },
+    {
+      "@id": "urn:hoh:gui:requirement/discoverable-typed-actions",
+      "@type": "h:Requirement",
+      "h:authority": "SECONDARY_AI",
+      "skos:prefLabel": "discoverable typed actions",
+      "h:description": "조작 이름, 입력·출력 스키마, effect(read/write/external), 확인과 사용자 제스처 요구를 선언하여 발견 가능하게 한다.",
+      "h:satisfiedBy": {
+        "@id": "urn:hoh:gui:contract/content-descriptor"
+      },
+      "h:satisfactionMeaning": "descriptor actions declare typed inputs, outputs and effect constraints"
+    },
+    {
+      "@id": "urn:hoh:gui:requirement/shared-human-ai-dispatch",
+      "@type": "h:Requirement",
+      "h:authority": "SECONDARY_AI",
+      "skos:prefLabel": "shared human and AI dispatch",
+      "h:description": "사람 UI와 AI 에이전트는 동일한 invoke 디스패처·검증·권한 정책을 지나며 actor는 JSON 입력이 아니라 신뢰된 호스트 문맥에서만 공급한다.",
+      "h:satisfiedBy": [
+        {
+          "@id": "urn:hoh:gui:contract/invoke-request"
+        },
+        {
+          "@id": "urn:hoh:gui:contract/runtime-methods"
+        }
+      ],
+      "h:satisfactionMeaning": "shared request envelope plus host-bound runtime dispatch"
+    },
+    {
+      "@id": "urn:hoh:gui:requirement/outcome-provenance",
+      "@type": "h:Requirement",
+      "h:authority": "SECONDARY_AI",
+      "skos:prefLabel": "outcome and provenance",
+      "h:description": "각 실행은 idempotency key, 결과, 상태 revision, 발생 이벤트 및 호스트 출처를 남긴다.",
+      "h:satisfiedBy": {
+        "@id": "urn:hoh:gui:contract/action-outcome"
+      },
+      "h:satisfactionMeaning": "outcome returns snapshot, output and receipt"
+    },
+    {
+      "@id": "urn:hoh:gui:requirement/human-control",
+      "@type": "h:Requirement",
+      "h:authority": "SECONDARY_AI",
+      "skos:prefLabel": "human control",
+      "h:description": "사람은 같은 콘텐츠를 직접 보고, 허용된 조작을 수행하고, 확인이 필요한 실행을 승인한다.",
+      "h:satisfiedBy": {
+        "@id": "urn:hoh:gui:contract/runtime-methods"
+      },
+      "h:satisfactionMeaning": "host uses the same methods and confirmation policy for direct interaction"
+    },
+    {
+      "@id": "urn:hoh:gui:contract/content-descriptor",
+      "@type": "h:SemanticContentContract",
+      "h:authority": "SECONDARY_AI",
+      "h:fields": [
+        "@context",
+        "@type",
+        "id",
+        "title",
+        "description",
+        "protocolVersion",
+        "descriptorRevision",
+        "stateSchema",
+        "actions",
+        "profiles",
+        "events",
+        "links"
+      ],
+      "h:description": "descriptor.schema.json의 콘텐츠 의미·상태 스키마·발견 가능한 조작 계약."
+    },
+    {
+      "@id": "urn:hoh:gui:contract/invoke-request",
+      "@type": "h:SemanticContentContract",
+      "h:authority": "SECONDARY_AI",
+      "h:fields": [
+        "contentId",
+        "descriptorRevision",
+        "actionId",
+        "input",
+        "expectedStateRevision",
+        "idempotencyKey"
+      ],
+      "h:description": "invoke.schema.json의 공통 JSON 명령 계약. actor는 이 JSON에 포함되지 않고 호스트 신뢰 문맥에서만 공급된다."
+    },
+    {
+      "@id": "urn:hoh:gui:contract/runtime-methods",
+      "@type": "h:SemanticContentContract",
+      "h:authority": "SECONDARY_AI",
+      "h:fields": [
+        "describe",
+        "read",
+        "invoke",
+        "subscribe"
+      ],
+      "h:description": "runtime.js가 제공하는 네 가지 메서드와 host-bound actor 문맥의 계약."
+    },
+    {
+      "@id": "urn:hoh:gui:contract/action-outcome",
+      "@type": "h:SemanticContentContract",
+      "h:authority": "SECONDARY_AI",
+      "h:fields": [
+        "ok",
+        "snapshot",
+        "output",
+        "receipt"
+      ],
+      "h:description": "invoke가 반환하는 상태 snapshot, action output 및 provenance·idempotency 정보를 담은 receipt 계약."
+    },
+    {
+      "@id": "urn:hoh:gui:model/shared-dispatch",
+      "@type": "h:InteractionModel",
+      "h:authority": "SECONDARY_AI",
+      "h:hasParticipant": [
+        {
+          "@id": "urn:hoh:gui:participant/human"
+        },
+        {
+          "@id": "urn:hoh:gui:participant/ai-agent"
+        }
+      ],
+      "h:usesDispatcher": {
+        "@id": "urn:hoh:gui:dispatcher/content-action"
+      },
+      "h:description": "UI 이벤트와 에이전트 툴 호출이 동일한 조작 정의와 결과를 공유한다."
+    },
+    {
+      "@id": "urn:hoh:gui:participant/human",
+      "@type": "h:HumanParticipant",
+      "h:authority": "SECONDARY_AI"
+    },
+    {
+      "@id": "urn:hoh:gui:participant/ai-agent",
+      "@type": "h:AgentParticipant",
+      "h:authority": "SECONDARY_AI"
+    },
+    {
+      "@id": "urn:hoh:gui:dispatcher/content-action",
+      "@type": "h:ActionDispatcher",
+      "h:authority": "SECONDARY_AI",
+      "h:validatesAgainst": {
+        "@id": "urn:hoh:gui:contract/invoke-request"
+      },
+      "h:producesOutcome": {
+        "@id": "urn:hoh:gui:contract/action-outcome"
+      },
+      "h:emitsEvent": {
+        "@id": "urn:hoh:gui:event/content-changed"
+      },
+      "h:description": "신뢰된 host actor 문맥으로 권한·확인·입력·descriptor revision·expected state revision·idempotency key를 검사한 후 콘텐츠 어댑터를 호출한다."
+    },
+    {
+      "@id": "urn:hoh:gui:event/content-changed",
+      "@type": "h:ContentEvent",
+      "h:authority": "SECONDARY_AI",
+      "skos:prefLabel": "content.changed"
+    },
+    {
+      "@id": "urn:hoh:gui:profile/hswm-optional",
+      "@type": "h:SemanticProfile",
+      "h:authority": "SECONDARY_AI",
+      "h:status": "OPTIONAL_PROJECTION_NOT_CONNECTED",
+      "h:description": "HSWM/표준 그래프 온톨로지로 콘텐츠 의미와 결과 출처를 투영할 수 있는 선택 프로파일. HSWM 실행이나 원격 연결을 뜻하지 않는다."
+    },
+    {
+      "@id": "urn:hoh:gui:bridge/mcp-in-process",
+      "@type": "h:BridgeMapping",
+      "h:authority": "SECONDARY_AI",
+      "h:status": "IMPLEMENTED_IN_PROCESS_MAPPING_NOT_MCP_SERVER",
+      "h:mapsConcept": "declared non-gesture, non-external typed action to in-process tool; descriptor and state to in-process resource",
+      "h:description": "protocol/mcp-mapping.js의 순수 in-process 자원·도구 페이로드 매핑이다. MCP transport, 인증 서버, Apps runtime 또는 규격 호환성을 주장하지 않는다."
+    },
+    {
+      "@id": "urn:hoh:gui:artifact/semantic-runtime",
+      "@type": "prov:Entity",
+      "h:authority": "APPLICATION_OBSERVATION",
+      "h:path": "protocol/runtime.js",
+      "h:implementationStatus": "IMPLEMENTED_ARTIFACT_HASH_PINNED",
+      "h:realizesContract": [
+        {
+          "@id": "urn:hoh:gui:contract/content-descriptor"
+        },
+        {
+          "@id": "urn:hoh:gui:contract/invoke-request"
+        },
+        {
+          "@id": "urn:hoh:gui:contract/runtime-methods"
+        },
+        {
+          "@id": "urn:hoh:gui:contract/action-outcome"
+        }
+      ],
+      "h:sha256": "e5dad886af72214c55457005180a09d1d96c97f8c46d6b76e0e2b8d27b68e9fb",
+      "h:validatedBy": {
+        "@id": "urn:hoh:gui:verification/semantic-content-0.1-2026-10-07"
+      }
+    },
+    {
+      "@id": "urn:hoh:gui:artifact/semantic-contract-types",
+      "@type": "prov:Entity",
+      "h:authority": "APPLICATION_OBSERVATION",
+      "h:path": "protocol/contracts.d.ts",
+      "h:implementationStatus": "IMPLEMENTED_ARTIFACT_HASH_PINNED",
+      "h:realizesContract": [
+        {
+          "@id": "urn:hoh:gui:contract/content-descriptor"
+        },
+        {
+          "@id": "urn:hoh:gui:contract/invoke-request"
+        },
+        {
+          "@id": "urn:hoh:gui:contract/runtime-methods"
+        },
+        {
+          "@id": "urn:hoh:gui:contract/action-outcome"
+        }
+      ],
+      "h:sha256": "a9db4a27d4091493ca8c8326d60f31a3442330aa3b0efe57255e49a172289d9d",
+      "h:validatedBy": {
+        "@id": "urn:hoh:gui:verification/semantic-content-0.1-2026-10-07"
+      }
+    },
+    {
+      "@id": "urn:hoh:gui:artifact/semantic-descriptor-schema",
+      "@type": "prov:Entity",
+      "h:authority": "APPLICATION_OBSERVATION",
+      "h:path": "protocol/descriptor.schema.json",
+      "h:implementationStatus": "IMPLEMENTED_ARTIFACT_HASH_PINNED",
+      "h:realizesContract": {
+        "@id": "urn:hoh:gui:contract/content-descriptor"
+      },
+      "h:sha256": "389872cce3d761cc393637073b788c67f8b97e2d0671abe0996e90823312ec84",
+      "h:validatedBy": {
+        "@id": "urn:hoh:gui:verification/semantic-content-0.1-2026-10-07"
+      }
+    },
+    {
+      "@id": "urn:hoh:gui:artifact/semantic-invoke-schema",
+      "@type": "prov:Entity",
+      "h:authority": "APPLICATION_OBSERVATION",
+      "h:path": "protocol/invoke.schema.json",
+      "h:implementationStatus": "IMPLEMENTED_ARTIFACT_HASH_PINNED",
+      "h:realizesContract": {
+        "@id": "urn:hoh:gui:contract/invoke-request"
+      },
+      "h:sha256": "5232b90db41ba5075fea7578812cc0a16c5f9e567f4558e8631003174b3712a1",
+      "h:validatedBy": {
+        "@id": "urn:hoh:gui:verification/semantic-content-0.1-2026-10-07"
+      }
+    },
+    {
+      "@id": "urn:hoh:gui:artifact/semantic-context",
+      "@type": "prov:Entity",
+      "h:authority": "APPLICATION_OBSERVATION",
+      "h:path": "protocol/context.jsonld",
+      "h:implementationStatus": "IMPLEMENTED_ARTIFACT_HASH_PINNED",
+      "h:realizesContract": {
+        "@id": "urn:hoh:gui:contract/content-descriptor"
+      },
+      "h:sha256": "7a263fa812d29cba1fdbe037cd9a295a2c3803dcc4d8346f6ef78f47d0056612",
+      "h:validatedBy": {
+        "@id": "urn:hoh:gui:verification/semantic-content-0.1-2026-10-07"
+      }
+    },
+    {
+      "@id": "urn:hoh:gui:artifact/semantic-mcp-mapping",
+      "@type": "prov:Entity",
+      "h:authority": "APPLICATION_OBSERVATION",
+      "h:path": "protocol/mcp-mapping.js",
+      "h:implementationStatus": "IMPLEMENTED_ARTIFACT_HASH_PINNED",
+      "h:realizesContract": [
+        {
+          "@id": "urn:hoh:gui:contract/invoke-request"
+        },
+        {
+          "@id": "urn:hoh:gui:contract/runtime-methods"
+        }
+      ],
+      "h:sha256": "7f4e2ee72444829b0161881761ae3792b726a2c2060f1463df2e0e4773ce1fc0",
+      "h:validatedBy": {
+        "@id": "urn:hoh:gui:verification/semantic-content-0.1-2026-10-07"
+      }
+    },
+    {
+      "@id": "urn:hoh:gui:artifact/semantic-board-model",
+      "@type": "prov:Entity",
+      "h:authority": "APPLICATION_OBSERVATION",
+      "h:path": "examples/semantic/model.js",
+      "h:implementationStatus": "IMPLEMENTED_ARTIFACT_HASH_PINNED",
+      "h:realizesContract": {
+        "@id": "urn:hoh:gui:contract/runtime-methods"
+      },
+      "h:sha256": "0c503fbb59560110199b49314bfacdee90908c233ddad704118112cc99848599",
+      "h:validatedBy": {
+        "@id": "urn:hoh:gui:verification/semantic-content-0.1-2026-10-07"
+      }
+    },
+    {
+      "@id": "urn:hoh:gui:artifact/semantic-board",
+      "@type": "prov:Entity",
+      "h:authority": "APPLICATION_OBSERVATION",
+      "h:path": "examples/semantic/board.json",
+      "h:implementationStatus": "IMPLEMENTED_ARTIFACT_HASH_PINNED",
+      "h:realizesContract": {
+        "@id": "urn:hoh:gui:contract/content-descriptor"
+      },
+      "h:sha256": "e27a4e672890576d9332c4076be675b82a040f25af3372d83f90acef3d4bc21c",
+      "h:validatedBy": {
+        "@id": "urn:hoh:gui:verification/semantic-content-0.1-2026-10-07"
+      }
+    },
+    {
+      "@id": "urn:hoh:gui:artifact/semantic-demo-app",
+      "@type": "prov:Entity",
+      "h:authority": "APPLICATION_OBSERVATION",
+      "h:path": "examples/semantic/app.js",
+      "h:implementationStatus": "IMPLEMENTED_ARTIFACT_HASH_PINNED",
+      "h:realizesContract": {
+        "@id": "urn:hoh:gui:contract/runtime-methods"
+      },
+      "h:sha256": "05a76c8795b4d90b25a91a2ca485f4059a97328bedc194c72d1ad7fd534e4ddc",
+      "h:validatedBy": {
+        "@id": "urn:hoh:gui:verification/semantic-content-0.1-2026-10-07"
+      }
+    },
+    {
+      "@id": "urn:hoh:gui:artifact/semantic-agent-session",
+      "@type": "prov:Entity",
+      "h:authority": "APPLICATION_OBSERVATION",
+      "h:path": "protocol/agent-session.js",
+      "h:implementationStatus": "IMPLEMENTED_ARTIFACT_HASH_PINNED",
+      "h:realizesContract": [
+        {
+          "@id": "urn:hoh:gui:contract/invoke-request"
+        },
+        {
+          "@id": "urn:hoh:gui:contract/action-outcome"
+        }
+      ],
+      "h:sha256": "461ceee3371d1da34e0c806b92dacacdf2345fd337f174c1d404ffcccff94b6c",
+      "h:validatedBy": {
+        "@id": "urn:hoh:gui:verification/semantic-content-0.1-2026-10-07"
+      }
+    },
+    {
+      "@id": "urn:hoh:gui:hasRequirement",
+      "@type": "rdf:Property",
+      "rdfs:domain": {
+        "@id": "urn:hoh:gui:SemanticContentProtocol"
+      },
+      "rdfs:range": {
+        "@id": "urn:hoh:gui:Requirement"
+      },
+      "rdfs:comment": "Semantic protocol draft to its explicit design requirement; one-to-many."
+    },
+    {
+      "@id": "urn:hoh:gui:definesContract",
+      "@type": "rdf:Property",
+      "rdfs:domain": {
+        "@id": "urn:hoh:gui:SemanticContentProtocol"
+      },
+      "rdfs:range": {
+        "@id": "urn:hoh:gui:SemanticContentContract"
+      },
+      "rdfs:comment": "Semantic protocol draft to a versioned interface contract; one-to-many."
+    },
+    {
+      "@id": "urn:hoh:gui:hasInteractionModel",
+      "@type": "rdf:Property",
+      "rdfs:domain": {
+        "@id": "urn:hoh:gui:SemanticContentProtocol"
+      },
+      "rdfs:range": {
+        "@id": "urn:hoh:gui:InteractionModel"
+      },
+      "rdfs:comment": "Semantic protocol draft to its human and AI interaction model; exactly one in this draft."
+    },
+    {
+      "@id": "urn:hoh:gui:hasParticipant",
+      "@type": "rdf:Property",
+      "rdfs:domain": {
+        "@id": "urn:hoh:gui:InteractionModel"
+      },
+      "rdfs:range": {
+        "@id": "urn:hoh:gui:Participant"
+      },
+      "rdfs:comment": "Interaction model to a human or agent participant; one-to-many."
+    },
+    {
+      "@id": "urn:hoh:gui:usesDispatcher",
+      "@type": "rdf:Property",
+      "rdfs:domain": {
+        "@id": "urn:hoh:gui:InteractionModel"
+      },
+      "rdfs:range": {
+        "@id": "urn:hoh:gui:ActionDispatcher"
+      },
+      "rdfs:comment": "Interaction model to the sole common action dispatcher; exactly one in this draft."
+    },
+    {
+      "@id": "urn:hoh:gui:validatesAgainst",
+      "@type": "rdf:Property",
+      "rdfs:domain": {
+        "@id": "urn:hoh:gui:ActionDispatcher"
+      },
+      "rdfs:range": {
+        "@id": "urn:hoh:gui:SemanticContentContract"
+      },
+      "rdfs:comment": "Action dispatcher to the command contract it validates before execution; exactly one."
+    },
+    {
+      "@id": "urn:hoh:gui:producesOutcome",
+      "@type": "rdf:Property",
+      "rdfs:domain": {
+        "@id": "urn:hoh:gui:ActionDispatcher"
+      },
+      "rdfs:range": {
+        "@id": "urn:hoh:gui:SemanticContentContract"
+      },
+      "rdfs:comment": "Action dispatcher to the outcome contract it returns after execution; exactly one."
+    },
+    {
+      "@id": "urn:hoh:gui:emitsEvent",
+      "@type": "rdf:Property",
+      "rdfs:domain": {
+        "@id": "urn:hoh:gui:ActionDispatcher"
+      },
+      "rdfs:range": {
+        "@id": "urn:hoh:gui:ContentEvent"
+      },
+      "rdfs:comment": "Action dispatcher to an event emitted for subscribers after a committed change; one-to-many."
+    },
+    {
+      "@id": "urn:hoh:gui:supportsProfile",
+      "@type": "rdf:Property",
+      "rdfs:domain": {
+        "@id": "urn:hoh:gui:SemanticContentProtocol"
+      },
+      "rdfs:range": {
+        "@id": "urn:hoh:gui:SemanticProfile"
+      },
+      "rdfs:comment": "Protocol draft to optional semantic profile; profile mapping is not a live connection."
+    },
+    {
+      "@id": "urn:hoh:gui:mapsToBridge",
+      "@type": "rdf:Property",
+      "rdfs:domain": {
+        "@id": "urn:hoh:gui:SemanticContentProtocol"
+      },
+      "rdfs:range": {
+        "@id": "urn:hoh:gui:BridgeMapping"
+      },
+      "rdfs:comment": "Protocol draft to a proposed interoperability mapping; not a compatibility assertion."
+    },
+    {
+      "@id": "urn:hoh:gui:satisfiedBy",
+      "@type": "rdf:Property",
+      "rdfs:domain": {
+        "@id": "urn:hoh:gui:Requirement"
+      },
+      "rdfs:range": {
+        "@id": "urn:hoh:gui:SemanticContentContract"
+      },
+      "rdfs:comment": "Requirement to one or more concrete contracts that satisfy it in this draft."
+    },
+    {
+      "@id": "urn:hoh:gui:SemanticContentProtocol",
+      "@type": "rdfs:Class"
+    },
+    {
+      "@id": "urn:hoh:gui:Requirement",
+      "@type": "rdfs:Class"
+    },
+    {
+      "@id": "urn:hoh:gui:SemanticContentContract",
+      "@type": "rdfs:Class",
+      "rdfs:subClassOf": {
+        "@id": "urn:hoh:gui:InterfaceContract"
+      }
+    },
+    {
+      "@id": "urn:hoh:gui:InteractionModel",
+      "@type": "rdfs:Class"
+    },
+    {
+      "@id": "urn:hoh:gui:Participant",
+      "@type": "rdfs:Class"
+    },
+    {
+      "@id": "urn:hoh:gui:HumanParticipant",
+      "@type": "rdfs:Class",
+      "rdfs:subClassOf": {
+        "@id": "urn:hoh:gui:Participant"
+      }
+    },
+    {
+      "@id": "urn:hoh:gui:AgentParticipant",
+      "@type": "rdfs:Class",
+      "rdfs:subClassOf": {
+        "@id": "urn:hoh:gui:Participant"
+      }
+    },
+    {
+      "@id": "urn:hoh:gui:ActionDispatcher",
+      "@type": "rdfs:Class"
+    },
+    {
+      "@id": "urn:hoh:gui:ContentEvent",
+      "@type": "rdfs:Class"
+    },
+    {
+      "@id": "urn:hoh:gui:SemanticProfile",
+      "@type": "rdfs:Class"
+    },
+    {
+      "@id": "urn:hoh:gui:BridgeMapping",
+      "@type": "rdfs:Class"
+    },
+    {
+      "@id": "urn:hoh:gui:artifact/semantic-outcome-schema",
+      "@type": "prov:Entity",
+      "h:authority": "APPLICATION_OBSERVATION",
+      "h:path": "protocol/outcome.schema.json",
+      "h:implementationStatus": "IMPLEMENTED_ARTIFACT_HASH_PINNED",
+      "h:realizesContract": {
+        "@id": "urn:hoh:gui:contract/action-outcome"
+      },
+      "h:sha256": "b5a7eb38aa2c03b8fd14724ab353df09f7919981a6bdb728bfdbff326601c75b",
+      "h:validatedBy": {
+        "@id": "urn:hoh:gui:verification/semantic-content-0.1-2026-10-07"
+      }
+    },
+    {
+      "@id": "urn:hoh:gui:verification/semantic-content-0.1-2026-10-07",
+      "@type": "prov:Entity",
+      "h:authority": "APPLICATION_OBSERVATION",
+      "h:path": "provenance/verification-content-0.1.json",
+      "h:recordedAt": "2026-10-07",
+      "h:description": "Local conformance evidence; no external MCP host, HSWM execution or model reasoning evaluation."
+    }
+  ]
+}

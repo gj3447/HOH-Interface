@@ -1,0 +1,26 @@
+.semantic-board { max-width:48rem; }
+.semantic-board h2 { margin:.65rem 0; font-size:clamp(1.5rem,3vw,2.4rem); overflow-wrap:anywhere; }
+.semantic-board .intro { color:var(--muted); }
+.semantic-form { display:grid; gap:.4rem; margin:1rem 0; }
+.semantic-form>div { display:flex; gap:.5rem; }
+.semantic-board input { min-width:0; width:100%; min-height:44px; padding:.55rem; border:1px solid var(--line); border-radius:.6rem; color:var(--text); background:var(--bg); }
+.semantic-board button,.proposal button { min-width:44px; min-height:44px; padding:.5rem .75rem; border:1px solid var(--line); border-radius:.6rem; color:var(--text); background:var(--surface-2); }
+.semantic-board button:disabled { opacity:.6; cursor:wait; }
+.semantic-form button { flex-shrink:0; }
+.task-list { list-style:none; padding:0; margin:1.5rem 0; display:grid; gap:.55rem; }
+.task-list li { display:flex; align-items:center; gap:.5rem; }
+.task-list .task-toggle { flex:1; text-align:left; overflow-wrap:anywhere; }
+.task-list .task-toggle[aria-pressed="true"] { color:var(--teal); text-decoration:line-through; }
+.semantic-status { min-height:1.5em; color:var(--teal); }
+.semantic-status[data-error="true"] { color:var(--red); }
+.semantic-history { border-top:1px solid var(--line); margin-top:1.5rem; padding-top:1rem; color:var(--muted); font-size:.88rem; }
+.semantic-history ol { padding-left:1.3rem; }
+.semantic-meta { display:flex; flex-wrap:wrap; gap:.6rem; font-size:.82rem; color:var(--muted); }
+.semantic-board details { margin-top:1rem; }
+.semantic-board summary { cursor:pointer; min-height:44px; padding:.6rem 0; }
+.semantic-board pre,.proposal pre { font-size:.8rem; white-space:pre-wrap; overflow-wrap:anywhere; }
+.proposal { margin-top:.7rem; padding:.7rem; border:1px solid var(--teal); border-radius:.6rem; }
+.proposal p { margin:.3rem 0; }.proposal button+button { margin-left:.5rem; }
+.proposal button:disabled { opacity:.5; cursor:default; }
+.messages li { white-space:pre-wrap; overflow-wrap:anywhere; }
+@media(max-width:900px) { .semantic-form>div { flex-wrap:wrap; }.semantic-form button { width:100%; } }

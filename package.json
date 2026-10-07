@@ -1,6 +1,6 @@
 {
   "name": "@hoh/ui",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
   "type": "module",
   "description": "HOH Interface: a minimal AI-native interaction layer for executable content and agent-directed work.",
@@ -23,13 +23,26 @@
     "./adapters/program-feed": "./adapters/program-feed.js",
     "./realtime/session": "./ui/realtime-session.js",
     "./realtime/contracts": "./realtime/contracts.d.ts",
-    "./adapters/local-webrtc": "./adapters/local-webrtc.js"
+    "./adapters/local-webrtc": "./adapters/local-webrtc.js",
+    "./content/runtime": {
+      "types": "./protocol/contracts.d.ts",
+      "import": "./protocol/runtime.js"
+    },
+    "./content/contracts": "./protocol/contracts.d.ts",
+    "./content/agent-session": "./protocol/agent-session.js",
+    "./content/mcp-mapping": "./protocol/mcp-mapping.js"
   },
   "scripts": {
     "test": "node --test test/*.test.mjs",
     "preview": "node scripts/preview.mjs",
     "export:metahumotonic": "node scripts/export-metahumotonic.mjs",
     "test:browser": "node test/browser-context.mjs",
-    "test:realtime": "node test/browser-realtime.mjs"
+    "test:realtime": "node test/browser-realtime.mjs",
+    "build:semantic": "node scripts/build-semantic-validators.mjs",
+    "check:semantic": "node scripts/build-semantic-validators.mjs --check",
+    "test:semantic:browser": "node test/browser-semantic.mjs"
+  },
+  "devDependencies": {
+    "ajv": "8.20.0"
   }
 }
