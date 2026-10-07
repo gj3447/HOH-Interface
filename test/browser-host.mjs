@@ -48,6 +48,49 @@ try {
   check(missing.applies === false && missing.reason === 'failed' && Boolean(missing.message), 'ui.open says when a content could not open');
   check(await page.locator('#messages').getAttribute('tabindex') === '0' && await page.locator('#messages').getAttribute('aria-label') === '대화', 'the scrolling chat list is reachable by keyboard and named');
 
+  // 0.4.0 — the feed continues, comments carry authors and removal, reactions carry counts, answers stream and render as the host draws them
+  await page.locator('[data-home]').click(); await page.locator('.dashboard-card').waitFor();
+  await page.locator('[data-dashboard-content-id="tool"]').first().click(); await page.locator('#viewerTitle', { hasText: '도구 앱' }).waitFor();
+  await page.locator('[data-next]').click();
+  await page.locator('#viewerTitle', { hasText: '더 받은 콘텐츠' }).waitFor({ timeout: 5000 });
+  check((await page.locator('#position').textContent()) === '3 / 3', 'the feed asks for the next page at its end');
+  await page.locator('[data-next]').click(); await page.locator('#viewerTitle', { hasText: '메모' }).waitFor({ timeout: 5000 });
+  check((await page.locator('#position').textContent()) === '1 / 3', 'with nothing more it wraps to the start');
+
+  const like = page.locator('[data-reaction="like"]');
+  check(await like.locator('.reaction-count').textContent() === '2' && await like.getAttribute('aria-label') === '좋아요 2' && (await like.getAttribute('title')).includes('김연구'), 'reaction counts and who pressed show on the button');
+  await like.click(); await page.waitForFunction(() => document.querySelector('[data-reaction="like"] .reaction-count')?.textContent === '3');
+  check(await like.getAttribute('aria-pressed') === 'true', 'a reaction updates the count the host returns');
+  await page.locator('[data-comment]').click();
+  check((await page.locator('#comments li').first().locator('.comment-meta').textContent()).startsWith('김연구 · '), 'comments carry author and time');
+  check(await page.locator('#commentScope').textContent() === '이 예제의 모든 사람', 'the host says who sees the comments');
+  check(await page.locator('#comments [data-delete-comment]').count() === 1, 'only comments the person may delete offer «지우기»');
+  await page.locator('#comments [data-delete-comment]').click();
+  await page.waitForFunction(() => document.querySelectorAll('#comments li').length === 1);
+  check(!(await page.locator('#comments').textContent()).includes('제가 단 댓글'), 'a comment can be removed');
+  await page.keyboard.press('Escape');
+
+  await page.locator('#chatInput').fill('자세히 알려줘'); await page.locator('#chatInput').press('Enter');
+  await page.locator('#messages li.answer.pending .answer-steps li', { hasText: '콘텐츠를 살펴보는 중' }).waitFor({ timeout: 3000 });
+  check(await page.locator('#messages li.answer.pending .answer-stop').isVisible(), 'while the answer comes: the steps and «멈추기»');
+  await page.locator('#messages li.answer:not(.pending) strong', { hasText: '굵게' }).waitFor({ timeout: 5000 });
+  check(await page.locator('#messages li.answer.pending').count() === 0, 'the finished answer is drawn by the host renderer');
+
+  await page.locator('#chatInput').fill('길게 설명해줘'); await page.locator('#chatInput').press('Enter');
+  await page.locator('#messages li.answer.pending .answer-text').filter({ hasText: '답:' }).waitFor({ timeout: 3000 });
+  await page.locator('#messages li.answer.pending .answer-stop').click();
+  await page.locator('#messages li.answer', { hasText: '(응답을 멈췄습니다)' }).waitFor({ timeout: 3000 });
+  check(true, '«멈추기» keeps what came and says it stopped');
+
+  await page.locator('#chatInput').fill('도구 열어줘'); await page.locator('#chatInput').press('Enter');
+  await page.locator('#viewerTitle', { hasText: '도구 앱' }).waitFor({ timeout: 5000 });
+  check((await page.locator('#messages li').allTextContents()).includes('답: 도구 열어줘'), 'an answer can open a content after it is shown');
+
+  await page.locator('#chatInput').fill('넘겨도 남아'); await page.locator('#chatInput').press('Enter');
+  await page.locator('[data-next]').click();
+  await page.locator('#messages li.answer', { hasText: '답: 넘겨도 남아' }).waitFor({ timeout: 5000 });
+  check(true, 'an answer stays in the conversation when the person moves on');
+
   const ratios = await page.evaluate(() => {
     const css = getComputedStyle(document.documentElement), hex = name => css.getPropertyValue(name).trim();
     const lum = h => { const c = [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16) / 255).map(v => v <= 0.04045 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4); return 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2]; };

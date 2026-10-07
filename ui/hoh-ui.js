@@ -3,7 +3,7 @@ import { createRealtimeSession } from './realtime-session.js';
 import { renderRealtimeView } from './realtime-view.js';
 
 /** Full-page HOH Interface. Hosts supply trusted adapters/renderers; payloads never install code. */
-export function mountHohInterface({ root, adapter, renderers = {}, realtime = null, workspaceName = 'HOH', homeContentId = 'dashboard-home' }) {
+export function mountHohInterface({ root, adapter, renderers = {}, renderAnswer = null, realtime = null, workspaceName = 'HOH', homeContentId = 'dashboard-home' }) {
   if (!root || !adapter) throw new Error('HOH UI requires a root and an adapter');
   const methods = ['bootstrap', 'list', 'open', 'favorite', 'react', 'comment', 'saveState', 'chat', 'profile', 'status'];
   if (methods.some(name => typeof adapter[name] !== 'function')) throw new Error('Incomplete HOH adapter');
@@ -21,12 +21,12 @@ export function mountHohInterface({ root, adapter, renderers = {}, realtime = nu
     }
   } }) : null;
   const listen = (target, event, handler) => target.addEventListener(event, handler, { signal: listeners.signal });
-  const mutationMethods = { '/favorites': 'favorite', '/reactions': 'react', '/comments': 'comment', '/state': 'saveState', '/chat': 'chat' };
+  const mutationMethods = { '/favorites': 'favorite', '/reactions': 'react', '/comments': 'comment', '/comments/delete': 'deleteComment', '/state': 'saveState', '/chat': 'chat' };
   root.innerHTML = shellMarkup;
   root.querySelector('.brand').textContent = 'HOH Interface';
   root.querySelector('.brand').title = workspaceName;
   document.title = `HOH Interface · ${workspaceName}`;
-const state = { items: [], index: -1, direct: null, lastFeedId: null, profile: {}, view: null, intent: 0, operation: Promise.resolve() };
+const state = { items: [], more: { hasMore: false, cursor: null, loading: null }, index: -1, direct: null, lastFeedId: null, profile: {}, view: null, intent: 0, operation: Promise.resolve() };
 const $ = (selector) => root.querySelector(selector);
 const current = () => state.index >= 0 ? state.items[state.index] : state.direct;
 
@@ -157,10 +157,31 @@ function render() {
   $('#contentStage').classList.toggle('is-realtime', item?.manifest?.kind === 'REALTIME');
   $('#viewerTitle').textContent = item?.content?.title || '콘텐츠'; $('#position').textContent = dashboard ? '앱' : (state.items.length ? (state.index + 1) + ' / ' + state.items.length : '0 / 0');
   $('#contentStage').replaceChildren(renderStage(item)); const saved = Boolean(view?.favorite); $('[data-save-label]').textContent = saved ? '저장됨' : '저장'; $('[data-save]').setAttribute('aria-pressed', String(saved));
-  for (const reaction of ['like', 'dislike']) { const button = $('[data-reaction="' + reaction + '"]'); button.setAttribute('aria-pressed', String(view?.reaction === reaction.toUpperCase())); button.hidden = !accepts('reaction'); }
+  for (const reaction of ['like', 'dislike']) { const button = $('[data-reaction="' + reaction + '"]'); button.setAttribute('aria-pressed', String(view?.reaction === reaction.toUpperCase())); button.hidden = !accepts('reaction'); showReactionCount(button, reaction, view); }
   $('[data-comment]').hidden = !accepts('comment'); $('[data-share]').hidden = !accepts('share'); $('[data-save]').hidden = !accepts('favorite'); $('[data-remove]').hidden = !saved || !accepts('favorite');
   $('.action-rail').hidden = dashboard || !['reaction', 'comment', 'share'].some(accepts); $('.viewer-foot').hidden = dashboard;
-  $('#contentMeta').textContent = (item?.reasons || []).join(' · '); $('#comments').replaceChildren(...(view?.comments || []).map((c) => Object.assign(document.createElement('li'), { textContent: c.body || '' }))); renderFavorites();
+  $('#contentMeta').textContent = (item?.reasons || []).join(' · '); $('#comments').replaceChildren(...(view?.comments || []).map(renderComment)); $('#commentScope').textContent = view?.commentScope ?? '나만 보기'; renderFavorites();
+}
+/** Counts on the like/dislike buttons and who pressed them, when the host gives them (reactionCounts · reactedBy). */
+function showReactionCount(button, reaction, view) {
+  const label = reaction === 'like' ? '좋아요' : '싫어요', count = Math.max(0, Number(view?.reactionCounts?.[reaction]) || 0), by = view?.reactedBy?.[reaction];
+  button.querySelector('.reaction-count')?.remove();
+  if (count) { const mark = document.createElement('span'); mark.className = 'reaction-count'; mark.setAttribute('aria-hidden', 'true'); mark.textContent = count > 99 ? '99+' : String(count); button.append(mark); }
+  button.setAttribute('aria-label', count ? `${label} ${count}` : label);
+  button.title = Array.isArray(by) && by.length ? `${label} — ${by.slice(0, 10).join(', ')}${by.length > 10 ? ' 외' : ''}` : label;
+}
+const commentTime = (at) => { const date = at ? new Date(at) : null; return date && !Number.isNaN(date.getTime()) ? new Intl.DateTimeFormat('ko-KR', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }).format(date) : ''; };
+/** A comment: who and when (when the host says), the text, and «지우기» where the host allows it and implements deleteComment. */
+function renderComment(comment) {
+  const row = document.createElement('li');
+  const meta = [comment.author, commentTime(comment.at)].filter(Boolean).join(' · ');
+  if (meta) { const line = document.createElement('p'); line.className = 'comment-meta'; line.textContent = meta; row.append(line); }
+  const body = document.createElement('p'); body.className = 'comment-body'; body.textContent = comment.body || ''; row.append(body);
+  if (comment.canDelete && comment.id != null && typeof adapter.deleteComment === 'function') {
+    const remove = document.createElement('button'); remove.type = 'button'; remove.dataset.deleteComment = String(comment.id); remove.textContent = '지우기';
+    remove.setAttribute('aria-label', `댓글 지우기${comment.author ? ' — ' + comment.author : ''}`); row.append(remove);
+  }
+  return row;
 }
 /** Opens a content and says what happened: {applies:true, contentId} once it is on screen, otherwise {applies:false, reason}
  *  — superseded (a later navigation won), navigation_cancelled, disposed, or failed (with message and status). */
@@ -212,7 +233,7 @@ function mutate(path, body) {
     if (result.viewRevision !== undefined) state.profile = { ...state.profile, viewRevision: result.viewRevision };
     return { result, applies: !disposed && state.intent === capturedIntent && current()?.content?.id === capturedContentId };
   });
-  return state.operation.catch((error) => { status(error.status === 503 ? '저장소 또는 제공자를 사용할 수 없습니다.' : '변경하지 못했습니다.', true); throw error; }).finally(() => setBusy(false));
+  return state.operation.catch((error) => { if (error?.name !== 'AbortError') status(error.status === 503 ? '저장소 또는 제공자를 사용할 수 없습니다.' : '변경하지 못했습니다.', true); throw error; }).finally(() => setBusy(false));
 }
 async function initialize() {
   if (disposed) return;
@@ -223,12 +244,28 @@ async function initialize() {
   rendererLifetime.abort(); state.intent += 1;
   try {
     const session = await adapter.bootstrap(); if (disposed) return; state.profile = session.profile || {};
-    const feed = await adapter.list(); if (disposed) return; state.items = feed.items || [];
+    const feed = await adapter.list({}); if (disposed) return; state.items = feed.items || []; state.more = { hasMore: Boolean(feed.hasMore), cursor: feed.cursor ?? null, loading: null };
     const requested = new URLSearchParams(location.search).get('content') || state.profile.activeContentId || homeContentId;
     await openById(requested, state.items.findIndex((item) => item.content?.id === requested));
     const live = await adapter.status().catch(() => null); if (disposed) return; const chat = chatReadiness(live?.readiness, session.readiness);
     $('#chatStatus').textContent = chat?.status === 'READY' ? 'AI 채팅을 사용할 수 있습니다.' : (chat?.reason || 'AI 제공자에 연결되지 않았습니다.');
   } catch { if (disposed) return; status('연결할 수 없음', true); $('#chatStatus').textContent = '콘텐츠 또는 AI 제공자에 연결할 수 없습니다.'; render(); }
+}
+/** The next page of the feed, when the host said there is more (list() hasMore · cursor). Resolves whether new items came. */
+function loadMore() {
+  if (disposed || !state.more.hasMore) return Promise.resolve(false);
+  state.more.loading ??= (async () => {
+    try {
+      const page = await adapter.list({ cursor: state.more.cursor });
+      if (disposed) return false;
+      const seen = new Set(state.items.map((item) => item.content?.id));
+      const fresh = (page.items || []).filter((item) => item?.content?.id && !seen.has(item.content.id));
+      state.items = [...state.items, ...fresh];
+      state.more = { hasMore: Boolean(page.hasMore) && fresh.length > 0, cursor: page.cursor ?? null, loading: null };
+      return fresh.length > 0;
+    } catch (error) { state.more = { ...state.more, loading: null }; status(error.message, true); return false; }
+  })();
+  return state.more.loading;
 }
 async function saveState(next, context = null) {
   const item = current();
@@ -246,7 +283,10 @@ async function saveState(next, context = null) {
 listen(root, 'click', async (event) => {
   const b = event.target.closest('button'); if (!b) return;
   if (b.matches('[data-prev]') && state.items.length) return openById(state.items[(state.index - 1 + state.items.length) % state.items.length].content.id, (state.index - 1 + state.items.length) % state.items.length);
-  if (b.matches('[data-next]') && state.items.length) return openById(state.items[(state.index + 1) % state.items.length].content.id, (state.index + 1) % state.items.length);
+  if (b.matches('[data-next]') && state.items.length) {
+    if (state.index === state.items.length - 1 && state.more.hasMore && await loadMore()) return openById(state.items[state.index + 1].content.id, state.index + 1);
+    return openById(state.items[(state.index + 1) % state.items.length].content.id, (state.index + 1) % state.items.length);
+  }
   if (b.matches('[data-home]')) return openById(homeContentId);
   if (b.matches('#dashboardGesture')) { const suppress = dashboardClickSuppressed && event.detail !== 0; dashboardClickSuppressed = false; if (suppress) return; return openById(homeContentId); }
   if (b.matches('[data-dashboard-action="feed"]')) return openRecommendedFeed();
@@ -255,17 +295,55 @@ listen(root, 'click', async (event) => {
   if (isDashboard(item)) return;
   if ((b.matches('[data-save]') || b.matches('[data-remove]')) && !accepts('favorite') || b.dataset.reaction && !accepts('reaction') || b.matches('[data-comment]') && !accepts('comment') || b.matches('[data-share]') && !accepts('share')) return;
   if (b.matches('[data-save]') || b.matches('[data-remove]')) { const favorite = b.matches('[data-save]') ? !state.view?.favorite : false; try { const queued = await mutate('/favorites', { contentId: item.content.id, favorite }); if (!queued.applies) return; state.view = { ...state.view, favorite }; const profile = await adapter.profile(); if (disposed) return; state.profile = profile.profile || profile; render(); } catch {} }
-  if (b.dataset.reaction) { const wanted = b.dataset.reaction.toUpperCase(), reaction = state.view?.reaction === wanted ? 'CLEAR' : wanted; try { const queued = await mutate('/reactions', { contentId: item.content.id, reaction }); if (!queued.applies) return; state.view = { ...state.view, reaction }; render(); } catch {} }
+  if (b.dataset.reaction) { const wanted = b.dataset.reaction.toUpperCase(), reaction = state.view?.reaction === wanted ? 'CLEAR' : wanted; try { const queued = await mutate('/reactions', { contentId: item.content.id, reaction }); if (!queued.applies) return; const { reactionCounts, reactedBy } = queued.result; state.view = { ...state.view, reaction, ...(reactionCounts ? { reactionCounts } : {}), ...(reactedBy ? { reactedBy } : {}) }; render(); } catch {} }
   if (b.matches('[data-comment]')) $('#commentDialog').showModal();
+  if (b.dataset.deleteComment) { const commentId = b.dataset.deleteComment; try { const queued = await mutate('/comments/delete', { contentId: item.content.id, commentId }); if (!queued.applies) return; state.view = { ...state.view, comments: queued.result.comments || (state.view?.comments || []).filter((c) => String(c.id) !== commentId) }; render(); } catch {} }
   if (b.matches('[data-share]')) { const url = new URL(location.pathname, location.origin); url.searchParams.set('content', item.content.id); try { navigator.share ? await navigator.share({ title: item.content.title, url: url.href }) : await navigator.clipboard.writeText(url.href); status('공유 링크를 복사했습니다.'); } catch {} }
   if (b.dataset.checkId) { const checked = new Set(state.view?.appState?.checked || []); checked.has(b.dataset.checkId) ? checked.delete(b.dataset.checkId) : checked.add(b.dataset.checkId); await saveState({ checked: [...checked] }); }
   if (b.dataset.tile !== undefined) await saveState({ score: Number(state.view?.appState?.score || 0) + 1 }); if (b.matches('[data-game-reset]')) await saveState({ score: 0 });
 });
+/** An answer as the host draws it (renderAnswer → a sanitized Node, e.g. Markdown) or as plain text. */
+function drawAnswer(target, result) {
+  if (typeof renderAnswer === 'function') { try { const node = renderAnswer(result); if (node instanceof Node) { target.replaceChildren(node); return; } } catch {} }
+  target.textContent = result.answer || '';
+}
+/** The answer while it is coming: the provider's steps, the text so far (onProgress) and «멈추기» (aborts the signal given to chat()). */
+function pendingAnswer() {
+  const controller = new AbortController(), node = document.createElement('li'), steps = document.createElement('ol'), text = document.createElement('div'), stop = document.createElement('button');
+  node.className = 'answer pending'; node.setAttribute('aria-busy', 'true'); steps.className = 'answer-steps'; text.className = 'answer-text';
+  stop.type = 'button'; stop.className = 'answer-stop'; stop.textContent = '멈추기'; node.append(steps, text, stop);
+  const pending = { node, signal: controller.signal, partial: '', stopped: false };
+  listen(stop, 'click', () => { pending.stopped = true; controller.abort(); });
+  pending.progress = (update = {}) => {
+    if (disposed || !node.isConnected || !node.classList.contains('pending')) return;
+    if (typeof update.step === 'string' && update.step) { steps.append(Object.assign(document.createElement('li'), { textContent: update.step })); while (steps.children.length > 4) steps.firstElementChild.remove(); }
+    if (typeof update.answer === 'string') pending.partial = update.answer; else if (typeof update.delta === 'string') pending.partial += update.delta; else return;
+    drawAnswer(text, { answer: pending.partial, partial: true });
+  };
+  pending.finish = (result = {}) => {
+    const said = typeof result.answer === 'string' ? result.answer : typeof result.message === 'string' ? result.message : pending.partial;
+    if (!said && !pending.stopped) { node.remove(); return; }
+    node.className = 'answer'; node.removeAttribute('aria-busy'); node.replaceChildren();
+    drawAnswer(node, { ...result, answer: pending.stopped && typeof result.answer !== 'string' ? `${said}${said ? '\n\n' : ''}(응답을 멈췄습니다)` : said, partial: false });
+  };
+  return pending;
+}
 listen($('#chatForm'), 'submit', async (event) => {
   event.preventDefault(); const input = $('#chatInput'), message = input.value.trim(), item = current(); if (!message || !item) return;
   const bubble = Object.assign(document.createElement('li'), { className: 'user', textContent: message }); $('#messages').append(bubble);
-  try { const queued = await mutate('/chat', { message, contentId: item.content.id }); if (!queued.applies) return; input.value = ''; const answer = queued.result.answer || queued.result.message; if (typeof answer === 'string' && answer) $('#messages').append(Object.assign(document.createElement('li'), { textContent: answer })); }
-  catch { if (disposed) return; bubble.classList.add('failed'); bubble.textContent = message + ' (전송 실패)'; $('#chatStatus').textContent = 'AI 제공자가 준비되지 않았습니다. 입력은 그대로 남아 있습니다.'; }
+  const pending = pendingAnswer(); $('#messages').append(pending.node);
+  try {
+    const queued = await mutate('/chat', { message, contentId: item.content.id, onProgress: pending.progress, signal: pending.signal });
+    if (input.value.trim() === message) input.value = '';
+    // The answer belongs to the conversation, so it always lands; a screen action in it (open) only when the screen is still where it was asked.
+    pending.finish(queued.result);
+    const open = queued.result.open;
+    if (queued.applies && typeof open === 'string' && open) openById(open, -1, { initiator: 'host' });
+  } catch (error) {
+    if (disposed) return;
+    if (pending.stopped || error?.name === 'AbortError') { pending.stopped = true; pending.finish({}); if (input.value.trim() === message) input.value = ''; return; }
+    pending.node.remove(); bubble.classList.add('failed'); bubble.textContent = message + ' (전송 실패)'; $('#chatStatus').textContent = 'AI 제공자가 준비되지 않았습니다. 입력은 그대로 남아 있습니다.';
+  }
 });
 listen($('#commentSubmit'), 'click', async () => { const body = $('#commentInput').value.trim(), item = current(); if (!body || !item) return; try { const queued = await mutate('/comments', { contentId: item.content.id, body }); if (!queued.applies) return; state.view = { ...state.view, comments: queued.result.comments || [...(state.view?.comments || []), { body }] }; $('#commentInput').value = ''; render(); $('#commentDialog').close(); } catch {} });
 listen($('#retryButton'), 'click', initialize);

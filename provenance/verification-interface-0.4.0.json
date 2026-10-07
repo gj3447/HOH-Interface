@@ -1,0 +1,73 @@
+{
+ "schema": "hoh/local-verification@1",
+ "recordedAt": "2026-10-07",
+ "authority": "APPLICATION_OBSERVATION",
+ "version": "0.4.0",
+ "scope": "Host contract 0.4.0: feed continuation (list cursor/hasMore), comments with author/time/removal and reaction counts, answers that stream with steps and a stop, a host answer renderer, an answer that opens a content after it is shown; answers always stay in the conversation",
+ "checks": {
+  "packageTests": {
+   "command": "npm test",
+   "passed": 37,
+   "exitCode": 0
+  },
+  "semanticValidators": {
+   "command": "npm run check:semantic",
+   "validators": 7,
+   "status": "MATCH"
+  },
+  "semanticStandards": {
+   "command": "python3 scripts/validate-semantic-standards.py",
+   "status": "PASS"
+  },
+  "rdf": {
+   "parser": "rdflib 7.6.0",
+   "triples": {
+    "graph/hoh-ui.jsonld": 178,
+    "graph/realtime.jsonld": 303
+   },
+   "remoteFetches": 0
+  },
+  "guiBrowser": {
+   "script": "test/browser-gui.mjs",
+   "passed": 14,
+   "status": "PASS"
+  },
+  "hostBrowser": {
+   "script": "test/browser-host.mjs",
+   "url": "http://127.0.0.1:8021/host/",
+   "passed": 26,
+   "status": "PASS",
+   "added": [
+    "the feed asks for the next page at its end",
+    "with nothing more it wraps to the start",
+    "reaction counts and who pressed show on the button",
+    "a reaction updates the count the host returns",
+    "comments carry author and time",
+    "the host says who sees the comments",
+    "only comments the person may delete offer «지우기»",
+    "a comment can be removed",
+    "while the answer comes: the steps and «멈추기»",
+    "the finished answer is drawn by the host renderer",
+    "«멈추기» keeps what came and says it stopped",
+    "an answer can open a content after it is shown",
+    "an answer stays in the conversation when the person moves on"
+   ]
+  },
+  "realtimeBrowser": {
+   "script": "test/browser-realtime.mjs",
+   "passed": 19,
+   "status": "PASS"
+  },
+  "semanticBrowser": {
+   "script": "test/browser-semantic.mjs",
+   "passed": 24,
+   "status": "PASS"
+  }
+ },
+ "behaviourChange": "A chat answer now always lands in the conversation; before, any navigation during the request dropped it. A screen action in the answer (open) is still skipped when the person moved on.",
+ "notChecked": [
+  "referenceHostTests — the MetaHumotonic reference host is not on this machine; program-feed's list() ignores the new argument and keeps wrapping"
+ ],
+ "origin": "Host requests from the MM host (gj3447/HOH-Interface#2: U2, U3, U6, U12), made at the owner's request.",
+ "recordedBy": "software-agent:claude-code for gj3447"
+}

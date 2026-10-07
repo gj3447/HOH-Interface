@@ -22,4 +22,4 @@ export const shellMarkup = `<main class="app-shell" data-sheet="content">
   </section>
   <button id="sheetHandle" class="mobile-grab" type="button" aria-label="AI 채팅 높이 조절">${icons.handle}</button>
 </main>
-<dialog id="commentDialog"><form method="dialog" class="comment-panel"><header><h2>댓글 · 나만 보기</h2><button value="cancel" aria-label="닫기">${icons.close}</button></header><ol id="comments" class="comment-list"></ol><label>댓글 <textarea id="commentInput" rows="3" placeholder="댓글을 입력하세요"></textarea></label><menu><button value="cancel">취소</button><button id="commentSubmit" type="button">등록</button></menu></form></dialog>`;
+<dialog id="commentDialog"><form method="dialog" class="comment-panel"><header><h2>댓글 <small id="commentScope">나만 보기</small></h2><button value="cancel" aria-label="닫기">${icons.close}</button></header><ol id="comments" class="comment-list"></ol><label>댓글 <textarea id="commentInput" rows="3" placeholder="댓글을 입력하세요"></textarea></label><menu><button value="cancel">취소</button><button id="commentSubmit" type="button">등록</button></menu></form></dialog>`;
