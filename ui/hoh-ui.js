@@ -78,6 +78,11 @@ function renderDashboard(item) {
       button.children[0].textContent = dashboardIcon(entry);
       button.children[1].textContent = entry.title || entry.id;
       button.children[2].textContent = entry.description || dashboardKindLabel[entry.kind] || '콘텐츠 열기';
+      const badge = Number.isInteger(entry.badge) && entry.badge > 0 ? entry.badge : 0;
+      if (badge) { // a host count (new messages, unread replies) on the icon; read out as words after the name
+        const mark = document.createElement('span'); mark.className = 'app-badge'; mark.textContent = badge > 99 ? '99+' : String(badge); button.children[0].append(mark);
+        const spoken = document.createElement('span'); spoken.className = 'sr-only'; spoken.textContent = ` 새 항목 ${badge}개`; button.children[1].after(spoken);
+      }
       grid.append(button);
     }
     section.append(grid); return section;
@@ -157,25 +162,27 @@ function render() {
   $('.action-rail').hidden = dashboard || !['reaction', 'comment', 'share'].some(accepts); $('.viewer-foot').hidden = dashboard;
   $('#contentMeta').textContent = (item?.reasons || []).join(' · '); $('#comments').replaceChildren(...(view?.comments || []).map((c) => Object.assign(document.createElement('li'), { textContent: c.body || '' }))); renderFavorites();
 }
+/** Opens a content and says what happened: {applies:true, contentId} once it is on screen, otherwise {applies:false, reason}
+ *  — superseded (a later navigation won), navigation_cancelled, disposed, or failed (with message and status). */
 async function openById(contentId, rankedIndex = -1, { initiator = 'user' } = {}) {
-  if (!contentId || disposed) return;
+  if (!contentId || disposed) return { applies: false, reason: disposed ? 'disposed' : 'no_content' };
   // A host- or agent-initiated open does not cancel what the person is waiting for (an AI answer, a save):
   // it lets the work already in flight finish and apply, then opens. A person's own navigation still supersedes it.
-  if (initiator === 'host') for (let tail = null; tail !== state.operation;) { tail = state.operation; await tail.catch(() => {}); if (disposed) return; }
+  if (initiator === 'host') for (let tail = null; tail !== state.operation;) { tail = state.operation; await tail.catch(() => {}); if (disposed) return { applies: false, reason: 'disposed' }; }
   if (mediaSession?.isActive()) {
-    if (contentId === mediaContentId && current()?.content?.id === contentId) return;
+    if (contentId === mediaContentId && current()?.content?.id === contentId) return { applies: true, contentId };
     if (!window.confirm('현재 통화·방송을 종료하고 다른 콘텐츠를 열까요?')) return { applies: false, reason: 'navigation_cancelled' };
     mediaSession.leave(); mediaContentId = null;
   }
   rendererLifetime.abort();
   const intent = ++state.intent;
   status('콘텐츠 여는 중');
-  state.operation = state.operation.catch(() => {}).then(async () => {
-    if (disposed) return;
+  const run = state.operation = state.operation.catch(() => {}).then(async () => {
+    if (disposed) return 'disposed';
     const view = await adapter.open({ contentId, expectedViewRevision: state.profile.viewRevision });
-    if (disposed) return;
+    if (disposed) return 'disposed';
     state.profile = { ...state.profile, viewRevision: view.viewRevision };
-    if (intent !== state.intent) return;
+    if (intent !== state.intent) return 'superseded';
     let index = rankedIndex >= 0 ? rankedIndex : state.items.findIndex((item) => item.content?.id === contentId);
     if (index < 0) state.direct = { content: view.content, manifest: view.manifest, reasons: [] };
     else {
@@ -189,8 +196,10 @@ async function openById(contentId, rankedIndex = -1, { initiator = 'user' } = {}
     state.profile = { ...state.profile, activeContentId: contentId };
     status('연결됨');
     render();
+    return 'opened';
   });
-  try { await state.operation; } catch (error) { if (intent === state.intent) status(error.message, true); }
+  try { const outcome = await run; return outcome === 'opened' ? { applies: true, contentId } : { applies: false, reason: outcome }; }
+  catch (error) { if (intent === state.intent) status(error.message, true); return { applies: false, reason: 'failed', message: error.message, ...(error.status ? { status: error.status } : {}) }; }
 }
 function mutate(path, body) {
   const capturedContentId = body.contentId;

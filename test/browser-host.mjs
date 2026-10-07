@@ -20,9 +20,13 @@ try {
   const errors = []; page.on('pageerror', error => errors.push(String(error)));
   await page.goto(new URL('/host/', root).href, { waitUntil: 'networkidle' });
   await page.locator('.dashboard-card').waitFor();
-  const icons = await page.locator('.app-grid button .app-icon').allTextContents();
+  const icons = await page.locator('.app-grid button .app-icon').evaluateAll(nodes => nodes.map(node => node.firstChild?.textContent || ''));
   check(icons[0] === '✎' && icons[1] === '⚒', 'host-supplied dashboard icons render');
   check(icons[2] === '◈' && icons[3] === '✓', 'missing or over-long host icons fall back to the kind icon');
+  const badges = await page.locator('.app-grid button .app-badge').allTextContents();
+  check(badges.join(',') === '3,99+', 'host counts show on the icon, capped at 99+');
+  const named = await page.locator('[data-dashboard-content-id="note"]').first().evaluate(node => node.textContent.replace(/\s+/g, ' '));
+  check(named.includes('새 항목 3개'), 'a count is also read out in words with the app name');
 
   await page.locator('[data-dashboard-content-id="tool"]').first().click();
   await page.locator('#viewerTitle', { hasText: '도구 앱' }).waitFor();
@@ -36,9 +40,13 @@ try {
 
   await page.locator('#chatInput').fill('저장해 줘');
   await page.locator('#chatInput').press('Enter');
-  await page.evaluate(() => window.hohExample.open('tool', { initiator: 'host' }));
+  const opened = page.evaluate(() => window.hohExample.open('tool', { initiator: 'host' }));
   await page.locator('#viewerTitle', { hasText: '도구 앱' }).waitFor({ timeout: 5000 });
   check((await page.locator('#messages li').allTextContents()).includes('답: 저장해 줘'), 'a host-initiated open keeps the AI answer the person was waiting for');
+  check(JSON.stringify(await opened) === JSON.stringify({ applies: true, contentId: 'tool' }), 'ui.open says the content is on screen');
+  const missing = await page.evaluate(() => window.hohExample.open('missing'));
+  check(missing.applies === false && missing.reason === 'failed' && Boolean(missing.message), 'ui.open says when a content could not open');
+  check(await page.locator('#messages').getAttribute('tabindex') === '0' && await page.locator('#messages').getAttribute('aria-label') === '대화', 'the scrolling chat list is reachable by keyboard and named');
 
   const ratios = await page.evaluate(() => {
     const css = getComputedStyle(document.documentElement), hex = name => css.getPropertyValue(name).trim();

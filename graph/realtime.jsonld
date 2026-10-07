@@ -623,11 +623,11 @@
       "h:realizesContract": {
         "@id": "urn:hoh:gui:gui-contract/realtime-content"
       },
-      "h:sha256": "53e0157ffc08d8310cad7d44252145139b95cfadd88d156db4285d9ac2999e89",
+      "h:sha256": "127a37ef7136915f9355f40eae47bb60bb13d39f63a47c54fca656db36894790",
       "h:status": "IMPLEMENTED_LOCALLY_VERIFIED",
       "h:recordedAt": "2026-10-07",
       "h:validatedBy": {
-        "@id": "urn:hoh:gui:observation/interface-0.3.1"
+        "@id": "urn:hoh:gui:observation/interface-0.3.2"
       }
     },
     {
@@ -638,11 +638,11 @@
       "h:realizesContract": {
         "@id": "urn:hoh:gui:gui-contract/realtime-content"
       },
-      "h:sha256": "a0cb1bd4719148dc7145f6f1b7745b44c50ae5fac2ac04c640af3d37dba1d2f5",
+      "h:sha256": "f0c06d452207d9e4d648c93622eef34a07b1fe47cfc9dd364730483d8106bf8b",
       "h:status": "IMPLEMENTED_LOCALLY_VERIFIED",
       "h:recordedAt": "2026-10-07",
       "h:validatedBy": {
-        "@id": "urn:hoh:gui:observation/interface-0.2.0"
+        "@id": "urn:hoh:gui:observation/interface-0.3.2"
       }
     },
     {
@@ -679,6 +679,13 @@
       "@type": "prov:Entity",
       "h:authority": "APPLICATION_OBSERVATION",
       "h:path": "provenance/verification-interface-0.3.1.json",
+      "h:scope": "LOCAL_BROWSER_PREVIEW_NOT_PRODUCTION"
+    },
+    {
+      "@id": "urn:hoh:gui:observation/interface-0.3.2",
+      "@type": "prov:Entity",
+      "h:authority": "APPLICATION_OBSERVATION",
+      "h:path": "provenance/verification-interface-0.3.2.json",
       "h:scope": "LOCAL_BROWSER_PREVIEW_NOT_PRODUCTION"
     }
   ]

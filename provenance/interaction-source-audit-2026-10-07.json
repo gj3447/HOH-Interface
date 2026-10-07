@@ -2,22 +2,22 @@
   "schema": "hoh/source-observation@1",
   "authority": "APPLICATION_OBSERVATION",
   "recordedAt": "2026-10-07",
-  "sourceRevision": "52260883e6c9e91f7ebc6b178baf2697d3edd924",
+  "sourceRevision": "cb8ad90b8ba72ea84a06f4c3562d8d67f4e85e53",
   "method": "READ_ONLY_SOURCE_INSPECTION",
   "runtimeChanged": false,
   "runtimeConformance": "NOT_VERIFIED_FOR_NEW_PROFILE",
   "artifacts": [
     {
       "path": "ui/hoh-ui.js",
-      "sha256": "85f8f3d9a8aff9fe0853c6d60d834d1824044fc32065a7a79fada467361bbb23"
+      "sha256": "213576c3a94fc358ff79a9207d9e31c0e43472d022ba7cd22930fb47d19545a2"
     },
     {
       "path": "ui/hoh-ui.css",
-      "sha256": "53e0157ffc08d8310cad7d44252145139b95cfadd88d156db4285d9ac2999e89"
+      "sha256": "127a37ef7136915f9355f40eae47bb60bb13d39f63a47c54fca656db36894790"
     },
     {
       "path": "ui/shell.js",
-      "sha256": "a0cb1bd4719148dc7145f6f1b7745b44c50ae5fac2ac04c640af3d37dba1d2f5"
+      "sha256": "f0c06d452207d9e4d648c93622eef34a07b1fe47cfc9dd364730483d8106bf8b"
     }
   ],
   "observations": [
@@ -35,7 +35,7 @@
       "status": "PARTIAL",
       "evidence": {
         "path": "ui/hoh-ui.js",
-        "line": 274
+        "line": 283
       },
       "finding": "Horizontal feed gesture is attached only to #feedGesture."
     },
@@ -44,7 +44,7 @@
       "status": "PARTIAL",
       "evidence": {
         "path": "ui/hoh-ui.js",
-        "line": 269
+        "line": 278
       },
       "finding": "Sheet handle supports dragging and split state; viewport-bottom origin is not implemented."
     },
@@ -53,7 +53,7 @@
       "status": "PARTIAL",
       "evidence": {
         "path": "ui/hoh-ui.js",
-        "line": 277
+        "line": 286
       },
       "finding": "Dashboard button supports downward drag; viewport-top origin is not implemented."
     },
@@ -64,7 +64,7 @@
         "path": "ui/hoh-ui.js",
         "line": 61
       },
-      "finding": "Fixed and favorite app groups exist; settings is supplied by the host. Since 0.3.1 a host may give each entry its own short icon."
+      "finding": "Fixed and favorite app groups exist; settings is supplied by the host. Since 0.3.1 a host may give each entry its own short icon, since 0.3.2 a badge count."
     },
     {
       "rule": "urn:hoh:gui:interaction-rule/reaction-glass",
@@ -80,7 +80,7 @@
       "status": "NOT_IMPLEMENTED",
       "evidence": {
         "path": "ui/hoh-ui.js",
-        "line": 268
+        "line": 277
       },
       "finding": "No keydown handler exists in the reviewed shell/controller files."
     },
@@ -96,5 +96,5 @@
   ],
   "bounds": "Existing source support is not a browser verification of the new edge/axis/shortcut contract. All audited UI artifact digests correspond to sourceRevision.",
   "refreshedFrom": "48e79cf4b20617f8e53775ee5567ca6b43289490",
-  "refreshNote": "Re-inspected at 0.3.1: the cited lines moved with the host-detail change (icons, accepts, host-initiated open, light tokens); every finding and status still holds. No keydown handler or edge-origin gesture was added."
+  "refreshNote": "Re-inspected at 0.3.1 and again at 0.3.2 (open result, badges, focusable chat list): the cited lines moved; every finding and status still holds. No keydown handler or edge-origin gesture was added."
 }
