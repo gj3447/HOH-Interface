@@ -2,14 +2,14 @@
   "schema": "hoh/source-observation@1",
   "authority": "APPLICATION_OBSERVATION",
   "recordedAt": "2026-10-07",
-  "sourceRevision": "64f7878be267c254be9a7e9d7f388e6839fe60c6",
+  "sourceRevision": "69beaaaf8fdc23f468148bd09aa4c88647e4ed1a",
   "method": "READ_ONLY_SOURCE_INSPECTION",
   "runtimeChanged": false,
   "runtimeConformance": "NOT_VERIFIED_FOR_NEW_PROFILE",
   "artifacts": [
     {
       "path": "ui/hoh-ui.js",
-      "sha256": "5f8083f852f65a402950fee022621c760a5dfff3ffb8cefbf2891f78d7d15d63"
+      "sha256": "0867c84eecb63322f54e99b685e55291e5a139c6ba7953ae7c8d0af41d3970fc"
     },
     {
       "path": "ui/hoh-ui.css",
@@ -35,7 +35,7 @@
       "status": "PARTIAL",
       "evidence": {
         "path": "ui/hoh-ui.js",
-        "line": 361
+        "line": 367
       },
       "finding": "Horizontal feed gesture is attached only to #feedGesture."
     },
@@ -44,7 +44,7 @@
       "status": "PARTIAL",
       "evidence": {
         "path": "ui/hoh-ui.js",
-        "line": 356
+        "line": 362
       },
       "finding": "Sheet handle supports dragging and split state; viewport-bottom origin is not implemented."
     },
@@ -53,7 +53,7 @@
       "status": "PARTIAL",
       "evidence": {
         "path": "ui/hoh-ui.js",
-        "line": 364
+        "line": 370
       },
       "finding": "Dashboard button supports downward drag; viewport-top origin is not implemented."
     },
@@ -80,7 +80,7 @@
       "status": "NOT_IMPLEMENTED",
       "evidence": {
         "path": "ui/hoh-ui.js",
-        "line": 355
+        "line": 361
       },
       "finding": "No keydown handler exists in the reviewed shell/controller files."
     },
@@ -96,5 +96,5 @@
   ],
   "bounds": "Existing source support is not a browser verification of the new edge/axis/shortcut contract. All audited UI artifact digests correspond to sourceRevision.",
   "refreshedFrom": "48e79cf4b20617f8e53775ee5567ca6b43289490",
-  "refreshNote": "Re-inspected at 0.3.1, 0.3.2 and 0.4.0 (feed continuation, comments, counts, streaming answers): the cited lines moved; every finding and status still holds. No keydown handler or edge-origin gesture was added."
+  "refreshNote": "Re-inspected at 0.3.1, 0.3.2, 0.4.0 and 0.4.1 (conversation follows the newest answer): the cited lines moved; every finding and status still holds. No keydown handler or edge-origin gesture was added."
 }
