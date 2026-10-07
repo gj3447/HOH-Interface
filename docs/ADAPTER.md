@@ -41,7 +41,7 @@ REALTIME의 호스트 인증·미디어 제공자·수명 계약은 [실시간 �
 | 메서드 | 입력 / 반환 |
 | --- | --- |
 | `bootstrap()` | `{profile, readiness?}`. 세션·CSRF는 어댑터 내부에서 처리한다. |
-| `list()` | `{items}`. 각 항목은 `{content, manifest, reasons?}`다. |
+| `list()` | `{items}`. 각 항목은 `{content, manifest, reasons?}`다. `reasons`는 호스트의 추천이 그 항목을 고른 까닭(짧은 문장 목록)이며 UI가 카드와 콘텐츠 아래에 보인다. |
 | `open({contentId, expectedViewRevision})` | `{content, manifest, viewRevision, appState?, favorite?, reaction?, comments?, dashboard?}` |
 | `favorite({contentId, favorite, viewRevision})` | 확인된 저장 결과 |
 | `react({contentId, reaction, viewRevision})` | `LIKE`, `DISLIKE`, `CLEAR`에 대한 확인된 결과 |
@@ -49,7 +49,7 @@ REALTIME의 호스트 인증·미디어 제공자·수명 계약은 [실시간 �
 | `saveState({contentId, state, viewRevision})` | `{appState}` |
 | `chat({contentId, message, viewRevision})` | 실제 제공자의 `{answer}` 또는 오류 |
 | `profile()` | `{profile}`. 즐겨찾기는 `{id,title,kind}` 목록이다. |
-| `status()` | `{readiness}`. 참조 어댑터는 `readiness.hswm.status/reason`을 제공한다. |
+| `status()` | `{readiness}`. `readiness.chat`은 AI 대화 제공자의 `{status, reason}`이다 — `READY`면 «AI 채팅을 사용할 수 있습니다», 아니면 `reason`을 보인다. 없으면 `readiness.hswm`을 같은 뜻으로 읽는다(참조 어댑터는 HSWM 채팅을 `readiness.hswm`으로 제공한다). |
 
 `content`는 `{id,title,payload}`, `manifest`는 `{kind}`를 포함한다.
 대시보드의 `dashboard`는 `{fixed:[{id,title,kind}], favorites:[{id,title,kind}]}`다.
@@ -66,6 +66,9 @@ UI는 화면, 제스처, 대화 초안, 작업 순서, 최신 선택 화면을 �
 현재 `adapters/program-feed.js`가 MetaHumotonic의 실제 `/api/program-feed/v1`
 프로토콜을 연결한다. 다른 호스트는 같은 메서드를 구현하고 자신이 제공할 앱과
 렌더러를 등록한다. 이 계약은 회사 업무 시스템이나 MM의 연결 완료를 뜻하지 않는다.
+
+AI 대화 제공자가 HSWM이 아닌 호스트(예: MM의 자체 AI)는 `readiness.chat`을 채우고 `readiness.hswm`을 채우지 않는다.
+`readiness.hswm`이 `READY`인 것은 HSWM 채팅이 연결됐다는 뜻으로만 쓴다.
 
 HSWM·CHU·USL은 백엔드 연결에 속한다. UI의 등록이나 그래프 관계는 실행 권한,
 HSWM admission, 모델의 준비 상태를 만들어 내지 않는다. 현재 참조 백엔드의

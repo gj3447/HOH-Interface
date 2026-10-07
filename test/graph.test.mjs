@@ -26,10 +26,14 @@ test('GUI graph preserves the Korean source, defined edge endpoints, host scope 
     assert.equal(new Set(ui[predicate].map(ref => ref['@id'])).size, count);
     for (const ref of ui[predicate]) assert.equal(indexed.get(ref['@id'])?.['@type'], type);
   }
-  assert.equal(indexed.get('urn:hoh:gui:host/mm')['h:status'], 'INTENDED_TARGET_NOT_RESOLVED');
-  assert.equal(indexed.get('urn:hoh:gui:host/company-work')['h:status'], 'INTENDED_NOT_INTEGRATED');
-  const currentImplementation = indexed.get('urn:hoh:gui:implementation/v0.2.0');
-  assert.equal(currentImplementation['prov:wasRevisionOf']['@id'], 'urn:hoh:gui:implementation/v0.1.1');
+  assert.equal(indexed.get('urn:hoh:gui:host/mm')['h:status'], 'INTEGRATED_EXTERNAL_HOST');
+  assert.equal(indexed.get('urn:hoh:gui:host/company-work')['h:status'], 'INTEGRATED_THROUGH_HOST');
+  assert.equal(indexed.get('urn:hoh:gui:host/company-work')['h:integratedVia']['@id'], 'urn:hoh:gui:host/mm');
+  const observation = indexed.get(indexed.get('urn:hoh:gui:host/mm')['h:observedIn']['@id']);
+  assert.equal(createHash('sha256').update(await readFile(new URL(observation['h:path'], root))).digest('hex'), observation['h:sha256']);
+  assert.equal(JSON.parse(await readFile(new URL(observation['h:path'], root), 'utf8')).readiness.hswm, 'NOT_CONNECTED');
+  const currentImplementation = indexed.get('urn:hoh:gui:implementation/v0.2.1');
+  assert.equal(currentImplementation['prov:wasRevisionOf']['@id'], 'urn:hoh:gui:implementation/v0.2.0');
   assert.equal(createHash('sha256').update(await readFile(new URL(currentImplementation['h:path'], root))).digest('hex'), currentImplementation['h:sha256']);
   const questions = JSON.parse(await readFile(new URL('graph/questions.json', root), 'utf8')).questions;
   const expanded = name => name.replace(/^h:/, 'urn:hoh:gui:').replace(/^prov:/, 'http://www.w3.org/ns/prov#');

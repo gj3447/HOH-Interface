@@ -209,8 +209,8 @@ async function initialize() {
     const feed = await adapter.list(); if (disposed) return; state.items = feed.items || [];
     const requested = new URLSearchParams(location.search).get('content') || state.profile.activeContentId || homeContentId;
     await openById(requested, state.items.findIndex((item) => item.content?.id === requested));
-    const live = await adapter.status().catch(() => null); if (disposed) return; const hswm = live?.readiness?.hswm || session.readiness?.hswm;
-    $('#chatStatus').textContent = hswm?.status === 'READY' ? 'AI 채팅을 사용할 수 있습니다.' : (hswm?.reason || 'AI 제공자에 연결되지 않았습니다.');
+    const live = await adapter.status().catch(() => null); if (disposed) return; const chat = chatReadiness(live?.readiness, session.readiness);
+    $('#chatStatus').textContent = chat?.status === 'READY' ? 'AI 채팅을 사용할 수 있습니다.' : (chat?.reason || 'AI 제공자에 연결되지 않았습니다.');
   } catch { if (disposed) return; status('연결할 수 없음', true); $('#chatStatus').textContent = '콘텐츠 또는 AI 제공자에 연결할 수 없습니다.'; render(); }
 }
 async function saveState(next, context = null) {
@@ -289,3 +289,9 @@ return { ready, open: openById, refresh: initialize, realtime: mediaSession, des
 
 /** Compatibility with the original @hoh/ui entry point. */
 export const mountHohUI = mountHohInterface;
+/** AI 대화 제공자의 준비 상태. `readiness.chat` 이 일반 열쇠이고, 없으면 참조 호스트가 주는 `readiness.hswm`(HSWM 채팅)을 같은 뜻으로 읽는다.
+ *  앞의 것(살아 있는 status())이 뒤의 것(bootstrap)보다 앞선다. HSWM 이 아닌 제공자는 `hswm` 자리를 채우지 않는다. */
+export function chatReadiness(...readinesses) {
+  for (const readiness of readinesses) { const provider = readiness?.chat || readiness?.hswm; if (provider) return provider; }
+  return null;
+}

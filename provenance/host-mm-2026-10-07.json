@@ -1,0 +1,69 @@
+{
+  "schema": "hoh/host-observation@1",
+  "recordedAt": "2026-10-07",
+  "authority": "APPLICATION_OBSERVATION",
+  "host": "urn:hoh:gui:host/mm",
+  "summary": "MM(metahumo_manufacture, 회사의 연구 서버 프로그램)이 HOH Interface 를 기본 화면으로 쓴다. 좋좋공은 MM 안의 범위로 같은 화면을 쓴다.",
+  "repository": "PRIVATE",
+  "vendored": {
+    "version": "0.1.1",
+    "commit": "940888483f24253491bda4cdfeef55528e6df7a2",
+    "files": [
+      "ui/hoh-ui.js",
+      "ui/shell.js",
+      "ui/hoh-ui.css",
+      "LICENSE",
+      "NOTICE"
+    ],
+    "rule": "사본을 고치지 않는다 — 바꿀 것은 이 레포로 보내고 새 판을 다시 들여온다"
+  },
+  "adapter": {
+    "implemented": [
+      "bootstrap",
+      "list",
+      "open",
+      "favorite",
+      "react",
+      "comment",
+      "saveState",
+      "chat",
+      "profile",
+      "status"
+    ],
+    "listReasons": "호스트 추천의 까닭을 reasons 로 넘긴다"
+  },
+  "renderers": [
+    "IMAGE",
+    "VIDEO",
+    "MARKDOWN",
+    "MESSAGE",
+    "MODEL",
+    "HTML",
+    "FILE",
+    "APP"
+  ],
+  "readiness": {
+    "chat": "호스트의 AI 대화 제공자",
+    "hswm": "NOT_CONNECTED"
+  },
+  "scopes": {
+    "jojogong": "좋좋공 — 같은 화면, 보이는 자료·조작만 좁은 범위"
+  },
+  "checks": {
+    "hostBrowser": {
+      "cases": 9,
+      "axeViolations": 0,
+      "status": "PASS"
+    },
+    "defaultScreen": {
+      "since": "2026-10-07",
+      "status": "OBSERVED"
+    }
+  },
+  "observedBy": "software-agent:claude-code for gj3447",
+  "nonclaims": [
+    "HSWM 연결 실행이 아니다",
+    "HOH 사본을 고친 것이 아니다",
+    "회사 업무 시스템 전체의 연결 완료가 아니다"
+  ]
+}

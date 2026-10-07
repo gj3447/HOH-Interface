@@ -1,0 +1,48 @@
+{
+ "schema": "hoh/local-verification@1",
+ "recordedAt": "2026-10-07",
+ "authority": "APPLICATION_OBSERVATION",
+ "version": "0.2.1",
+ "scope": "General AI chat readiness key, list() reasons in the adapter contract, MM recorded as a connected host (좋좋공 through MM)",
+ "checks": {
+  "packageTests": {
+   "command": "npm test",
+   "passed": 15,
+   "exitCode": 0
+  },
+  "rdf": {
+   "parser": "rdflib 7.6.0",
+   "triples": {
+    "graph/hoh-ui.jsonld": 154,
+    "graph/realtime.jsonld": 291
+   },
+   "remoteFetches": 0
+  },
+  "guiBrowser": {
+   "script": "test/browser-gui.mjs",
+   "url": "http://127.0.0.1:8021",
+   "passed": 14,
+   "status": "PASS"
+  },
+  "realtimeBrowser": {
+   "script": "test/browser-realtime.mjs",
+   "url": "http://127.0.0.1:8021/realtime/",
+   "passed": 19,
+   "status": "PASS"
+  },
+  "hostBrowser": {
+   "host": "urn:hoh:gui:host/mm",
+   "observation": "provenance/host-mm-2026-10-07.json",
+   "status": "PASS"
+  }
+ },
+ "changes": [
+  "ui/hoh-ui.js: chatReadiness(readiness...) — readiness.chat first, readiness.hswm as the fallback; the live status() before bootstrap",
+  "docs/ADAPTER.md: list() reasons are the host recommendation's reasons shown under the content; status() readiness.chat; a non-HSWM provider leaves readiness.hswm empty",
+  "graph/hoh-ui.jsonld: host/mm INTEGRATED_EXTERNAL_HOST, host/company-work INTEGRATED_THROUGH_HOST via host/mm, observation/host-mm-2026-10-07, implementation/v0.2.1; graph/history/hoh-ui-0.2.0.jsonld keeps the previous graph"
+ ],
+ "notChecked": [
+  "referenceHostTests — the MetaHumotonic reference host is not on this machine; the program-feed adapter is unchanged"
+ ],
+ "recordedBy": "software-agent:claude-code for gj3447"
+}
