@@ -1,0 +1,77 @@
+{
+ "schema": "hoh/local-verification@1",
+ "recordedAt": "2026-10-07",
+ "authority": "APPLICATION_OBSERVATION",
+ "version": "0.3.1",
+ "scope": "Host-owned shell details: dashboard icons, host resources accepted per content, host-initiated open that keeps a pending AI answer, light-theme contrast",
+ "checks": {
+  "packageTests": {
+   "command": "npm test",
+   "passed": 37,
+   "exitCode": 0
+  },
+  "semanticValidators": {
+   "command": "npm run check:semantic",
+   "validators": 7,
+   "status": "MATCH"
+  },
+  "semanticStandards": {
+   "command": "python3 scripts/validate-semantic-standards.py",
+   "status": "PASS"
+  },
+  "rdf": {
+   "parser": "rdflib 7.6.0",
+   "triples": {
+    "graph/hoh-ui.jsonld": 162,
+    "graph/realtime.jsonld": 295
+   },
+   "remoteFetches": 0
+  },
+  "guiBrowser": {
+   "script": "test/browser-gui.mjs",
+   "passed": 14,
+   "status": "PASS"
+  },
+  "hostBrowser": {
+   "script": "test/browser-host.mjs",
+   "url": "http://127.0.0.1:8021/host/",
+   "passed": 8,
+   "status": "PASS",
+   "contrast": {
+    "tealOnSurface2": 4.94,
+    "tealOnBg": 5.27,
+    "whiteOnTealDark": 5.2
+   },
+   "assertions": [
+    "host-supplied dashboard icons render",
+    "missing or over-long host icons fall back to the kind icon",
+    "reactions and comments hidden where the host does not accept them",
+    "share and save stay where the host accepts them",
+    "every resource shows when the host says nothing",
+    "a host-initiated open keeps the AI answer the person was waiting for",
+    "light theme teal text and white-on-teal buttons meet 4.5:1",
+    "no page errors"
+   ]
+  },
+  "realtimeBrowser": {
+   "script": "test/browser-realtime.mjs",
+   "passed": 19,
+   "status": "PASS"
+  },
+  "semanticBrowser": {
+   "script": "test/browser-semantic.mjs",
+   "passed": 24,
+   "status": "PASS"
+  }
+ },
+ "contrastMethod": "WCAG 2.x relative luminance. Light --teal #067d75 → #05726b: text on --surface-2 4.27 → 4.94, on the 14% teal tint over glass 4.01 → 4.59, icons on the 25% tint ≥ 3.49 (non-text 3:1). --teal-dark #0d968c → #0a7a72: white text 3.65 → 5.20. Dark theme unchanged.",
+ "behaviour": {
+  "userOpenDuringChat": "answer not applied (unchanged — the person's own navigation supersedes)",
+  "hostOpenDuringChat": "answer applied, then the content opens"
+ },
+ "notChecked": [
+  "referenceHostTests — the MetaHumotonic reference host is not on this machine; the program-feed adapter is unchanged"
+ ],
+ "origin": "Host handoff items from the MM host (U1 contrast, U4 host-initiated open, U5 per-content resources, U7 dashboard icons), made at the owner's request.",
+ "recordedBy": "software-agent:claude-code for gj3447"
+}

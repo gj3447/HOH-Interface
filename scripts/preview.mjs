@@ -22,6 +22,8 @@ routes.set('/realtime/', 'examples/realtime/index.html');
 routes.set('/realtime/app.js', 'examples/realtime/app.js');
 routes.set('/realtime/local-webrtc.js', 'adapters/local-webrtc.js');
 routes.set('/semantic/', 'examples/semantic/index.html');
+routes.set('/host/', 'examples/host-contract/index.html');
+routes.set('/host/app.js', 'examples/host-contract/app.js');
 for (const file of ['app.js', 'model.js', 'validators.js', 'style.css', 'board.json']) routes.set(`/semantic/${file}`, `examples/semantic/${file}`);
 for (const file of ['runtime.js', 'agent-session.js', 'mcp-mapping.js', 'outcome.schema.json']) routes.set(`/protocol/${file}`, `protocol/${file}`);
 const types = { html: 'text/html; charset=utf-8', js: 'text/javascript; charset=utf-8', json: 'application/json; charset=utf-8', css: 'text/css; charset=utf-8', svg: 'image/svg+xml', png: 'image/png', webmanifest: 'application/manifest+json' };
@@ -44,7 +46,7 @@ const server = createServer(async (request, response) => {
       request.on('aborted', () => upstream.destroy());
       request.pipe(upstream); return;
     }
-    if (url.pathname === '/' || ['/feed', '/realtime', '/semantic'].includes(url.pathname)) { response.writeHead(302, { Location: url.pathname === '/' ? '/feed/' : url.pathname + '/' }); response.end(); return; }
+    if (url.pathname === '/' || ['/feed', '/realtime', '/semantic', '/host'].includes(url.pathname)) { response.writeHead(302, { Location: url.pathname === '/' ? '/feed/' : url.pathname + '/' }); response.end(); return; }
     const source = routes.get(url.pathname);
     if (!source || request.method !== 'GET') { response.writeHead(404); response.end(); return; }
     const bytes = await readFile(resolve(root, source));

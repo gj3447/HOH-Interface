@@ -2,18 +2,18 @@
   "schema": "hoh/source-observation@1",
   "authority": "APPLICATION_OBSERVATION",
   "recordedAt": "2026-10-07",
-  "sourceRevision": "48e79cf4b20617f8e53775ee5567ca6b43289490",
+  "sourceRevision": "52260883e6c9e91f7ebc6b178baf2697d3edd924",
   "method": "READ_ONLY_SOURCE_INSPECTION",
   "runtimeChanged": false,
   "runtimeConformance": "NOT_VERIFIED_FOR_NEW_PROFILE",
   "artifacts": [
     {
       "path": "ui/hoh-ui.js",
-      "sha256": "3cc306ec2f889d6535362f337300c63f326ddec76b008da1497b6403315607a1"
+      "sha256": "85f8f3d9a8aff9fe0853c6d60d834d1824044fc32065a7a79fada467361bbb23"
     },
     {
       "path": "ui/hoh-ui.css",
-      "sha256": "ce65b2b12b259142bd8b1a410b04925044eee1bb454244ea5c77905bba87116d"
+      "sha256": "53e0157ffc08d8310cad7d44252145139b95cfadd88d156db4285d9ac2999e89"
     },
     {
       "path": "ui/shell.js",
@@ -35,7 +35,7 @@
       "status": "PARTIAL",
       "evidence": {
         "path": "ui/hoh-ui.js",
-        "line": 265
+        "line": 274
       },
       "finding": "Horizontal feed gesture is attached only to #feedGesture."
     },
@@ -44,7 +44,7 @@
       "status": "PARTIAL",
       "evidence": {
         "path": "ui/hoh-ui.js",
-        "line": 260
+        "line": 269
       },
       "finding": "Sheet handle supports dragging and split state; viewport-bottom origin is not implemented."
     },
@@ -53,7 +53,7 @@
       "status": "PARTIAL",
       "evidence": {
         "path": "ui/hoh-ui.js",
-        "line": 268
+        "line": 277
       },
       "finding": "Dashboard button supports downward drag; viewport-top origin is not implemented."
     },
@@ -62,9 +62,9 @@
       "status": "PRESENT_IN_SOURCE_HOST_DEPENDENT",
       "evidence": {
         "path": "ui/hoh-ui.js",
-        "line": 57
+        "line": 61
       },
-      "finding": "Fixed and favorite app groups exist; settings is supplied by the host."
+      "finding": "Fixed and favorite app groups exist; settings is supplied by the host. Since 0.3.1 a host may give each entry its own short icon."
     },
     {
       "rule": "urn:hoh:gui:interaction-rule/reaction-glass",
@@ -73,14 +73,14 @@
         "path": "ui/hoh-ui.css",
         "line": 35
       },
-      "finding": "Favorites and reaction rails have translucent background, blur, borders and shadows."
+      "finding": "Favorites and reaction rails have translucent background, blur, borders and shadows. Since 0.3.1 a host can hide the resources a content does not accept (open() accepts)."
     },
     {
       "rule": "urn:hoh:gui:interaction-rule/desktop-shortcuts",
       "status": "NOT_IMPLEMENTED",
       "evidence": {
         "path": "ui/hoh-ui.js",
-        "line": 259
+        "line": 268
       },
       "finding": "No keydown handler exists in the reviewed shell/controller files."
     },
@@ -94,5 +94,7 @@
       "finding": "Dashboard entry exists; dedicated desktop AI invocation and shared glass entry controls are absent."
     }
   ],
-  "bounds": "Existing source support is not a browser verification of the new edge/axis/shortcut contract. All audited UI artifact digests correspond to sourceRevision."
+  "bounds": "Existing source support is not a browser verification of the new edge/axis/shortcut contract. All audited UI artifact digests correspond to sourceRevision.",
+  "refreshedFrom": "48e79cf4b20617f8e53775ee5567ca6b43289490",
+  "refreshNote": "Re-inspected at 0.3.1: the cited lines moved with the host-detail change (icons, accepts, host-initiated open, light tokens); every finding and status still holds. No keydown handler or edge-origin gesture was added."
 }
