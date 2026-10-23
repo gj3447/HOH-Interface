@@ -17,6 +17,14 @@
       "h:recordedAt": "2026-10-07"
     },
     {
+      "@id": "urn:hoh:gui:source/user-hoh-app-drawer-17dce0bd928d4426fc5bb62550e89b4870d1151c8c026222c7cd1c5bcd03858f",
+      "@type": "prov:Entity",
+      "h:authority": "USER_PRIMARY",
+      "h:path": "sources/user-hoh-app-drawer-2026-10-23.txt",
+      "h:sha256": "17dce0bd928d4426fc5bb62550e89b4870d1151c8c026222c7cd1c5bcd03858f",
+      "h:recordedAt": "2026-10-23"
+    },
+    {
       "@id": "urn:hoh:gui:interaction-profile/v0.1-draft",
       "@type": "h:InteractionProfile",
       "skos:prefLabel": "HOH Interaction Profile 0.1 draft",
@@ -69,9 +77,9 @@
       "@type": "prov:Entity",
       "h:authority": "SECONDARY_AI",
       "h:path": "docs/INTERACTION_PROFILE.md",
-      "h:sha256": "01c9eae70ff3f7cac0017438fa12cf87238c76f8a747b9506ec8203973a3cde8",
+      "h:sha256": "57ee11e87373818b36fb024eb20d2048a4ac4941f31d376e0ca549cba68e163e",
       "prov:wasDerivedFrom": {
-        "@id": "urn:hoh:gui:source/user-hoh-interaction-224832972605dd38116048037824500a391fadf911bcd998ffe5aaa47010698e"
+        "@id": "urn:hoh:gui:source/user-hoh-app-drawer-17dce0bd928d4426fc5bb62550e89b4870d1151c8c026222c7cd1c5bcd03858f"
       }
     },
     {
@@ -217,9 +225,9 @@
       "h:authority": "SECONDARY_AI",
       "h:status": "USER_REQUIREMENT_INTERPRETATION",
       "prov:wasDerivedFrom": {
-        "@id": "urn:hoh:gui:source/user-hoh-interaction-224832972605dd38116048037824500a391fadf911bcd998ffe5aaa47010698e"
+        "@id": "urn:hoh:gui:source/user-hoh-app-drawer-17dce0bd928d4426fc5bb62550e89b4870d1151c8c026222c7cd1c5bcd03858f"
       },
-      "h:description": "가시 화면 상단에서 아래로 끌어 앱 메인 대시보드를 연다. 콘텐츠 스크롤 시작 도달은 조건이 아니다.",
+      "h:description": "가시 화면 상단에서 아래로 끌어 현재 콘텐츠 위에 앱 서랍을 연다. 콘텐츠의 위치와 상태를 유지한다.",
       "h:interactionComponent": {
         "@id": "urn:hoh:gui:component/dashboard"
       },
@@ -238,9 +246,9 @@
       "h:authority": "SECONDARY_AI",
       "h:status": "USER_REQUIREMENT_INTERPRETATION",
       "prov:wasDerivedFrom": {
-        "@id": "urn:hoh:gui:source/user-hoh-interaction-224832972605dd38116048037824500a391fadf911bcd998ffe5aaa47010698e"
+        "@id": "urn:hoh:gui:source/user-hoh-app-drawer-17dce0bd928d4426fc5bb62550e89b4870d1151c8c026222c7cd1c5bcd03858f"
       },
-      "h:description": "고정 앱과 즐겨찾기를 앱 아이콘 그리드로 표시하고 설정을 고정 앱에 포함한다.",
+      "h:description": "한 화면의 추천 앱·개인 배치·AI 보관함. 길게 눌러 편집하고 앱을 겹쳐 폴더를 만든다. AI 분류는 화면별 자식 수를 제한한 트리이며 개인 배치를 쓰지 않는다. 폴더 아이콘에서 확대하고 전체 표면 끌기로 축소해 부모 한 단계에 복귀한다. 별도 끌기 손잡이 없이 60% 이하 놓음 또는 빠른 쓸기, 접근 가능한 뒤로가기를 지원한다. 공용 실행 구현 완료를 뜻하지 않는다.",
       "h:interactionComponent": {
         "@id": "urn:hoh:gui:component/dashboard"
       },
@@ -250,11 +258,14 @@
         }
       ],
       "h:gridGroup": [
-        "FIXED_APPS",
-        "FAVORITES"
+        "RECOMMENDED_APPS",
+        "PERSONAL_GRID",
+        "AI_LIBRARY_TREE"
       ],
-      "h:settingsPlacement": "APP_IN_FIXED_APPS",
-      "h:scrollAxes": "Y_ONLY"
+      "h:settingsPlacement": "APP_IN_PERSONAL_GRID",
+      "h:scrollAxes": "PAGED_OR_TREE",
+      "h:mobileBranchCapacity": 4,
+      "h:folderExitScale": 0.6
     },
     {
       "@id": "urn:hoh:gui:interaction-rule/reaction-glass",
@@ -436,7 +447,7 @@
       "rdfs:range": {
         "@id": "xsd:string"
       },
-      "rdfs:comment": "Rule to allowed content scrolling axes; optional single Y_ONLY, not program control degrees of freedom."
+      "rdfs:comment": "Content uses Y_ONLY; dashboard uses PAGED_OR_TREE within a fixed-height drawer."
     },
     {
       "@id": "urn:hoh:gui:gestureOrigin",
@@ -480,7 +491,7 @@
       "rdfs:range": {
         "@id": "xsd:string"
       },
-      "rdfs:comment": "Dashboard rule to groups; exactly FIXED_APPS and FAVORITES for this draft."
+      "rdfs:comment": "Dashboard groups: RECOMMENDED_APPS, PERSONAL_GRID, AI_LIBRARY_TREE (owner amendment 2026-10-23)."
     },
     {
       "@id": "urn:hoh:gui:settingsPlacement",
@@ -491,7 +502,7 @@
       "rdfs:range": {
         "@id": "xsd:string"
       },
-      "rdfs:comment": "Dashboard rule to settings membership; exactly APP_IN_FIXED_APPS."
+      "rdfs:comment": "Settings belongs in the personal app grid; feed exclusions are inside that app."
     },
     {
       "@id": "urn:hoh:gui:visualTreatment",
@@ -514,6 +525,28 @@
         "@id": "xsd:string"
       },
       "rdfs:comment": "Rule to desktop invocation modality; optional single value; key combinations remain implementation proposals."
+    },
+    {
+      "@id": "urn:hoh:gui:mobileBranchCapacity",
+      "@type": "rdf:Property",
+      "rdfs:domain": {
+        "@id": "urn:hoh:gui:InteractionRule"
+      },
+      "rdfs:range": {
+        "@id": "xsd:integer"
+      },
+      "rdfs:comment": "Maximum direct children at each phone AI-library level; owner-selected, not an experimental optimum."
+    },
+    {
+      "@id": "urn:hoh:gui:folderExitScale",
+      "@type": "rdf:Property",
+      "rdfs:domain": {
+        "@id": "urn:hoh:gui:InteractionRule"
+      },
+      "rdfs:range": {
+        "@id": "xsd:double"
+      },
+      "rdfs:comment": "Uniform width/height fraction at ordinary release that commits parent navigation; outward fling may close earlier."
     }
   ]
 }
