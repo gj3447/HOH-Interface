@@ -123,15 +123,37 @@
           "subject": "urn:hoh:gui:interaction-rule/dashboard-grid",
           "predicate": "urn:hoh:gui:gridGroup",
           "expectedValues": [
-            "FIXED_APPS",
-            "FAVORITES"
+            "RECOMMENDED_APPS",
+            "PERSONAL_GRID",
+            "AI_LIBRARY_TREE"
           ]
         },
         {
           "subject": "urn:hoh:gui:interaction-rule/dashboard-grid",
           "predicate": "urn:hoh:gui:settingsPlacement",
           "expectedValues": [
-            "APP_IN_FIXED_APPS"
+            "APP_IN_PERSONAL_GRID"
+          ]
+        },
+        {
+          "subject": "urn:hoh:gui:interaction-rule/dashboard-grid",
+          "predicate": "urn:hoh:gui:scrollAxes",
+          "expectedValues": [
+            "PAGED_OR_TREE"
+          ]
+        },
+        {
+          "subject": "urn:hoh:gui:interaction-rule/dashboard-grid",
+          "predicate": "urn:hoh:gui:mobileBranchCapacity",
+          "expectedValues": [
+            4
+          ]
+        },
+        {
+          "subject": "urn:hoh:gui:interaction-rule/dashboard-grid",
+          "predicate": "urn:hoh:gui:folderExitScale",
+          "expectedValues": [
+            0.6
           ]
         }
       ]
