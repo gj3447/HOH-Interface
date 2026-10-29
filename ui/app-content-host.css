@@ -1,0 +1,14 @@
+.hoh-packaged-content {
+  width: 100%;
+  height: 100%;
+  min-height: 320px;
+  position: relative;
+}
+.hoh-packaged-app {
+  display: block;
+  border: 0;
+  width: 100%;
+  height: 100%;
+  min-height: 280px;
+  background: transparent;
+}

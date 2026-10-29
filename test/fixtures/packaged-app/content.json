@@ -1,0 +1,27 @@
+{
+  "schema": "mm.content-package/v1",
+  "name": "interop-board",
+  "title": "공통 콘텐츠 보드",
+  "summary": "같은 앱 패키지의 사람·에이전트 조작과 화면 복원을 검증하는 합성 예제.",
+  "tools": [],
+  "params": ["count"],
+  "version": 1,
+  "hotReload": true,
+  "content": {
+    "id": "urn:ailab:interop:board",
+    "revision": 1,
+    "description": "count는 이 앱의 보기 상태다. 서버의 업무 데이터나 실제 자원의 수가 아니다.",
+    "state": {
+      "type": "object",
+      "properties": { "count": { "type": "integer", "minimum": 0, "maximum": 100 }, "unsaved": { "type": "boolean" } },
+      "required": ["count", "unsaved"]
+    },
+    "actions": [
+      { "id": "increment", "title": "하나 추가", "description": "보기의 수를 하나 늘린다.", "input": { "type": "object", "properties": {}, "required": [] }, "gestureRequired": false },
+      { "id": "setCount", "title": "수 정하기", "description": "보기의 수를 정한다.", "input": { "type": "object", "properties": { "count": { "type": "integer", "minimum": 0, "maximum": 100 } }, "required": ["count"] }, "gestureRequired": false },
+      { "id": "humanOnly", "title": "직접 조작", "description": "실제 사람의 조작이 필요한 시험 동작.", "input": { "type": "object", "properties": {}, "required": [] }, "gestureRequired": true },
+      { "id": "confirmedOnly", "title": "확인 필요", "description": "자동 실행되면 안 되는 시험 동작.", "input": { "type": "object", "properties": {}, "required": [] }, "gestureRequired": false, "requiresConfirmation": true },
+      { "id": "setUnsaved", "title": "작업 중 상태", "description": "화면 교체 보류를 검증한다.", "input": { "type": "object", "properties": { "value": { "type": "boolean" } }, "required": ["value"] }, "gestureRequired": false }
+    ]
+  }
+}

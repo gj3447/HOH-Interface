@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>공통 콘텐츠 보드</title>
+<!-- ailab-app-kit -->
+<style>
+body{margin:0;padding:24px;font:16px system-ui;background:var(--color-background-primary,#151515);color:var(--color-text-primary,#eee)}
+main{max-width:36rem;margin:auto}output{display:block;font-size:clamp(48px,12vw,88px);font-variant-numeric:tabular-nums;margin:24px 0}button{font:inherit;border:1px solid #777;border-radius:10px;padding:12px 18px;color:inherit;background:transparent;cursor:pointer;min-height:44px}button:focus-visible{outline:3px solid #82beff;outline-offset:3px}
+</style>
+</head>
+<body><main><h1>공통 콘텐츠 보드</h1><p>이 화면과 옆의 에이전트는 같은 동작을 사용합니다.</p><output id="count" aria-live="polite">0</output><button id="add" type="button">하나 추가</button><p id="status" role="status"></p></main>
+<script>
+(async () => {
+  const { input } = await ailab.connect();
+  let count = Math.max(0, Math.min(100, Number(input.count) || 0)), unsaved = false;
+  const draw = () => { document.getElementById('count').value = String(count); ailab.remember({ count: String(count) }); ailab.changed(); };
+  const update = value => { count = value; draw(); return { status: 'view updated' }; };
+  ailab.content({ id: 'urn:ailab:interop:board', revision: 1, state: () => ({ count, unsaved }), actions: {
+    increment: { gesture: false, run: () => update(Math.min(100, count + 1)) },
+    setCount: { gesture: false, run: ({ count: value }) => update(value) },
+    humanOnly: { gesture: true, run: () => update(99) },
+    confirmedOnly: { gesture: false, run: () => update(98) },
+    setUnsaved: { gesture: false, run: ({ value }) => { unsaved = value; ailab.changed(); return { status: 'view updated' }; } }
+  } });
+  document.getElementById('add').onclick = () => { void Promise.resolve(ailab.act('increment')).catch(() => { document.getElementById('status').textContent = '변경을 완료하지 못했어요.'; }); };
+  draw();
+})();
+</script>
+</body></html>

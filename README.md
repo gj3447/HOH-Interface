@@ -40,6 +40,27 @@ npm run preview -- --port 8022
 
 공개 초안이며 업계 표준 채택·독립 인증·모든 기존 콘텐츠의 전환을 주장하지 않는다.
 
+## Portable packaged apps · 0.5.0
+
+`mm.content-package/v1` 앱을 고치지 않고 실행하는 공통 패키지 검사기·키트·sandbox 호스트를 제공한다.
+호스트가 선택한 묶음 SHA-256과 원본 템플릿 해시를 검사하고, 기존 콘텐츠 ID와 동작 이름을 유지한다.
+`createPackagedContentRenderer`를 공통 셸의 `PACKAGED_APP` 렌더러로 등록한다.
+
+```sh
+npm run preview:packaged -- --port 8023
+# http://127.0.0.1:8023/ — 합성 앱, 규칙 기반 채팅, 메모리 보기 상태
+```
+
+- [실행·의미·권한 계약](docs/CONTENT_INTEROPERABILITY.md)
+- `@hoh/ui/content/app-package`: 판본·해시·MM 모양 검사와 패키지 읽기
+- `@hoh/ui/content/app-host`: 호스트가 승인한 앱의 실행·상태 읽기·동작·구독
+- `@hoh/ui/adapters/packaged-content`: 기존 HOH 셸의 렌더러 확장
+
+앱의 화면 상태는 `FRAME_REPORTED` 관측이다. 업무 서버의 영속 상태나 실행 증거로 바꾸어 부르지 않는다.
+계정·게시 권한·명시적으로 등록한 읽기 도구·보기 복원 저장소는 소비 호스트가 제공한다.
+회사 앱 자료와 서버 자격은 이 패키지에 들어 있지 않다. 이 확장 자체가 회사 앱 전체의
+연결이나 운영 사이트 배포를 완료하지는 않는다.
+
 ## 공통 화면
 
 [입력·제스처 명세 0.1](docs/INTERACTION_PROFILE.md): 콘텐츠는 세로 스크롤만,
