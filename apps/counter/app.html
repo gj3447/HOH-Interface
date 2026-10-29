@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>카운터</title>
+<!-- ailab-app-kit -->
+<style>
+*{box-sizing:border-box}html,body{height:100%;margin:0}body{background:#111;color:#f6f6f6;font:16px system-ui,sans-serif}main{min-height:100%;max-width:42rem;margin:auto;display:flex;flex-direction:column;justify-content:center;padding:clamp(24px,6vw,64px);gap:24px}.label{display:flex;align-items:center;gap:12px}.label input{width:100%;font:inherit;font-size:clamp(20px,4vw,28px);font-weight:600;color:inherit;background:none;border:0;border-bottom:1px solid #555;padding:10px 0}output{font-size:clamp(64px,18vw,144px);font-weight:300;font-variant-numeric:tabular-nums;letter-spacing:-.06em;line-height:1.1;overflow-wrap:anywhere}.controls{display:flex;gap:16px}button{font:inherit;font-size:28px;min-height:64px;min-width:88px;padding:8px 20px;border:1px solid #777;background:#222;color:inherit;border-radius:18px;cursor:pointer}button:active{background:#444}button:focus-visible,input:focus-visible{outline:3px solid #8dd6ff;outline-offset:4px}.hint{color:#aaa;line-height:1.6;font-size:14px}#status{min-height:1.5em;color:#ffc6ba}button:disabled{opacity:.35;cursor:default}@media(max-height:400px){main{gap:12px;padding:16px}output{font-size:64px}button{min-height:48px}}
+</style></head><body>
+<main><h1>카운터</h1>
+<output id="count" aria-live="polite" aria-label="현재 숫자">0</output>
+<div class="controls"><button id="minus" type="button" aria-label="하나 빼기">−</button><button id="plus" type="button" aria-label="하나 더하기">＋</button></div>
+<p class="hint">옆 대화에 원하는 숫자나 이름을 말해 보세요.</p><p id="status" role="status"></p></main>
+<script>
+(async()=>{
+  const {input={}}=await ailab.connect({name:'hoh-counter',version:'1'});
+  let count=Math.min(1000000,Math.max(0,Math.trunc(Number(input.count)||0)));
+  const $=id=>document.getElementById(id);
+  const draw=()=>{$('count').value=String(count);$('minus').disabled=count===0;$('plus').disabled=count===1000000;ailab.remember({count:String(count)});ailab.changed();};
+  const changed=()=>{draw();return {status:'화면을 바꿨어요.',count};};
+  ailab.content({id:'urn:ailab:hoh:content:counter',revision:1,state:()=>({count}),actions:{
+    increment:{gesture:false,run:()=>{count=Math.min(1000000,count+1);return changed();}},
+    decrement:{gesture:false,run:()=>{count=Math.max(0,count-1);return changed();}},
+    setCount:{gesture:false,run:({count:value})=>{if(!Number.isInteger(value)||value<0||value>1000000)throw new Error('숫자 범위를 확인해 주세요.');count=value;return changed();}}
+  }});
+  const run=(action,args={})=>{try{Promise.resolve(ailab.act(action,args)).catch(()=>{$('status').textContent='변경을 완료하지 못했어요.';});}catch{$('status').textContent='변경을 완료하지 못했어요.';}};
+  $('plus').onclick=()=>run('increment');$('minus').onclick=()=>run('decrement');draw();
+})();
+</script></body></html>

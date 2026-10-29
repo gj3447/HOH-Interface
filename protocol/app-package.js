@@ -115,7 +115,7 @@ export function decodeMmShape(shape, value) {
   }
 }
 
-export function parseMmPackage(raw, template) {
+export function parseMmPackageMetadata(raw) {
   const pkg = appJson(raw);
   fields(pkg, ['schema', 'name', 'title', 'summary', 'tools', 'params', 'version'], ['hotReload', 'admin', 'icon', 'color', 'content']);
   requireValue(pkg.schema === 'mm.content-package/v1', 'Unsupported package format.', 'UNSUPPORTED_PROFILE');
@@ -125,12 +125,10 @@ export function parseMmPackage(raw, template) {
   requireValue(Array.isArray(pkg.params) && pkg.params.length <= 8 && unique(pkg.params) && pkg.params.every(v => typeof v === 'string' && /^[a-z][a-zA-Z0-9]{0,30}$/.test(v) && !forbidden.has(v)), 'Invalid parameter list.');
   for (const key of ['admin', 'hotReload']) if (pkg[key] !== undefined) requireValue(typeof pkg[key] === 'boolean', `Invalid ${key}.`);
   for (const key of ['icon', 'color']) if (pkg[key] !== undefined) requireValue(text(pkg[key], 20), `Invalid ${key}.`);
-  requireValue(typeof template === 'string' && encoder.encode(template).length <= APP_LIMITS.template && template.split(MM_KIT_SLOT).length === 2, 'Template needs exactly one MM kit slot and must fit the size limit.');
   if (pkg.content !== undefined) {
     const c = pkg.content;
     fields(c, ['id', 'revision', 'description', 'state', 'actions'], ['controls', 'links']);
     requireValue(typeof c.id === 'string' && /^urn:ailab:[a-z0-9][a-z0-9:.-]{2,120}$/.test(c.id) && integer(c.revision, 1) && text(c.description, 8000), 'Invalid content description.');
-    requireValue(template.includes(c.id), 'Template must register the declared content identity.');
     if (c.controls !== undefined) requireValue(c.controls === 'playback', 'Unsupported content controls.');
     if (c.links !== undefined) requireValue(Array.isArray(c.links) && c.links.length <= 8 && c.links.every(v => text(v, 300)), 'Invalid content links.');
     assertMmShape(c.state); requireValue(c.state.type === 'object', 'Content state must be an object.');
@@ -142,6 +140,13 @@ export function parseMmPackage(raw, template) {
     }
   }
   return freezeAppJson(pkg);
+}
+
+export function parseMmPackage(raw, template) {
+  const pkg = parseMmPackageMetadata(raw);
+  requireValue(typeof template === 'string' && encoder.encode(template).length <= APP_LIMITS.template && template.split(MM_KIT_SLOT).length === 2, 'Template needs exactly one MM kit slot and must fit the size limit.');
+  if (pkg.content) requireValue(template.includes(pkg.content.id), 'Template must register the declared content identity.');
+  return pkg;
 }
 
 export async function appSha256(bytes) {

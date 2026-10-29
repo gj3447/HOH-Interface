@@ -1,0 +1,75 @@
+{
+  "schema": "mm.content-package/v1",
+  "name": "hoh-counter",
+  "title": "카운터",
+  "summary": "버튼이나 옆 대화로 숫자를 세고 바꿔요.",
+  "tools": [],
+  "params": [
+    "count"
+  ],
+  "version": 1,
+  "hotReload": true,
+  "icon": "calculator",
+  "color": "graphite",
+  "content": {
+    "id": "urn:ailab:hoh:content:counter",
+    "revision": 1,
+    "description": "사람이 직접 세거나 정하는 카운터. 현재 숫자는 사용자가 입력한 값이며 실제 설비나 외부 측정값이 아니다. increment는 1 더하기, decrement는 1 빼기, setCount는 원하는 정수로 변경이다.",
+    "state": {
+      "type": "object",
+      "properties": {
+        "count": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000000
+        }
+      },
+      "required": [
+        "count"
+      ]
+    },
+    "actions": [
+      {
+        "id": "increment",
+        "title": "하나 더하기",
+        "description": "현재 카운터를 1 늘린다.",
+        "input": {
+          "type": "object",
+          "properties": {},
+          "required": []
+        },
+        "gestureRequired": false
+      },
+      {
+        "id": "decrement",
+        "title": "하나 빼기",
+        "description": "현재 카운터를 1 줄인다. 0보다 작아지지 않는다.",
+        "input": {
+          "type": "object",
+          "properties": {},
+          "required": []
+        },
+        "gestureRequired": false
+      },
+      {
+        "id": "setCount",
+        "title": "숫자 정하기",
+        "description": "현재 카운터를 요청한 정수로 바꾼다.",
+        "input": {
+          "type": "object",
+          "properties": {
+            "count": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 1000000
+            }
+          },
+          "required": [
+            "count"
+          ]
+        },
+        "gestureRequired": false
+      }
+    ]
+  }
+}

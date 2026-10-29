@@ -38,6 +38,7 @@ export declare function freezeAppJson<T>(value: T): Readonly<T>;
 export declare function stableAppJson(value: AppJson): string;
 export declare function assertMmShape(shape: unknown): asserts shape is MmShape;
 export declare function decodeMmShape(shape: MmShape, value: unknown): AppJson;
+export declare function parseMmPackageMetadata(raw: unknown): MmAppPackage;
 export declare function parseMmPackage(raw: unknown, template: string): MmAppPackage;
 export declare function appSha256(bytes: string | Uint8Array): Promise<string>;
 export declare function readMmBundle(bytes: string | Uint8Array, options: { expectedDigest: string; allowFixture?: boolean }): Promise<VerifiedAppBundle>;
