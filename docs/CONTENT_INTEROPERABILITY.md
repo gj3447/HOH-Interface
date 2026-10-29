@@ -148,7 +148,7 @@ explicit Node, browser, reference and output locations.
 
 The public Interface suite passes 48 unit/regression checks (11 package checks),
 and the exported TypeScript contracts pass strict checking. Browser validation
-passes 43 checks across the pinned MM reference host, that host using the shared
+passes 44 checks across the pinned MM reference host, that host using the shared
 kit, and the actual HOH shell using the new package renderer. The same source
 package/template digests are used in all paths. This covers two selected consumer
 apps, a consumer playback fixture and the portable synthetic board.

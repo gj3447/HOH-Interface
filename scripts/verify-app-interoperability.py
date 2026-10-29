@@ -90,6 +90,7 @@ def main() -> None:
                         check(all(blocked[x] for x in ('cookie', 'parentDom', 'network')) and blocked['origin'] == 'null', f'{label}: app keeps its opaque-origin and network boundary')
 
                     check(hoh.locator('.chat').is_visible(), 'HOH runs the package inside its actual content-and-chat shell')
+                    check('LLM 미연결' in hoh.locator('#chatStatus').inner_text(), 'the deterministic chat example does not claim a connected language model')
                     hoh.locator('#chatInput').fill('하나 추가')
                     hoh.locator('#chatForm').evaluate('(form)=>form.requestSubmit()')
                     expect(hoh.frame_locator('iframe').first.locator('#count')).to_have_text('5')

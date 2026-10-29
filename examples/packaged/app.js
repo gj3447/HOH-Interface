@@ -56,7 +56,7 @@ const adapter = {
   open: async ({ contentId }) => { const item = items.find(i => i.content.id === contentId); if (!item) throw new Error('Unknown package'); currentId = contentId; viewRevision += 1; return { ...item, viewRevision, appState: {}, comments: [] }; },
   favorite: async () => ({}), react: async () => ({}), comment: async () => ({ comments: [] }),
   saveState: async () => { throw new Error('Package state is changed through its actions.'); }, profile: async () => ({ profile: profiles() }),
-  status: async () => ({ readiness: { chat: { status: 'READY', reason: '호환 검증용 규칙 기반 명령 · LLM 미연결' } } }),
+  status: async () => ({ readiness: { chat: { status: 'NOT_READY', reason: '호환 검증용 규칙 기반 명령 · LLM 미연결' } } }),
   chat: async ({ message }) => {
     if (!/^하나 추가$/.test(message.trim())) return { answer: '검증용 명령: 하나 추가. 이 예제에는 LLM이 연결되지 않았어요.' };
     const result = await invoke('increment'); return { answer: result.ok ? `화면의 수가 ${result.snapshot.state.count}입니다.` : `변경하지 못했어요: ${result.code}` };
