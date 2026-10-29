@@ -164,3 +164,12 @@ These checks use private reference inputs and isolated loopback servers. They do
 not exercise a live model, a company service's business writes, persistent account
 state or a production deployment. The host integrations and their release/readback
 remain separate acceptance work.
+
+
+0.5.1 adds `parseMmPackageMetadata` for validating a catalog description without
+claiming verified executable bytes, and the portable `apps/counter` application.
+The counter runs unchanged in the MM reference host, the reference host using the
+shared kit, and the HOH renderer. The expanded browser suite passes 47 checks;
+this remains runtime interoperability evidence, not automatic authorization by a
+consumer's publisher. Managed browser verification uses a private short IPC path
+while keeping its profile/output on the managed filesystem.

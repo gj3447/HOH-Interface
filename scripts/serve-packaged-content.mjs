@@ -22,6 +22,8 @@ export async function startPackagedPreview({ port = 0, reference = null } = {}) 
     bundles.set(pkg.name, { bytes, digest, verified });
   }
   await add(resolve(root, 'test/fixtures/packaged-app'), { repository: 'interop-fixture', revision: '1'.repeat(40), dir: 'test/fixtures/packaged-app', fixture: true });
+  try { await add(resolve(root, 'apps/counter'), { repository: 'fixture:counter-working-copy', revision: '1'.repeat(40), dir: 'apps/counter', fixture: true }); }
+  catch (error) { if (error.code !== 'ENOENT') throw error; }
   let mmKit = null, mmHost = null;
   if (reference) {
     reference = await realpath(reference);

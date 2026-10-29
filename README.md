@@ -40,7 +40,7 @@ npm run preview -- --port 8022
 
 공개 초안이며 업계 표준 채택·독립 인증·모든 기존 콘텐츠의 전환을 주장하지 않는다.
 
-## Portable packaged apps · 0.5.0
+## Portable packaged apps · 0.5.1
 
 `mm.content-package/v1` 앱을 고치지 않고 실행하는 공통 패키지 검사기·키트·sandbox 호스트를 제공한다.
 호스트가 선택한 묶음 SHA-256과 원본 템플릿 해시를 검사하고, 기존 콘텐츠 ID와 동작 이름을 유지한다.
@@ -52,6 +52,7 @@ npm run preview:packaged -- --port 8023
 ```
 
 - [실행·의미·권한 계약](docs/CONTENT_INTEROPERABILITY.md)
+- [카운터 앱 패키지](apps/counter/content.json) · [원본 화면](apps/counter/app.html): MM 형식을 그대로 사용하는 공개 예제. 보기 저장은 호스트가 맡는다.
 - `@hoh/ui/content/app-package`: 판본·해시·MM 모양 검사와 패키지 읽기
 - `@hoh/ui/content/app-host`: 호스트가 승인한 앱의 실행·상태 읽기·동작·구독
 - `@hoh/ui/adapters/packaged-content`: 기존 HOH 셸의 렌더러 확장

@@ -8,6 +8,8 @@ from pathlib import Path
 import selectors
 import subprocess
 import time
+import tempfile
+import stat
 from urllib.parse import urlparse
 
 
@@ -22,6 +24,7 @@ def main() -> None:
 
     root = Path(__file__).resolve().parents[1]
     args.output.mkdir(parents=True, exist_ok=True)
+    ipc = None
     report = {'scope': 'HOH renderer and pinned MM reference runtime; local fixture hosts, no live model, accounts or business writes', 'checks': [], 'errors': [], 'packages': []}
     server = subprocess.Popen([args.node, 'scripts/serve-packaged-content.mjs', '--mm-reference', str(args.mm_reference)], cwd=root, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
 
@@ -41,7 +44,17 @@ def main() -> None:
         origin = json.loads(line)['url']
         check(urlparse(origin).hostname == '127.0.0.1', 'preview binds to loopback only')
         with sync_playwright() as pw:
-            browser = pw.chromium.launch(headless=True, **({'executable_path': args.browser_executable} if args.browser_executable else {}))
+            launch = {'headless': True, 'ignore_default_args': ['--disable-dev-shm-usage']}
+            if os.environ.get('STORAGE_ARTIFACT_DIR') and os.name == 'posix':
+                runtime = Path(os.environ.get('XDG_RUNTIME_DIR', f'/run/user/{os.getuid()}'))
+                info = runtime.lstat()
+                if not stat.S_ISDIR(info.st_mode) or info.st_uid != os.getuid() or stat.S_IMODE(info.st_mode) != 0o700:
+                    raise RuntimeError('A private runtime directory is required for browser IPC')
+                ipc = tempfile.TemporaryDirectory(prefix='hoh-ipc-', dir=runtime)
+                launch['env'] = {**os.environ, 'TMPDIR': ipc.name, 'TMP': ipc.name, 'TEMP': ipc.name}
+            if args.browser_executable:
+                launch['executable_path'] = args.browser_executable
+            browser = pw.chromium.launch(**launch)
             try:
                 def fresh(mode='hoh', app='interop-board', mobile=False, strict=False):
                     context = browser.new_context(viewport={'width': 390, 'height': 844} if mobile else {'width': 1440, 'height': 960}, locale='ko-KR', color_scheme='dark', reduced_motion='reduce')
@@ -137,6 +150,7 @@ def main() -> None:
                     available = {p['name'] for p in report['packages']}
                     for name, action, data, property_, wanted in [
                         ('playback-demo', 'setFrame', {'index': 8}, 'frame', 9),
+                        ('hoh-counter', 'setCount', {'count': 11}, 'count', 11),
                         ('org', 'setTab', {'tab': 'work'}, 'tab', 'work'),
                         ('phone-workspace', 'navigate', {'tab': 'library'}, 'tab', 'library'),
                     ]:
@@ -188,6 +202,8 @@ def main() -> None:
         except subprocess.TimeoutExpired:
             server.kill()
             server.wait(timeout=5)
+        if ipc is not None:
+            ipc.cleanup()
         (args.output / 'result.json').write_text(json.dumps(report, ensure_ascii=False, indent=2) + '\n')
         print(json.dumps({'result': report['result'], 'checks': len(report['checks']), 'failure': report.get('failure')}, ensure_ascii=False))
 
