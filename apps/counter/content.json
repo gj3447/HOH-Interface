@@ -7,7 +7,7 @@
   "params": [
     "count"
   ],
-  "version": 1,
+  "version": 2,
   "hotReload": true,
   "icon": "calculator",
   "color": "graphite",
