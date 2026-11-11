@@ -27,6 +27,7 @@ export interface AppHost {
   open?(content: string, context: { scope: AppInstanceScope }): void | Promise<void>;
   openLink?(url: string, context: { scope: AppInstanceScope }): void | Promise<void>;
   draftMessage?(text: string): void;
+  information?(entry: { text: string; about: string; kind: 'explain' | 'result' | 'error'; origin?: { x: number; y: number } }): void | boolean | Promise<void | boolean>;
   onError?(error: { ok: false; code: string; reason: string }): void;
 }
 export interface MountedAppContent {

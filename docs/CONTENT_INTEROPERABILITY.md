@@ -208,3 +208,16 @@ uncertain versus definite failures, the one-command bound and refusal of
 undeclared or unsupported providers with a minimal page double. No browser,
 external service or host integration was exercised for this addition.
 
+## App information for the host conversation · 0.6.1
+
+`ailab.log(text, { kind, about, from })` lets an app hand prepared information to the
+host instead of covering its own content with help text. `kind` is `explain`, `result`
+or `error`; `about` names the subject; `from` is the element or point the request came
+from. The host receives it as `host.information({ text, about, kind, origin })` after an
+`information` authorization and decides where it is shown. A host without
+`information` rejects the notification, and at most 20 are accepted per 10 seconds.
+
+This is app-provided text. It does not send a user message, call a model or execute a
+command, and a host must not present it as an AI answer. The addition was developed and
+browser-tested in the HOH host; this repository only carries the same runtime bytes.
+
