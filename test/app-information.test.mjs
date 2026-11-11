@@ -123,7 +123,8 @@ test('the explicit SDK explanation waits for host acceptance and never changes a
   vm.runInNewContext(appContentKitSource({ channel: 'test' }), context);
   const kit = context.window.ailab;
   await assert.rejects(kit.explain('before connect'), { code: 'NOT_INITIALIZED' });
-  await kit.connect({ name: 'fixture' });
+  const connected = await kit.connect({ name: 'fixture' });
+  assert.equal(connected.capabilities.information.profile, 'hoh/app-information@2');
   const result = await kit.explain('설명', { about: '카드', subjectId: 'card:1', revision: 3, reveal: true,
     from: { getBoundingClientRect: () => ({ left: 10, top: 20, width: 40, height: 60 }) },
     blocks: [{ id: 'table', type: 'table', columns: ['비용'], rows: [[2]] }] });

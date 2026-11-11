@@ -152,7 +152,7 @@ function installAppContentKit(options) {
         notify('ui/notifications/initialized'); publish();
         if (resume) notify('ailab/notifications/resume-input', { arguments: JSON.parse(resume) });
         let timer;
-        try { const args = await Promise.race([arriving, new Promise((_, reject) => { timer = setTimeout(() => reject(error('INPUT_TIMEOUT')), 1500); })]); return { context, input: args, host: result.hostInfo }; }
+        try { const args = await Promise.race([arriving, new Promise((_, reject) => { timer = setTimeout(() => reject(error('INPUT_TIMEOUT')), 1500); })]); return { context, input: args, host: result.hostInfo, capabilities: copy(result.hostCapabilities || {}) }; }
         finally { clearTimeout(timer); }
       })();
       return connection;

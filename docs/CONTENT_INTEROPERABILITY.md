@@ -273,3 +273,7 @@ business record, save app progress or confer execution authority. The host must
 also prevent a stale information card from targeting a replacement app instance.
 Information grouping, summaries and disclosure remain host presentation policy.
 
+`connect()` also returns the negotiated `capabilities` snapshot so a consumer can
+check the actual host information profile before enabling dependent controls.
+These declarations describe available interfaces; they do not grant authority.
+
