@@ -225,6 +225,9 @@ browser-tested in the HOH host; this repository only carries the same runtime by
 
 `await ailab.explain(text, { about, subjectId, revision, reveal: true, from, blocks })`
 uses the same authorized information path and waits for the host's acceptance.
+The host explicitly opts in with `informationProfile: 'hoh/app-information@2'`;
+the initialization handshake advertises it. Mixed older host/SDK copies must not
+acknowledge a rich explanation after silently discarding its subject or blocks.
 It requires initialization and reports a missing/full/refused display instead of
 drafting a user question. `ailab.log` remains the compatible notification API.
 An acceptance response is the host callback's acknowledgement, not a native action

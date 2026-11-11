@@ -8,7 +8,7 @@ import { appContentKitSource } from '../ui/app-content-kit.js';
 
 const pkg = JSON.parse(await readFile(new URL('./fixtures/packaged-app/content.json', import.meta.url), 'utf8'));
 const template = await readFile(new URL('./fixtures/packaged-app/app.html', import.meta.url), 'utf8');
-async function mounted(t, { allow = true, supports = true } = {}) {
+async function mounted(t, { allow = true, supports = true, rich = true } = {}) {
   const raw = JSON.stringify({ schema: 'mm.content-bundle/v1', source: { repository: 'fixture', revision: '1'.repeat(40), dir: 'fixture', fixture: true },
     package: { ...pkg, tools: [] }, template, templateSha256: await appSha256(template) });
   const bundle = await readMmBundle(raw, { expectedDigest: await appSha256(raw), allowFixture: true });
@@ -21,7 +21,7 @@ async function mounted(t, { allow = true, supports = true } = {}) {
   const prior = Object.fromEntries(Object.keys(globals).map(key => [key, Object.getOwnPropertyDescriptor(globalThis, key)]));
   Object.assign(globalThis, globals);
   let sequence = 0;
-  const app = await mountAppContent({ bundle, timeoutMs: 2000, host: { id: 'fixture-host', principalId: 'viewer',
+  const app = await mountAppContent({ bundle, timeoutMs: 2000, host: { id: 'fixture-host', principalId: 'viewer', ...(rich ? { informationProfile: 'hoh/app-information@2' } : {}),
     authorize: request => { operations.push(request.operation); return request.operation !== 'information' || allow; },
     draftMessage() { assert.fail('information must not create a user command'); },
     ...(supports ? { information: value => { shown.push(value); return true; } } : {}) } });
@@ -88,6 +88,12 @@ test('targeted explanations carry inert tables and media without drafting or inv
 test('automatic result notices cannot request a chat reveal', () => {
   assert.equal(parseAppInformation({ text: '자동 기록', kind: 'result', reveal: true }).reveal, false);
 });
+test('an older text-only host cannot acknowledge unsupported rich explanations', async t => {
+  const view = await mounted(t, { rich: false });
+  assert.equal((await view.request('ailab/notifications/log', { text: 'rich', subjectId: 'card:1', reveal: true })).error.message, 'UNSUPPORTED_INFORMATION');
+  assert.equal(view.shown.length, 0);
+  assert.equal((await view.request('ailab/notifications/log', { text: 'legacy text' })).result.accepted, true);
+});
 test('explanations refuse executable blocks, forged roles, unsafe media and oversized collections', () => {
   for (const patch of [
     { actor: 'host' }, { revision: -1 }, { subjectId: 'x'.repeat(241) },
@@ -107,7 +113,7 @@ test('the explicit SDK explanation waits for host acceptance and never changes a
     if (message.id === undefined) return;
     queueMicrotask(() => {
       receive({ source: parent, data: { jsonrpc: '2.0', channel: 'test', id: message.id,
-        result: message.method === 'ui/initialize' ? { protocolVersion: 'ailab-apps/1', hostContext: {} } : { accepted } } });
+        result: message.method === 'ui/initialize' ? { protocolVersion: 'ailab-apps/1', hostContext: {}, hostCapabilities: { information: { profile: 'hoh/app-information@2' } } } : { accepted } } });
       if (message.method === 'ui/initialize') receive({ source: parent, data: { jsonrpc: '2.0', channel: 'test', method: 'ui/notifications/tool-input', params: { arguments: {} } } });
     });
   } };

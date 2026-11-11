@@ -114,7 +114,8 @@ export async function mountAppContent({ bundle, host, params = {}, signal, stage
     try {
       if (m.method === 'ui/initialize') {
         assert(!started && m.params?.protocolVersion === 'ailab-apps/1', 'UNSUPPORTED_PROFILE'); await gate('initialize'); started = true;
-        reply({ protocolVersion: 'ailab-apps/1', hostInfo: { name: host.id, version: '1' }, hostCapabilities: { serverTools: { effects: Object.fromEntries(pkg.tools.map(name => [name, provider(name).effect])) }, message: {}, displayModes: ['inline'] }, hostContext: context() });
+        reply({ protocolVersion: 'ailab-apps/1', hostInfo: { name: host.id, version: '1' }, hostCapabilities: { serverTools: { effects: Object.fromEntries(pkg.tools.map(name => [name, provider(name).effect])) }, message: {}, displayModes: ['inline'],
+          ...(typeof host.information === 'function' && host.informationProfile === 'hoh/app-information@2' ? { information: { profile: host.informationProfile } } : {}) }, hostContext: context() });
         send({ method: 'ui/notifications/tool-input', params: { arguments: input, hotResume: pkg.hotReload === true } }); return;
       }
       assert(started, 'NOT_INITIALIZED');
@@ -124,6 +125,8 @@ export async function mountAppContent({ bundle, host, params = {}, signal, stage
           const now = Date.now(); while (informationTimes.length && now - informationTimes[0] > 10000) informationTimes.shift();
           assert(informationTimes.length < 20, 'BUSY'); informationTimes.push(now);
           const p = parseAppInformation(m.params || {});
+          if (p.blocks !== undefined || p.subjectId !== undefined || p.revision !== undefined || p.reveal === true)
+            assert(host.informationProfile === 'hoh/app-information@2', 'UNSUPPORTED_INFORMATION');
           await gate('information');
           const rect = frame.getBoundingClientRect(), point = p.from;
           const origin = point && Number.isFinite(point.x) && Number.isFinite(point.y) && rect.width && rect.height

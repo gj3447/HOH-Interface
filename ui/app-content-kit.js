@@ -9,7 +9,7 @@ function installAppContentKit(options) {
   'use strict';
   const channel = options.channel || null, expected = options.content || null;
   const pending = new Map(), events = new Map(), completed = new Map();
-  let counter = 0, context = {}, input = null, inputResolve, connection, connected = false, closed = false;
+  let counter = 0, context = {}, input = null, inputResolve, connection, connected = false, closed = false, informationProfile = null;
   let content = null, revision = 0, stateKey = null, sent = null, stateTimer = null, resume = null, queue = Promise.resolve();
   const error = (code, message = code) => Object.assign(new Error(message), { code });
   const copy = (value, max = 12000) => {
@@ -132,7 +132,7 @@ function installAppContentKit(options) {
         const arriving = new Promise(resolve => { inputResolve = resolve; if (input) resolve(input); });
         const result = await request('ui/initialize', { protocolVersion: 'ailab-apps/1', appInfo: appInfo || {}, appCapabilities: {} });
         if (result?.protocolVersion !== 'ailab-apps/1') throw error('UNSUPPORTED_PROFILE');
-        applyContext(result.hostContext); connected = true;
+        applyContext(result.hostContext); informationProfile = result.hostCapabilities?.information?.profile || null; connected = true;
         notify('ui/notifications/initialized'); publish();
         if (resume) notify('ailab/notifications/resume-input', { arguments: JSON.parse(resume) });
         let timer;
@@ -157,6 +157,7 @@ function installAppContentKit(options) {
     /** Explicit explanation, acknowledged by the existing host display callback. No user-message draft. */
     async explain(text, options = {}) {
       if (!connected || closed) throw error(closed ? 'CLOSED' : 'NOT_INITIALIZED');
+      if (informationProfile !== 'hoh/app-information@2') throw error('UNSUPPORTED_INFORMATION');
       const result = await request('ailab/notifications/log', informationInput(text, { ...options, kind: 'explain' }));
       if (result?.accepted !== true) throw error('INFORMATION_UNAVAILABLE');
       return { accepted: true };

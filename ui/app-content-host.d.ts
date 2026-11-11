@@ -27,6 +27,8 @@ export interface AppHost {
   open?(content: string, context: { scope: AppInstanceScope }): void | Promise<void>;
   openLink?(url: string, context: { scope: AppInstanceScope }): void | Promise<void>;
   draftMessage?(text: string): void;
+  /** Opt in only when the host preserves subjects/drafts and implements blocks and explicit reveal. */
+  informationProfile?: 'hoh/app-information@2';
   information?(entry: Omit<AppInformation, 'from'> & { origin?: { x: number; y: number } }): void | boolean | Promise<void | boolean>;
   onError?(error: { ok: false; code: string; reason: string }): void;
 }
