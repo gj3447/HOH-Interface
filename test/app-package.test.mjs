@@ -39,6 +39,20 @@ test('source template needs one kit slot and the same semantic identity', () => 
   assert.throws(() => parseMmPackage(pkg, template.replace(pkg.content.id, 'urn:other:id')), { code: 'INVALID_PACKAGE' });
   assert.throws(() => parseMmPackage(pkg, template + '<!-- ailab-app-kit -->'), { code: 'INVALID_PACKAGE' });
 });
+test('migrating an existing HOH content preserves its URN and snapshot binding', async () => {
+  const id = 'urn:hoh:game-content:the-excel-tycoon';
+  const p = clone(pkg); p.content.id = id;
+  const html = template.replaceAll(pkg.content.id, id);
+  assert.equal(parseMmPackage(p, html).content.id, id);
+  assert.equal(mmViewSnapshot(p, { contentId: id, descriptorRevision: 1, stateRevision: 0,
+    state: { count: 0, unsaved: false } }).contentId, id);
+  assert.throws(() => mmViewSnapshot(p, { contentId: pkg.content.id, descriptorRevision: 1, stateRevision: 0,
+    state: { count: 0, unsaved: false } }), { code: 'INVALID_SNAPSHOT' });
+  for (const invalid of ['urn:hoh:', 'urn:hoh:has space', 'https://example.com/content', 'urn:other:content']) {
+    const bad = clone(p); bad.content.id = invalid;
+    assert.throws(() => parseMmPackage(bad, html.replaceAll(id, invalid)), { code: 'INVALID_PACKAGE' });
+  }
+});
 test('action/parameter collisions and hidden authority fields are rejected', () => {
   const altered = clone(pkg); altered.content.actions.push(altered.content.actions[0]);
   assert.throws(() => parseMmPackage(altered, template), { code: 'INVALID_PACKAGE' });

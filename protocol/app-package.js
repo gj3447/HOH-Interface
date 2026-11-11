@@ -128,7 +128,8 @@ export function parseMmPackageMetadata(raw) {
   if (pkg.content !== undefined) {
     const c = pkg.content;
     fields(c, ['id', 'revision', 'description', 'state', 'actions'], ['controls', 'links']);
-    requireValue(typeof c.id === 'string' && /^urn:ailab:[a-z0-9][a-z0-9:.-]{2,120}$/.test(c.id) && integer(c.revision, 1) && text(c.description, 8000), 'Invalid content description.');
+    // Existing HOH content keeps its identity when its renderer becomes a package.
+    requireValue(typeof c.id === 'string' && /^urn:(?:ailab|hoh):[a-z0-9][a-z0-9:.-]{2,120}$/.test(c.id) && integer(c.revision, 1) && text(c.description, 8000), 'Invalid content description.');
     if (c.controls !== undefined) requireValue(c.controls === 'playback', 'Unsupported content controls.');
     if (c.links !== undefined) requireValue(Array.isArray(c.links) && c.links.length <= 8 && c.links.every(v => text(v, 300)), 'Invalid content links.');
     assertMmShape(c.state); requireValue(c.state.type === 'object', 'Content state must be an object.');
