@@ -1,8 +1,10 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
-import { appSha256, readMmBundle } from '../protocol/app-package.js';
+import { appSha256, readMmBundle, parseAppInformation } from '../protocol/app-package.js';
 import { mountAppContent } from '../ui/app-content-host.js';
+import vm from 'node:vm';
+import { appContentKitSource } from '../ui/app-content-kit.js';
 
 const pkg = JSON.parse(await readFile(new URL('./fixtures/packaged-app/content.json', import.meta.url), 'utf8'));
 const template = await readFile(new URL('./fixtures/packaged-app/app.html', import.meta.url), 'utf8');
@@ -73,4 +75,58 @@ test('information has a bounded ten-second budget', async t => {
   for (let i = 0; i < 20; i++) assert.deepEqual((await view.request('ailab/notifications/log', { text: 'ok' })).result, { accepted: true });
   assert.equal((await view.request('ailab/notifications/log', { text: 'excess' })).error.message, 'BUSY');
   assert.equal(view.shown.length, 20);
+});
+test('targeted explanations carry inert tables and media without drafting or invoking commands', async t => {
+  const view = await mounted(t);
+  const payload = { text: '현재 카드의 비용과 효과', about: '카드', subjectId: 'card:1', revision: 4, reveal: true,
+    blocks: [{ id: 'cost', type: 'table', columns: ['항목', '값'], rows: [['재미', 2]] },
+      { id: 'portrait', type: 'media', kind: 'image', url: '/assets/character.png', alt: '캐릭터' }], from: { x: 20, y: 30 } };
+  assert.equal((await view.request('ailab/notifications/log', payload)).result.accepted, true);
+  const { from: _from, ...expected } = payload;
+  assert.deepEqual(view.shown[0], { ...expected, kind: 'explain', origin: { x: 30, y: 50 } });
+});
+test('automatic result notices cannot request a chat reveal', () => {
+  assert.equal(parseAppInformation({ text: '자동 기록', kind: 'result', reveal: true }).reveal, false);
+});
+test('explanations refuse executable blocks, forged roles, unsafe media and oversized collections', () => {
+  for (const patch of [
+    { actor: 'host' }, { revision: -1 }, { subjectId: 'x'.repeat(241) },
+    { blocks: [{ id: 'x', type: 'action', command: 'erase' }] },
+    { blocks: [{ id: 'x', type: 'media', kind: 'image', url: 'javascript:alert(1)', alt: 'bad' }] },
+    { blocks: [{ id: 'x', type: 'media', kind: 'image', url: '//outside.example/x', alt: 'bad' }] },
+    { blocks: [{ id: 'x', type: 'media', kind: 'image', url: 'https://user:pw@example.com/x', alt: 'bad' }] },
+    { blocks: [{ id: 'x', type: 'table', columns: ['one'], rows: [['a', 'b']] }] },
+    { blocks: Array.from({ length: 13 }, (_, i) => ({ id: String(i), type: 'text', text: 'x' })) },
+    { blocks: [{ id: 'x', type: 'text', text: 'a' }, { id: 'x', type: 'text', text: 'b' }] },
+  ]) assert.throws(() => parseAppInformation({ text: '설명', ...patch }), { code: 'INVALID_INFORMATION' });
+});
+test('the explicit SDK explanation waits for host acceptance and never changes a user-message draft', async () => {
+  let receive, accepted = true;
+  const sent = [], parent = { postMessage: message => {
+    sent.push(message);
+    if (message.id === undefined) return;
+    queueMicrotask(() => {
+      receive({ source: parent, data: { jsonrpc: '2.0', channel: 'test', id: message.id,
+        result: message.method === 'ui/initialize' ? { protocolVersion: 'ailab-apps/1', hostContext: {} } : { accepted } } });
+      if (message.method === 'ui/initialize') receive({ source: parent, data: { jsonrpc: '2.0', channel: 'test', method: 'ui/notifications/tool-input', params: { arguments: {} } } });
+    });
+  } };
+  const context = { window: {}, parent, setTimeout, clearTimeout,
+    addEventListener: (_, fn) => { receive = fn; }, removeEventListener() {},
+    document: { documentElement: { style: { setProperty() {} }, dataset: {} } } };
+  vm.runInNewContext(appContentKitSource({ channel: 'test' }), context);
+  const kit = context.window.ailab;
+  await assert.rejects(kit.explain('before connect'), { code: 'NOT_INITIALIZED' });
+  await kit.connect({ name: 'fixture' });
+  const result = await kit.explain('설명', { about: '카드', subjectId: 'card:1', revision: 3, reveal: true,
+    from: { getBoundingClientRect: () => ({ left: 10, top: 20, width: 40, height: 60 }) },
+    blocks: [{ id: 'table', type: 'table', columns: ['비용'], rows: [[2]] }] });
+  assert.equal(result.accepted, true);
+  const payload = sent.find(message => message.method === 'ailab/notifications/log').params;
+  assert.equal(payload.subjectId, 'card:1'); assert.equal(payload.reveal, true);
+  assert.deepEqual(JSON.parse(JSON.stringify(payload.from)), { x: 30, y: 50 });
+  assert.equal(payload.blocks[0].rows[0][0], 2);
+  assert.equal(sent.some(message => ['ui/message', 'tools/call'].includes(message.method)), false);
+  accepted = false;
+  await assert.rejects(kit.explain('refused'), { code: 'INFORMATION_UNAVAILABLE' });
 });

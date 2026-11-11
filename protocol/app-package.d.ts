@@ -1,4 +1,18 @@
 export type AppJson = null | boolean | number | string | AppJson[] | { [key: string]: AppJson };
+export type AppInformationBlock = { id: string; title?: string } & (
+  | { type: 'text'; text: string }
+  | { type: 'table'; columns: string[]; rows: (string | number)[][] }
+  | { type: 'chart'; points: { label: string; value: number }[]; unit?: string; source?: string }
+  | { type: 'diagram'; edges: { from: string; relation: string; to: string }[] }
+  | { type: 'media'; kind: 'image' | 'video' | 'audio'; url: string; alt: string }
+  | { type: 'source'; text: string; url: string }
+);
+export interface AppInformation {
+  text: string; about: string; kind: 'explain' | 'result' | 'error';
+  subjectId?: string; revision?: number; reveal?: boolean; blocks?: AppInformationBlock[];
+  from?: { x: number; y: number };
+}
+export declare function parseAppInformation(raw: unknown): Readonly<AppInformation>;
 export type MmShape =
   | { type: 'object'; properties: Record<string, MmShape>; required?: string[] }
   | { type: 'string'; enum?: string[]; maxLength?: number; pattern?: string }

@@ -51,6 +51,18 @@ function installAppContentKit(options) {
     if (Number.isFinite(context.safeAreaInsets?.bottom)) document.documentElement.style.setProperty('--safe-bottom', `${Math.max(0, context.safeAreaInsets.bottom)}px`);
   }
   const sequential = run => { const result = queue.catch(() => {}).then(run); queue = result.catch(() => {}); return result; };
+  const informationInput = (text, options = {}) => {
+    const source = options.from, rect = typeof source?.getBoundingClientRect === 'function' ? source.getBoundingClientRect() : null;
+    const point = rect ? { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 } : source;
+    return copy({ text: String(text ?? '').trim().slice(0, 12000),
+      kind: ['explain', 'result', 'error'].includes(options.kind) ? options.kind : 'explain',
+      ...(typeof options.about === 'string' ? { about: options.about.slice(0, 160) } : {}),
+      ...(options.subjectId !== undefined ? { subjectId: options.subjectId } : {}),
+      ...(options.revision !== undefined ? { revision: options.revision } : {}),
+      ...(options.reveal !== undefined ? { reveal: options.reveal } : {}),
+      ...(options.blocks !== undefined ? { blocks: options.blocks } : {}),
+      ...(point && Number.isFinite(point.x) && Number.isFinite(point.y) ? { from: { x: point.x, y: point.y } } : {}) }, 64000);
+  };
   async function runAction(actionId, args, actor) {
     if (!content || !Object.hasOwn(content.actions, actionId)) throw error('UNKNOWN_ACTION');
     const action = content.actions[actionId];
@@ -140,12 +152,14 @@ function installAppContentKit(options) {
     /** App-provided information; does not submit a user message or execute a command. */
     log(text, options = {}) {
       const value = String(text ?? '').trim(); if (closed || !value) return;
-      const source = options.from, rect = typeof source?.getBoundingClientRect === 'function' ? source.getBoundingClientRect() : null;
-      const point = rect ? { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 } : source;
-      notify('ailab/notifications/log', { text: value.slice(0, 12000),
-        kind: ['explain', 'result', 'error'].includes(options.kind) ? options.kind : 'explain',
-        ...(typeof options.about === 'string' ? { about: options.about.slice(0, 160) } : {}),
-        ...(point && Number.isFinite(point.x) && Number.isFinite(point.y) ? { from: { x: point.x, y: point.y } } : {}) });
+      notify('ailab/notifications/log', informationInput(value, options));
+    },
+    /** Explicit explanation, acknowledged by the existing host display callback. No user-message draft. */
+    async explain(text, options = {}) {
+      if (!connected || closed) throw error(closed ? 'CLOSED' : 'NOT_INITIALIZED');
+      const result = await request('ailab/notifications/log', informationInput(text, { ...options, kind: 'explain' }));
+      if (result?.accepted !== true) throw error('INFORMATION_UNAVAILABLE');
+      return { accepted: true };
     },
     displayMode: mode => request('ui/request-display-mode', { mode }),
     on(type, fn) { if (typeof fn !== 'function') throw error('INVALID_LISTENER'); const listeners = events.get(type) || new Set(); listeners.add(fn); events.set(type, listeners); return () => listeners.delete(fn); },

@@ -221,3 +221,29 @@ This is app-provided text. It does not send a user message, call a model or exec
 command, and a host must not present it as an AI answer. The addition was developed and
 browser-tested in the HOH host; this repository only carries the same runtime bytes.
 
+## Targeted explanations · 0.6.2
+
+`await ailab.explain(text, { about, subjectId, revision, reveal: true, from, blocks })`
+uses the same authorized information path and waits for the host's acceptance.
+It requires initialization and reports a missing/full/refused display instead of
+drafting a user question. `ailab.log` remains the compatible notification API.
+An acceptance response is the host callback's acknowledgement, not a native action
+receipt; applications must verify their actual display in browser acceptance tests.
+
+`subjectId` identifies the app's selected object; the host supplies the mounted
+content/account/view identity. `revision` identifies the app's observed state.
+Hosts keep those identities separate, reject stale explanations, and preserve the
+user's draft and selected text. A `reveal` request applies only to explicit
+explanations; automatic result/error logs cannot demand a layout or scroll change.
+
+Up to twelve inert blocks support text, tables, charts, diagrams, source links and
+image/video/audio references, within a 64 KB payload bound. Unknown/executable
+block types, forged authority fields, invalid values and unsafe URL schemes fail
+closed. Hosts decide whether a media reference may load; external references must
+not silently become authenticated/proxied fetches. The package cannot provide
+callbacks or invoke actions through these blocks. A host may present its own
+structured frame using these values while retaining APP provenance.
+
+Keep decision-critical values, immediate errors and confirmation controls in the
+app. Explanations do not confer native-write authorization or change saved game
+state. Match the shared runtime pin before publishing an app that requires this API.

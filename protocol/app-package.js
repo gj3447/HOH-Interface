@@ -38,6 +38,66 @@ export function stableAppJson(value) {
   if (plain(value)) return `{${Object.keys(value).sort().map(k => `${JSON.stringify(k)}:${stableAppJson(value[k])}`).join(',')}}`;
   return JSON.stringify(value);
 }
+
+/** App-owned explanatory data, never commands, HTML, identities or approval evidence. */
+export function parseAppInformation(raw) {
+  try {
+    const p = appJson(raw, 64000);
+    fields(p, ['text'], ['about', 'kind', 'subjectId', 'revision', 'reveal', 'blocks', 'from']);
+    requireValue(typeof p.text === 'string', 'Information text must be a string.');
+    const kind = ['explain', 'result', 'error'].includes(p.kind) ? p.kind : 'explain';
+    const value = { text: p.text.trim().slice(0, 12000), about: typeof p.about === 'string' ? p.about.slice(0, 160) : '', kind };
+    if (p.subjectId !== undefined) {
+      requireValue(text(p.subjectId, 240, 1) && !/[\u0000-\u001f\u007f]/.test(p.subjectId), 'Invalid information subject.');
+      value.subjectId = p.subjectId;
+    }
+    if (p.revision !== undefined) { requireValue(integer(p.revision, 0), 'Invalid information revision.'); value.revision = p.revision; }
+    if (p.reveal !== undefined) { requireValue(typeof p.reveal === 'boolean', 'Invalid reveal request.'); value.reveal = kind === 'explain' && p.reveal; }
+    const short = (v, max = 240) => { requireValue(typeof v === 'string' && v.length <= max, 'Invalid information label.'); return v; };
+    const url = v => {
+      short(v, 2000);
+      requireValue(!/[\u0000-\u0020\\]/.test(v), 'Invalid information URL.');
+      const u = new URL(v, 'https://host.invalid/');
+      requireValue(!u.username && !u.password && (v.startsWith('/') && !v.startsWith('//') || u.protocol === 'https:' && v.startsWith('https://')), 'Unsupported information URL.');
+      return v;
+    };
+    const rows = (v, max, map) => { requireValue(Array.isArray(v) && v.length <= max, 'Information collection exceeds its bound.'); return v.map(map); };
+    if (p.blocks !== undefined) {
+      value.blocks = rows(p.blocks, 12, block => {
+        requireValue(plain(block) && text(block.id, 80, 1) && /^[A-Za-z0-9:_-]+$/.test(block.id), 'Invalid information block.');
+        const common = ['id', 'type'], optional = ['title'];
+        const out = { id: block.id, type: block.type, ...(block.title !== undefined ? { title: short(block.title) } : {}) };
+        if (block.type === 'text') { fields(block, [...common, 'text'], optional); out.text = short(block.text, 12000); }
+        else if (block.type === 'table') {
+          fields(block, [...common, 'columns', 'rows'], optional);
+          out.columns = rows(block.columns, 8, x => short(x, 120)); requireValue(out.columns.length, 'Missing table columns.');
+          out.rows = rows(block.rows, 40, row => { requireValue(Array.isArray(row) && row.length === out.columns.length, 'Table width differs.'); return row.map(cell => {
+            requireValue(typeof cell === 'string' && cell.length <= 600 || typeof cell === 'number' && Number.isFinite(cell), 'Invalid table cell.'); return cell;
+          }); });
+        } else if (block.type === 'chart') {
+          fields(block, [...common, 'points'], [...optional, 'unit', 'source']);
+          out.points = rows(block.points, 40, point => { fields(point, ['label', 'value']); requireValue(typeof point.value === 'number' && Number.isFinite(point.value), 'Invalid chart value.'); return { label: short(point.label, 120), value: point.value }; });
+          if (block.unit !== undefined) out.unit = short(block.unit, 40);
+          if (block.source !== undefined) out.source = short(block.source, 600);
+        } else if (block.type === 'diagram') {
+          fields(block, [...common, 'edges'], optional);
+          out.edges = rows(block.edges, 40, edge => { fields(edge, ['from', 'relation', 'to']); return { from: short(edge.from, 120), relation: short(edge.relation, 120), to: short(edge.to, 120) }; });
+        } else if (block.type === 'media') {
+          fields(block, [...common, 'kind', 'url', 'alt'], optional);
+          requireValue(['image', 'video', 'audio'].includes(block.kind), 'Unsupported information media.');
+          Object.assign(out, { kind: block.kind, url: url(block.url), alt: short(block.alt, 600) });
+        } else if (block.type === 'source') {
+          fields(block, [...common, 'text', 'url'], optional); Object.assign(out, { text: short(block.text, 1200), url: url(block.url) });
+        } else appFail('INVALID_INFORMATION', 'Unsupported information block type.');
+        return out;
+      });
+      requireValue(unique(value.blocks.map(b => b.id)), 'Duplicate information block.');
+    }
+    requireValue(value.text || value.blocks?.length, 'Information must not be empty.');
+    if (p.from !== undefined) { fields(p.from, ['x', 'y']); requireValue(Number.isFinite(p.from.x) && Number.isFinite(p.from.y), 'Invalid information origin.'); value.from = { x: p.from.x, y: p.from.y }; }
+    return freezeAppJson(value);
+  } catch (error) { if (error instanceof AppPackageError && error.code === 'INVALID_INFORMATION') throw error; appFail('INVALID_INFORMATION', 'The information payload is invalid or exceeds its bound.'); }
+}
 const text = (v, max, min = 0) => typeof v === 'string' && v.length >= min && v.length <= max;
 const integer = (v, min, max = Number.MAX_SAFE_INTEGER) => Number.isSafeInteger(v) && v >= min && v <= max;
 const unique = values => new Set(values).size === values.length;

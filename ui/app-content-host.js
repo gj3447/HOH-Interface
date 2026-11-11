@@ -1,4 +1,4 @@
-import { APP_LIMITS, AppPackageError, MM_KIT_SLOT, appFail, appJson, decodeMmShape, freezeAppJson, isVerifiedAppBundle, mmResumeInput, mmViewSnapshot, stableAppJson } from '../protocol/app-package.js';
+import { APP_LIMITS, AppPackageError, MM_KIT_SLOT, appFail, appJson, decodeMmShape, freezeAppJson, isVerifiedAppBundle, mmResumeInput, mmViewSnapshot, stableAppJson, parseAppInformation } from '../protocol/app-package.js';
 import { appContentKitSource } from './app-content-kit.js';
 
 export const APP_DOCUMENT_CSP = "default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data: blob:; media-src data: blob:; connect-src 'none'; font-src 'none'; frame-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'";
@@ -123,14 +123,14 @@ export async function mountAppContent({ bundle, host, params = {}, signal, stage
           assert(initialized && typeof host.information === 'function', 'UNSUPPORTED_INFORMATION');
           const now = Date.now(); while (informationTimes.length && now - informationTimes[0] > 10000) informationTimes.shift();
           assert(informationTimes.length < 20, 'BUSY'); informationTimes.push(now);
-          const p = m.params || {}, text = typeof p.text === 'string' ? p.text.trim().slice(0, 12000) : '';
-          assert(text, 'INVALID_INFORMATION');
+          const p = parseAppInformation(m.params || {});
           await gate('information');
           const rect = frame.getBoundingClientRect(), point = p.from;
           const origin = point && Number.isFinite(point.x) && Number.isFinite(point.y) && rect.width && rect.height
             ? { x: rect.left + Math.min(rect.width, Math.max(0, point.x)), y: rect.top + Math.min(rect.height, Math.max(0, point.y)) } : undefined;
-          const displayed = await host.information({ text, about: typeof p.about === 'string' ? p.about.slice(0, 160) : '',
-            kind: ['explain', 'result', 'error'].includes(p.kind) ? p.kind : 'explain', ...(origin ? { origin } : {}) });
+          const { from: _from, ...entry } = p;
+          const displayed = await host.information({ ...entry, ...(origin ? { origin } : {}) });
+          active();
           assert(displayed !== false, 'INFORMATION_UNAVAILABLE');
           reply({ accepted: true }); return;
         }
