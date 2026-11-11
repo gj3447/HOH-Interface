@@ -8,7 +8,8 @@ export function appContentKitSource(options = {}) {
 function installAppContentKit(options) {
   'use strict';
   const channel = options.channel || null, expected = options.content || null;
-  const pending = new Map(), events = new Map(), completed = new Map();
+  const pending = new Map(), events = new Map(), completed = new Map(), subjects = new Map();
+  const subjectId = id => typeof id === 'string' && /^[a-zA-Z0-9][a-zA-Z0-9._:-]{0,159}$/.test(id);
   let counter = 0, context = {}, input = null, inputResolve, connection, connected = false, closed = false, informationProfile = null;
   let content = null, revision = 0, stateKey = null, sent = null, stateTimer = null, resume = null, queue = Promise.resolve();
   const error = (code, message = code) => Object.assign(new Error(message), { code });
@@ -101,7 +102,7 @@ function installAppContentKit(options) {
     if (message?.id != null) send({ id: message.id, result: {} });
     closed = true; clearTimeout(stateTimer); removeEventListener('message', receive);
     for (const p of pending.values()) { clearTimeout(p.timer); p.reject(error('CLOSED')); }
-    pending.clear(); events.clear(); completed.clear();
+    pending.clear(); events.clear(); completed.clear(); subjects.clear();
   }
   function receive(event) {
     if (closed || event.source !== parent) return;
@@ -120,6 +121,21 @@ function installAppContentKit(options) {
       case 'ailab/notifications/event': emit(m.params?.type, m.params?.data); break;
       case 'ailab/content/read': if (m.id != null) send(content ? { id: m.id, result: publish() } : { id: m.id, error: { code: -32000, message: 'UNKNOWN_CONTENT' } }); break;
       case 'ailab/content/invoke': if (m.id != null) void sequential(() => invoke(m)); break;
+      case 'ailab/information/focus': {
+        if (m.id == null) break;
+        try {
+          if (!connected || !content) throw error('NOT_INITIALIZED');
+          const id = m.params?.subjectId, element = subjectId(id) ? subjects.get(id) : null;
+          if (!element || !element.isConnected || element.ownerDocument !== document) throw error('UNKNOWN_SUBJECT');
+          if (!element.getClientRects().length || element.disabled) throw error('SUBJECT_UNAVAILABLE');
+          element.scrollIntoView({ block: 'nearest', inline: 'nearest', behavior: 'instant' });
+          element.focus({ preventScroll: true });
+          if (document.activeElement !== element) throw error('FOCUS_UNCONFIRMED');
+          emit('subject-focus', { subjectId: id });
+          send({ id: m.id, result: { focused: true, subjectId: id } });
+        } catch (e) { send({ id: m.id, error: { code: -32000, message: e.code || 'FOCUS_FAILED' } }); }
+        break;
+      }
       case 'ailab/hot-check': if (m.id != null) { const state = content ? publish().state : {}; send({ id: m.id, result: { ok: !state.unsaved && !(state.unsavedItems > 0) && !state.draft && !pending.size } }); } break;
       case 'ui/resource-teardown': close(m); break;
       default: if (m.id != null) send({ id: m.id, error: { code: -32601, message: 'UNSUPPORTED_METHOD' } });
@@ -164,6 +180,14 @@ function installAppContentKit(options) {
     },
     displayMode: mode => request('ui/request-display-mode', { mode }),
     on(type, fn) { if (typeof fn !== 'function') throw error('INVALID_LISTENER'); const listeners = events.get(type) || new Set(); listeners.add(fn); events.set(type, listeners); return () => listeners.delete(fn); },
+    /** Register a local, focusable presentation target. No selector or business action is accepted. */
+    subject(id, element) {
+      if (closed) throw error('CLOSED');
+      if (!subjectId(id) || !(element instanceof HTMLElement) || element.ownerDocument !== document) throw error('INVALID_SUBJECT');
+      if (!subjects.has(id) && subjects.size >= 64) throw error('SUBJECT_LIMIT');
+      subjects.set(id, element);
+      return () => { if (subjects.get(id) === element) subjects.delete(id); };
+    },
     content(definition) {
       if (content) throw error('CONTENT_ALREADY_REGISTERED');
       if (!definition || typeof definition.state !== 'function' || !definition.actions || expected && (definition.id !== expected.id || definition.revision !== expected.revision)) throw error('CONTENT_MISMATCH');

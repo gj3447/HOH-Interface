@@ -40,6 +40,7 @@ export interface MountedAppContent {
   subscribe(listener: (observation: AppViewObservation) => void): Promise<() => void>;
   invoke(request: AppViewInvokeRequest): Promise<AppInvokeOutcome>;
   flush(): Promise<void>;
+  focusSubject(subjectId: string): Promise<{ readonly scope: AppInstanceScope; readonly subjectId: string; readonly focused: true }>;
   canReplace(): Promise<boolean>;
   refresh(): void; close(): void; teardown(): void;
 }

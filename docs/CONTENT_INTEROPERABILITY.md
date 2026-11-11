@@ -250,3 +250,26 @@ structured frame using these values while retaining APP provenance.
 Keep decision-critical values, immediate errors and confirmation controls in the
 app. Explanations do not confer native-write authorization or change saved game
 state. Match the shared runtime pin before publishing an app that requires this API.
+
+## Returning to an information subject
+
+An app may register up to 64 local, focusable elements with
+`ailab.subject('diagram.input', element)`. IDs use 1–160 ASCII letters, digits,
+periods, colons, underscores or hyphens and start with a letter or digit. The
+returned function unregisters that exact element; replacing a registration does
+not let an old cleanup remove its replacement. Teardown clears all registrations.
+
+A host can call `mounted.focusSubject(id)` from its own information-card control.
+The existing mount/channel and the host's `information-focus` authorization bind
+the request. It accepts a registered subject ID, never a CSS selector, URL,
+app command or permission flag. The app kit scrolls the current element into
+view, focuses it and checks actual focus before acknowledging the same ID. It
+emits `subject-focus` for the app's optional visual highlight. Unknown, detached,
+hidden, disabled or non-focusable targets fail; no success is inferred from a
+sent message. Navigation and teardown refuse old requests.
+
+This is presentation navigation. It does not call a domain action, modify a
+business record, save app progress or confer execution authority. The host must
+also prevent a stale information card from targeting a replacement app instance.
+Information grouping, summaries and disclosure remain host presentation policy.
+

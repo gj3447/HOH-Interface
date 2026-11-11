@@ -8,7 +8,7 @@ import { appContentKitSource } from '../ui/app-content-kit.js';
 
 const pkg = JSON.parse(await readFile(new URL('./fixtures/packaged-app/content.json', import.meta.url), 'utf8'));
 const template = await readFile(new URL('./fixtures/packaged-app/app.html', import.meta.url), 'utf8');
-async function mounted(t, { allow = true, supports = true, rich = true } = {}) {
+async function mounted(t, { allow = true, supports = true, rich = true, allowFocus = true } = {}) {
   const raw = JSON.stringify({ schema: 'mm.content-bundle/v1', source: { repository: 'fixture', revision: '1'.repeat(40), dir: 'fixture', fixture: true },
     package: { ...pkg, tools: [] }, template, templateSha256: await appSha256(template) });
   const bundle = await readMmBundle(raw, { expectedDigest: await appSha256(raw), allowFixture: true });
@@ -22,7 +22,7 @@ async function mounted(t, { allow = true, supports = true, rich = true } = {}) {
   Object.assign(globalThis, globals);
   let sequence = 0;
   const app = await mountAppContent({ bundle, timeoutMs: 2000, host: { id: 'fixture-host', principalId: 'viewer', ...(rich ? { informationProfile: 'hoh/app-information@2' } : {}),
-    authorize: request => { operations.push(request.operation); return request.operation !== 'information' || allow; },
+    authorize: request => { operations.push(request.operation); return request.operation === 'information-focus' ? allowFocus : request.operation !== 'information' || allow; },
     draftMessage() { assert.fail('information must not create a user command'); },
     ...(supports ? { information: value => { shown.push(value); return true; } } : {}) } });
   t.after(() => { app.close(); for (const [key, descriptor] of Object.entries(prior)) {
@@ -44,7 +44,7 @@ async function mounted(t, { allow = true, supports = true, rich = true } = {}) {
   await request('ui/initialize', { protocolVersion: 'ailab-apps/1' });
   post({ method: 'ui/notifications/initialized' });
   await new Promise(resolve => setImmediate(resolve));
-  return { request, post, shown, operations, channel };
+  return { request, post, shown, operations, channel, app, sent };
 }
 
 test('informational text uses its authorized host callback and bounded coordinates', async t => {
@@ -135,4 +135,30 @@ test('the explicit SDK explanation waits for host acceptance and never changes a
   assert.equal(sent.some(message => ['ui/message', 'tools/call'].includes(message.method)), false);
   accepted = false;
   await assert.rejects(kit.explain('refused'), { code: 'INFORMATION_UNAVAILABLE' });
+
+});
+test('subject navigation requires current authorization and an exact frame acknowledgement', async t => {
+  const view = await mounted(t);
+  const result = view.app.focusSubject('part.a');
+  await new Promise(resolve => setImmediate(resolve));
+  const request = view.sent.find(m => m.method === 'ailab/information/focus');
+  assert.equal(request.params.subjectId, 'part.a');
+  view.post({ id: request.id, result: { focused: true, subjectId: 'part.a' } });
+  assert.equal((await result).scope.instanceId, view.app.scope.instanceId);
+  assert.ok(view.operations.includes('information-focus'));
+});
+test('a denied or closed instance cannot send a focus request', async t => {
+  const view = await mounted(t, { allowFocus: false });
+  await assert.rejects(view.app.focusSubject('part.a'), { code: 'DENIED' });
+  assert.equal(view.sent.filter(m => m.method === 'ailab/information/focus').length, 0);
+  view.app.close();
+  await assert.rejects(view.app.focusSubject('part.a'), { code: 'CLOSED' });
+});
+test('a focus reply for a different subject cannot count as success', async t => {
+  const view = await mounted(t);
+  const result = view.app.focusSubject('part.a');
+  await new Promise(resolve => setImmediate(resolve));
+  const request = view.sent.find(m => m.method === 'ailab/information/focus');
+  view.post({ id: request.id, result: { focused: true, subjectId: 'part.b' } });
+  await assert.rejects(result, { code: 'FOCUS_UNCONFIRMED' });
 });

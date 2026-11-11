@@ -241,6 +241,15 @@ export async function mountAppContent({ bundle, host, params = {}, signal, stage
       };
       const result = queue.catch(() => {}).then(execute).catch(failure); queue = result; return result;
     },
+    async focusSubject(subjectId) {
+      assert(typeof subjectId === 'string' && /^[a-zA-Z0-9][a-zA-Z0-9._:-]{0,159}$/.test(subjectId), 'INVALID_SUBJECT');
+      await gate('information-focus', { subjectId });
+      assert(initialized, 'NOT_INITIALIZED');
+      const result = await rpc('ailab/information/focus', { subjectId });
+      await gate('information-focus', { subjectId });
+      assert(result?.focused === true && result.subjectId === subjectId, 'FOCUS_UNCONFIRMED');
+      return freezeAppJson({ scope, subjectId, focused: true });
+    },
     async flush() { await resumeQueue; active(); },
     async canReplace() {
       await gate('replace');
