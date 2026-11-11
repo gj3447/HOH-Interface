@@ -30,7 +30,7 @@ export async function mountAppContent({ bundle, host, params = {}, signal, stage
   const scope = freezeAppJson({ hostId: host.id, principalId: host.principalId, instanceId: crypto.randomUUID(), bundleDigest: bundle.digest,
     contentId: pkg.content?.id || `app:${pkg.name}`, descriptorRevision: pkg.content?.revision || pkg.version, parameters: input });
   let closed = false, started = false, initialized = false, readySettled = false, snapshot = null, lastError = null;
-  let counter = 0, queue = Promise.resolve(), pendingOpen = null, resumeQueue = Promise.resolve(), pendingTools = 0;
+  let counter = 0, queue = Promise.resolve(), pendingOpen = null, resumeQueue = Promise.resolve(), pendingTools = 0, pendingCommands = 0;
   const controller = new AbortController(), pending = new Map(), subscribers = new Set(), invocations = new Map();
   const channel = crypto.randomUUID(), duration = Math.min(30000, Math.max(100, timeoutMs));
   const frame = document.createElement('iframe');
@@ -45,7 +45,10 @@ export async function mountAppContent({ bundle, host, params = {}, signal, stage
     return decision;
   }
   await gate('mount');
-  for (const name of pkg.tools) assert(Object.hasOwn(host.tools || {}, name) && host.tools[name]?.effect === 'read' && typeof host.tools[name].call === 'function', 'PROVIDER_UNAVAILABLE', `A declared read provider is unavailable: ${name}`);
+  // A provider is the host's own binding. 'command' providers reach a host-registered external
+  // executor; the package only names the tool and never supplies an endpoint or credential.
+  const provider = name => { const tool = Object.hasOwn(host.tools || {}, name) ? host.tools[name] : null; return tool && ['read', 'command'].includes(tool.effect) && typeof tool.call === 'function' ? tool : null; };
+  for (const name of pkg.tools) assert(provider(name), 'PROVIDER_UNAVAILABLE', `A declared provider is unavailable: ${name}`);
   let settleReady;
   const ready = new Promise(resolve => { settleReady = value => { if (!readySettled) { readySettled = true; clearTimeout(readyTimer); resolve(value); } }; });
   const readyTimer = setTimeout(() => fatal(new AppPackageError('READY_TIMEOUT', 'The app did not become ready.')), duration);
@@ -110,7 +113,7 @@ export async function mountAppContent({ bundle, host, params = {}, signal, stage
     try {
       if (m.method === 'ui/initialize') {
         assert(!started && m.params?.protocolVersion === 'ailab-apps/1', 'UNSUPPORTED_PROFILE'); await gate('initialize'); started = true;
-        reply({ protocolVersion: 'ailab-apps/1', hostInfo: { name: host.id, version: '1' }, hostCapabilities: { serverTools: {}, message: {}, displayModes: ['inline'] }, hostContext: context() });
+        reply({ protocolVersion: 'ailab-apps/1', hostInfo: { name: host.id, version: '1' }, hostCapabilities: { serverTools: { effects: Object.fromEntries(pkg.tools.map(name => [name, provider(name).effect])) }, message: {}, displayModes: ['inline'] }, hostContext: context() });
         send({ method: 'ui/notifications/tool-input', params: { arguments: input, hotResume: pkg.hotReload === true } }); return;
       }
       assert(started, 'NOT_INITIALIZED');
@@ -118,14 +121,22 @@ export async function mountAppContent({ bundle, host, params = {}, signal, stage
         case 'ui/notifications/initialized': initialized = true; if (!pkg.content || snapshot) settleReady(true); return;
         case 'ailab/notifications/content-state': await gate('read'); accept(m.params); return;
         case 'tools/call': {
-          const name = m.params?.name, tool = Object.hasOwn(host.tools || {}, name) ? host.tools[name] : null;
-          assert(initialized && pkg.tools.includes(name) && tool?.effect === 'read' && typeof tool.call === 'function', 'UNDECLARED_TOOL');
-          assert(pendingTools < 8, 'BUSY');
+          const name = m.params?.name, tool = typeof name === 'string' ? provider(name) : null;
+          assert(initialized && pkg.tools.includes(name) && tool, 'UNDECLARED_TOOL');
+          const command = tool.effect === 'command';
+          // One command at a time: its outcome decides what the next one may assume.
+          assert(command ? pendingCommands < 1 : pendingTools < 8, 'BUSY');
           const args = appJson(m.params.arguments ?? {}, 12000);
-          await gate('tool', { tool: name, input: args }); pendingTools += 1;
-          try { const result = appJson(await tool.call(args, { scope, signal: controller.signal }), 512000); active(); reply({ structuredContent: result }); }
-          catch (e) { reply({ isError: true, content: [{ type: 'text', text: failure(e).code }] }); }
-          finally { pendingTools -= 1; }
+          // The host mints the request identity, so a lost reply is reconciled by the provider
+          // under the same key instead of being sent again by the app under a new one.
+          const requestId = command ? crypto.randomUUID() : undefined;
+          if (command) pendingCommands += 1; else pendingTools += 1;
+          try {
+            await gate(command ? 'command' : 'tool', { tool: name, input: args, ...(command ? { requestId } : {}) });
+            const result = appJson(await tool.call(args, { scope, signal: controller.signal, ...(command ? { requestId } : {}) }), 512000); active(); reply({ structuredContent: result });
+          }
+          catch (e) { const code = failure(e).code; reply({ isError: true, content: [{ type: 'text', text: command && !(e instanceof AppPackageError) ? 'EXECUTION_UNCERTAIN' : code }] }); }
+          finally { if (command) pendingCommands -= 1; else pendingTools -= 1; }
           return;
         }
         case 'ailab/notifications/resume-input': {

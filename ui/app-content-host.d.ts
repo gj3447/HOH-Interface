@@ -17,7 +17,12 @@ export type AppInvokeOutcome = (AppViewObservation & { ok: true; output: AppJson
 export interface AppHost {
   id: string; principalId: string; theme?: 'dark' | 'light'; styles?: Record<string, string>;
   authorize(request: { operation: string; scope: AppInstanceScope; requirements: { admin: boolean }; signal: AbortSignal; [key: string]: unknown }): boolean | { allowed: boolean } | Promise<boolean | { allowed: boolean }>;
-  tools?: Record<string, { effect: 'read'; call(input: AppJson, context: { scope: AppInstanceScope; signal: AbortSignal }): AppJson | Promise<AppJson> }>;
+  /**
+   * Host-owned providers a package may name in `tools`. A `command` provider changes state held by a
+   * host-registered external executor. The host authorizes it as operation `command` and supplies
+   * `requestId`; the provider must use that key so an uncertain result is reconciled, never resent.
+   */
+  tools?: Record<string, { effect: 'read' | 'command'; call(input: AppJson, context: { scope: AppInstanceScope; signal: AbortSignal; requestId?: string }): AppJson | Promise<AppJson> }>;
   remember?(parameters: Record<string, string>, context: { scope: AppInstanceScope; signal: AbortSignal }): void | Promise<void>;
   open?(content: string, context: { scope: AppInstanceScope }): void | Promise<void>;
   openLink?(url: string, context: { scope: AppInstanceScope }): void | Promise<void>;

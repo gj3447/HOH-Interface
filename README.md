@@ -40,7 +40,7 @@ npm run preview -- --port 8022
 
 공개 초안이며 업계 표준 채택·독립 인증·모든 기존 콘텐츠의 전환을 주장하지 않는다.
 
-## Portable packaged apps · 0.5.1
+## Portable packaged apps · 0.6.0
 
 `mm.content-package/v1` 앱을 고치지 않고 실행하는 공통 패키지 검사기·키트·sandbox 호스트를 제공한다.
 호스트가 선택한 묶음 SHA-256과 원본 템플릿 해시를 검사하고, 기존 콘텐츠 ID와 동작 이름을 유지한다.
@@ -56,6 +56,9 @@ npm run preview:packaged -- --port 8023
 - `@hoh/ui/content/app-package`: 판본·해시·MM 모양 검사와 패키지 읽기
 - `@hoh/ui/content/app-host`: 호스트가 승인한 앱의 실행·상태 읽기·동작·구독
 - `@hoh/ui/adapters/packaged-content`: 기존 HOH 셸의 렌더러 확장
+
+0.6.0은 호스트가 등록한 **명령 제공자**(`effect: 'command'`)를 추가한다. 패키지는 도구 이름만 선언하고 주소·자격 증명은 호스트 운영자가 정한다.
+호스트가 요청 식별자를 발급해 응답 유실을 같은 키로 대조하며, 분류되지 않은 실패는 `EXECUTION_UNCERTAIN`으로 돌려준다([계약](docs/CONTENT_INTEROPERABILITY.md#command-providers--060)).
 
 앱의 화면 상태는 `FRAME_REPORTED` 관측이다. 업무 서버의 영속 상태나 실행 증거로 바꾸어 부르지 않는다.
 계정·게시 권한·명시적으로 등록한 읽기 도구·보기 복원 저장소는 소비 호스트가 제공한다.

@@ -53,7 +53,7 @@ Package source/revision fields are provenance, not authorization.
 
 The host pins exact bundle bytes and checks the template digest before creating
 an executable frame. It requires an explicit host authorization callback and
-only exposes declared, host-registered read tools. An `admin` flag is an access
+only exposes declared, host-registered providers (read, and since 0.6.0 command). An `admin` flag is an access
 requirement; an app cannot grant itself that role. Fixture bundles require an
 explicit development-only option and are refused by default.
 
@@ -173,3 +173,38 @@ shared kit, and the HOH renderer. The expanded browser suite passes 47 checks;
 this remains runtime interoperability evidence, not automatic authorization by a
 consumer's publisher. Managed browser verification uses a private short IPC path
 while keeping its profile/output on the managed filesystem.
+
+## Command providers · 0.6.0
+
+Until 0.5.1 a package could only name host-registered **read** providers. An app
+whose real state lives in another service had no declared way to change it, so
+each host integration grew its own app-specific paths. 0.6.0 adds one provider
+kind instead of one integration per app.
+
+A host may register a provider with `effect: 'command'`. The package still only
+lists the tool name in `tools`; it supplies no endpoint, credential or routing.
+Which content may reach which external executor is the host operator's
+registration, not package metadata and not model output.
+
+- The host authorizes each call as operation `command`, separately from `tool`
+  reads, with the tool name and input. A denied command never reaches the provider.
+- The host mints one `requestId` per call and passes it to the provider. The
+  provider uses that key for its prepare/execute/receipt exchange, so a lost
+  reply is reconciled under the same key instead of being sent again.
+- A failure the provider did not classify is returned as `EXECUTION_UNCERTAIN`.
+  Only an `AppPackageError` thrown by the provider keeps its code as a definite
+  refusal. A failed read stays a failed read.
+- One command per mounted app runs at a time. Reads remain available meanwhile.
+- `hostCapabilities.serverTools.effects` reports the kind of each declared tool.
+
+Human controls and agent requests should reach the same declared action; the
+action's handler calls the command provider. Whether a human gesture, a chat
+approval or both are required is the host's `authorize` decision. The frame's
+reported state is still `FRAME_REPORTED`: the external executor's receipt, read
+by the host, is the evidence that a command ran.
+
+`test/app-command-tool.test.mjs` covers authorization, request identity,
+uncertain versus definite failures, the one-command bound and refusal of
+undeclared or unsupported providers with a minimal page double. No browser,
+external service or host integration was exercised for this addition.
+
