@@ -40,7 +40,12 @@ npm run preview -- --port 8022
 
 공개 초안이며 업계 표준 채택·독립 인증·모든 기존 콘텐츠의 전환을 주장하지 않는다.
 
-## Portable packaged apps · 0.5.0
+## Portable packaged apps · 0.5.2
+
+0.5.2 adds bounded app-provided informational events. Apps call `api.log(text, options)`;
+an opted-in host handles them through `information(entry)` after its `information` authorization.
+These events do not submit a user message or execute a tool. Text, coordinates and notification rate
+are bounded; an absent capability or denied scope stays unavailable. The 0.5 read-only tool contract remains.
 
 `mm.content-package/v1` 앱을 고치지 않고 실행하는 공통 패키지 검사기·키트·sandbox 호스트를 제공한다.
 호스트가 선택한 묶음 SHA-256과 원본 템플릿 해시를 검사하고, 기존 콘텐츠 ID와 동작 이름을 유지한다.

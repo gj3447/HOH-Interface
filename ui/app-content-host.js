@@ -31,6 +31,7 @@ export async function mountAppContent({ bundle, host, params = {}, signal, stage
     contentId: pkg.content?.id || `app:${pkg.name}`, descriptorRevision: pkg.content?.revision || pkg.version, parameters: input });
   let closed = false, started = false, initialized = false, readySettled = false, snapshot = null, lastError = null;
   let counter = 0, queue = Promise.resolve(), pendingOpen = null, resumeQueue = Promise.resolve(), pendingTools = 0;
+  const informationTimes = [];
   const controller = new AbortController(), pending = new Map(), subscribers = new Set(), invocations = new Map();
   const channel = crypto.randomUUID(), duration = Math.min(30000, Math.max(100, timeoutMs));
   const frame = document.createElement('iframe');
@@ -115,6 +116,21 @@ export async function mountAppContent({ bundle, host, params = {}, signal, stage
       }
       assert(started, 'NOT_INITIALIZED');
       switch (m.method) {
+        case 'ailab/notifications/log': {
+          assert(initialized && typeof host.information === 'function', 'UNSUPPORTED_INFORMATION');
+          const now = Date.now(); while (informationTimes.length && now - informationTimes[0] > 10000) informationTimes.shift();
+          assert(informationTimes.length < 20, 'BUSY'); informationTimes.push(now);
+          const p = m.params || {}, text = typeof p.text === 'string' ? p.text.trim().slice(0, 12000) : '';
+          assert(text, 'INVALID_INFORMATION');
+          await gate('information');
+          const rect = frame.getBoundingClientRect(), point = p.from;
+          const origin = point && Number.isFinite(point.x) && Number.isFinite(point.y) && rect.width && rect.height
+            ? { x: rect.left + Math.min(rect.width, Math.max(0, point.x)), y: rect.top + Math.min(rect.height, Math.max(0, point.y)) } : undefined;
+          const displayed = await host.information({ text, about: typeof p.about === 'string' ? p.about.slice(0, 160) : '',
+            kind: ['explain', 'result', 'error'].includes(p.kind) ? p.kind : 'explain', ...(origin ? { origin } : {}) });
+          assert(displayed !== false, 'INFORMATION_UNAVAILABLE');
+          reply({ accepted: true }); return;
+        }
         case 'ui/notifications/initialized': initialized = true; if (!pkg.content || snapshot) settleReady(true); return;
         case 'ailab/notifications/content-state': await gate('read'); accept(m.params); return;
         case 'tools/call': {

@@ -137,6 +137,16 @@ function installAppContentKit(options) {
     open: content => request('ailab/open', { content }),
     openLink: url => request('ui/open-link', { url }),
     say: text => request('ui/message', { role: 'user', content: [{ type: 'text', text }] }),
+    /** App-provided information; does not submit a user message or execute a command. */
+    log(text, options = {}) {
+      const value = String(text ?? '').trim(); if (closed || !value) return;
+      const source = options.from, rect = typeof source?.getBoundingClientRect === 'function' ? source.getBoundingClientRect() : null;
+      const point = rect ? { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 } : source;
+      notify('ailab/notifications/log', { text: value.slice(0, 12000),
+        kind: ['explain', 'result', 'error'].includes(options.kind) ? options.kind : 'explain',
+        ...(typeof options.about === 'string' ? { about: options.about.slice(0, 160) } : {}),
+        ...(point && Number.isFinite(point.x) && Number.isFinite(point.y) ? { from: { x: point.x, y: point.y } } : {}) });
+    },
     displayMode: mode => request('ui/request-display-mode', { mode }),
     on(type, fn) { if (typeof fn !== 'function') throw error('INVALID_LISTENER'); const listeners = events.get(type) || new Set(); listeners.add(fn); events.set(type, listeners); return () => listeners.delete(fn); },
     content(definition) {
