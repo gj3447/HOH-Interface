@@ -1,0 +1,1 @@
+{"schema":"hoh/office-tiptap-bundle@1","source":"office/tiptap-source.js","digest":"03c617c5a00577d1eaeedf3f53f47586ba8ca3493555c8e10a8c715b750f26c5","bytes":831366,"packages":{"@tiptap/core":"3.33.1","@tiptap/starter-kit":"3.33.1","esbuild":"0.25.11"}}

@@ -41,7 +41,9 @@
     },
     "./content/app-kit": "./ui/app-content-kit.js",
     "./adapters/packaged-content": "./adapters/packaged-content.js",
-    "./content/app-host.css": "./ui/app-content-host.css"
+    "./content/app-host.css": "./ui/app-content-host.css",
+    "./office/documents": "./office/document-editor.js",
+    "./office/tiptap": "./office/tiptap.js"
   },
   "scripts": {
     "test": "node --test test/*.test.mjs",
@@ -55,8 +57,12 @@
     "test:semantic:browser": "node test/browser-semantic.mjs",
     "preview:packaged": "node scripts/serve-packaged-content.mjs",
     "test:packaged": "node --test test/app-package.test.mjs"
+    ,"build:office-tiptap": "node scripts/build-office-tiptap.mjs"
   },
   "devDependencies": {
+    "@tiptap/core": "3.33.1",
+    "@tiptap/starter-kit": "3.33.1",
+    "esbuild": "0.25.11",
     "ajv": "8.20.0"
   }
 }
