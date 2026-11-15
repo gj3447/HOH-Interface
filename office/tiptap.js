@@ -604,13 +604,13 @@ var Mark = class _Mark {
   /**
   Deserialize a mark from JSON.
   */
-  static fromJSON(schema, json2) {
-    if (!json2)
+  static fromJSON(schema, json) {
+    if (!json)
       throw new RangeError("Invalid input for Mark.fromJSON");
-    let type = schema.marks[json2.type];
+    let type = schema.marks[json.type];
     if (!type)
-      throw new RangeError(`There is no mark type ${json2.type} in this schema`);
-    let mark = type.create(json2.attrs);
+      throw new RangeError(`There is no mark type ${json.type} in this schema`);
+    let mark = type.create(json.attrs);
     return mark;
   }
   /**
@@ -698,23 +698,23 @@ var Slice = class _Slice {
   toJSON() {
     if (!this.content.size)
       return null;
-    let json2 = { content: this.content.toJSON() };
+    let json = { content: this.content.toJSON() };
     if (this.openStart > 0)
-      json2.openStart = this.openStart;
+      json.openStart = this.openStart;
     if (this.openEnd > 0)
-      json2.openEnd = this.openEnd;
-    return json2;
+      json.openEnd = this.openEnd;
+    return json;
   }
   /**
   Deserialize a slice from its JSON representation.
   */
-  static fromJSON(schema, json2) {
-    if (!json2)
+  static fromJSON(schema, json) {
+    if (!json)
       return _Slice.empty;
-    let openStart = json2.openStart || 0, openEnd = json2.openEnd || 0;
+    let openStart = json.openStart || 0, openEnd = json.openEnd || 0;
     if (typeof openStart != "number" || typeof openEnd != "number")
       throw new RangeError("Invalid input for Slice.fromJSON");
-    return new _Slice(Fragment.fromJSON(schema, json2.content), openStart, openEnd);
+    return new _Slice(Fragment.fromJSON(schema, json.content), openStart, openEnd);
   }
   /**
   Create a slice from a fragment by taking the maximum possible
@@ -1557,22 +1557,22 @@ var Node = class _Node {
   /**
   Deserialize a node from its JSON representation.
   */
-  static fromJSON(schema, json2) {
-    if (!json2)
+  static fromJSON(schema, json) {
+    if (!json)
       throw new RangeError("Invalid input for Node.fromJSON");
     let marks = void 0;
-    if (json2.marks) {
-      if (!Array.isArray(json2.marks))
+    if (json.marks) {
+      if (!Array.isArray(json.marks))
         throw new RangeError("Invalid mark data for Node.fromJSON");
-      marks = json2.marks.map(schema.markFromJSON);
+      marks = json.marks.map(schema.markFromJSON);
     }
-    if (json2.type == "text") {
-      if (typeof json2.text != "string")
+    if (json.type == "text") {
+      if (typeof json.text != "string")
         throw new RangeError("Invalid text node in JSON");
-      return schema.text(json2.text, marks);
+      return schema.text(json.text, marks);
     }
-    let content = Fragment.fromJSON(schema, json2.content);
-    let node = schema.nodeType(json2.type).create(json2.attrs, content, marks);
+    let content = Fragment.fromJSON(schema, json.content);
+    let node = schema.nodeType(json.type).create(json.attrs, content, marks);
     return node;
   }
 };
@@ -2397,8 +2397,8 @@ var Schema = class {
       let type = this.marks[prop], excl = type.spec.excludes;
       type.excluded = excl == null ? [type] : excl == "" ? [] : gatherMarks(this, excl.split(" "));
     }
-    this.nodeFromJSON = (json2) => Node.fromJSON(this, json2);
-    this.markFromJSON = (json2) => Mark.fromJSON(this, json2);
+    this.nodeFromJSON = (json) => Node.fromJSON(this, json);
+    this.markFromJSON = (json) => Mark.fromJSON(this, json);
     this.topNodeType = this.nodes[this.spec.topNode || "doc"];
     this.cached.wrappings = /* @__PURE__ */ Object.create(null);
   }
@@ -3657,13 +3657,13 @@ var Step = class {
   Deserialize a step from its JSON representation. Will call
   through to the step class' own implementation of this method.
   */
-  static fromJSON(schema, json2) {
-    if (!json2 || !json2.stepType)
+  static fromJSON(schema, json) {
+    if (!json || !json.stepType)
       throw new RangeError("Invalid input for Step.fromJSON");
-    let type = stepsByID[json2.stepType];
+    let type = stepsByID[json.stepType];
     if (!type)
-      throw new RangeError(`No step type ${json2.stepType} defined`);
-    return type.fromJSON(schema, json2);
+      throw new RangeError(`No step type ${json.stepType} defined`);
+    return type.fromJSON(schema, json);
   }
   /**
   To be able to serialize steps to JSON, each step needs a string
@@ -3784,10 +3784,10 @@ var AddMarkStep = class _AddMarkStep extends Step {
   /**
   @internal
   */
-  static fromJSON(schema, json2) {
-    if (typeof json2.from != "number" || typeof json2.to != "number")
+  static fromJSON(schema, json) {
+    if (typeof json.from != "number" || typeof json.to != "number")
       throw new RangeError("Invalid input for AddMarkStep.fromJSON");
-    return new _AddMarkStep(json2.from, json2.to, schema.markFromJSON(json2.mark));
+    return new _AddMarkStep(json.from, json.to, schema.markFromJSON(json.mark));
   }
 };
 Step.jsonID("addMark", AddMarkStep);
@@ -3838,10 +3838,10 @@ var RemoveMarkStep = class _RemoveMarkStep extends Step {
   /**
   @internal
   */
-  static fromJSON(schema, json2) {
-    if (typeof json2.from != "number" || typeof json2.to != "number")
+  static fromJSON(schema, json) {
+    if (typeof json.from != "number" || typeof json.to != "number")
       throw new RangeError("Invalid input for RemoveMarkStep.fromJSON");
-    return new _RemoveMarkStep(json2.from, json2.to, schema.markFromJSON(json2.mark));
+    return new _RemoveMarkStep(json.from, json.to, schema.markFromJSON(json.mark));
   }
 };
 Step.jsonID("removeMark", RemoveMarkStep);
@@ -3882,10 +3882,10 @@ var MarkSetStep = class _MarkSetStep extends Step {
   toJSON() {
     return { stepType: "markSet", steps: this.steps.map((s) => s.toJSON()) };
   }
-  static fromJSON(schema, json2) {
-    if (!Array.isArray(json2.steps) || !json2.steps.every((s) => s.stepType == "addMark" || s.stepType == "removeMark"))
+  static fromJSON(schema, json) {
+    if (!Array.isArray(json.steps) || !json.steps.every((s) => s.stepType == "addMark" || s.stepType == "removeMark"))
       throw new RangeError("Invalid JSON for MarkSetStep");
-    return new _MarkSetStep(json2.steps.map((s) => Step.fromJSON(schema, s)));
+    return new _MarkSetStep(json.steps.map((s) => Step.fromJSON(schema, s)));
   }
 };
 Step.jsonID("markSet", MarkSetStep);
@@ -3928,10 +3928,10 @@ var AddNodeMarkStep = class _AddNodeMarkStep extends Step {
   /**
   @internal
   */
-  static fromJSON(schema, json2) {
-    if (typeof json2.pos != "number")
+  static fromJSON(schema, json) {
+    if (typeof json.pos != "number")
       throw new RangeError("Invalid input for AddNodeMarkStep.fromJSON");
-    return new _AddNodeMarkStep(json2.pos, schema.markFromJSON(json2.mark));
+    return new _AddNodeMarkStep(json.pos, schema.markFromJSON(json.mark));
   }
 };
 Step.jsonID("addNodeMark", AddNodeMarkStep);
@@ -3967,10 +3967,10 @@ var RemoveNodeMarkStep = class _RemoveNodeMarkStep extends Step {
   /**
   @internal
   */
-  static fromJSON(schema, json2) {
-    if (typeof json2.pos != "number")
+  static fromJSON(schema, json) {
+    if (typeof json.pos != "number")
       throw new RangeError("Invalid input for RemoveNodeMarkStep.fromJSON");
-    return new _RemoveNodeMarkStep(json2.pos, schema.markFromJSON(json2.mark));
+    return new _RemoveNodeMarkStep(json.pos, schema.markFromJSON(json.mark));
   }
 };
 Step.jsonID("removeNodeMark", RemoveNodeMarkStep);
@@ -4023,20 +4023,20 @@ var ReplaceStep = class _ReplaceStep extends Step {
     }
   }
   toJSON() {
-    let json2 = { stepType: "replace", from: this.from, to: this.to };
+    let json = { stepType: "replace", from: this.from, to: this.to };
     if (this.slice.size)
-      json2.slice = this.slice.toJSON();
+      json.slice = this.slice.toJSON();
     if (this.structure)
-      json2.structure = true;
-    return json2;
+      json.structure = true;
+    return json;
   }
   /**
   @internal
   */
-  static fromJSON(schema, json2) {
-    if (typeof json2.from != "number" || typeof json2.to != "number")
+  static fromJSON(schema, json) {
+    if (typeof json.from != "number" || typeof json.to != "number")
       throw new RangeError("Invalid input for ReplaceStep.fromJSON");
-    return new _ReplaceStep(json2.from, json2.to, Slice.fromJSON(schema, json2.slice), !!json2.structure);
+    return new _ReplaceStep(json.from, json.to, Slice.fromJSON(schema, json.slice), !!json.structure);
   }
 };
 ReplaceStep.MAP_BIAS = 1;
@@ -4092,7 +4092,7 @@ var ReplaceAroundStep = class _ReplaceAroundStep extends Step {
     return new _ReplaceAroundStep(from2.pos, to.pos, gapFrom, gapTo, this.slice, this.insert, this.structure);
   }
   toJSON() {
-    let json2 = {
+    let json = {
       stepType: "replaceAround",
       from: this.from,
       to: this.to,
@@ -4101,18 +4101,18 @@ var ReplaceAroundStep = class _ReplaceAroundStep extends Step {
       insert: this.insert
     };
     if (this.slice.size)
-      json2.slice = this.slice.toJSON();
+      json.slice = this.slice.toJSON();
     if (this.structure)
-      json2.structure = true;
-    return json2;
+      json.structure = true;
+    return json;
   }
   /**
   @internal
   */
-  static fromJSON(schema, json2) {
-    if (typeof json2.from != "number" || typeof json2.to != "number" || typeof json2.gapFrom != "number" || typeof json2.gapTo != "number" || typeof json2.insert != "number")
+  static fromJSON(schema, json) {
+    if (typeof json.from != "number" || typeof json.to != "number" || typeof json.gapFrom != "number" || typeof json.gapTo != "number" || typeof json.insert != "number")
       throw new RangeError("Invalid input for ReplaceAroundStep.fromJSON");
-    return new _ReplaceAroundStep(json2.from, json2.to, json2.gapFrom, json2.gapTo, Slice.fromJSON(schema, json2.slice), json2.insert, !!json2.structure);
+    return new _ReplaceAroundStep(json.from, json.to, json.gapFrom, json.gapTo, Slice.fromJSON(schema, json.slice), json.insert, !!json.structure);
   }
 };
 Step.jsonID("replaceAround", ReplaceAroundStep);
@@ -4939,10 +4939,10 @@ var AttrStep = class _AttrStep extends Step {
   toJSON() {
     return { stepType: "attr", pos: this.pos, attr: this.attr, value: this.value };
   }
-  static fromJSON(schema, json2) {
-    if (typeof json2.pos != "number" || typeof json2.attr != "string")
+  static fromJSON(schema, json) {
+    if (typeof json.pos != "number" || typeof json.attr != "string")
       throw new RangeError("Invalid input for AttrStep.fromJSON");
-    return new _AttrStep(json2.pos, json2.attr, json2.value);
+    return new _AttrStep(json.pos, json.attr, json.value);
   }
 };
 Step.jsonID("attr", AttrStep);
@@ -4975,10 +4975,10 @@ var DocAttrStep = class _DocAttrStep extends Step {
   toJSON() {
     return { stepType: "docAttr", attr: this.attr, value: this.value };
   }
-  static fromJSON(schema, json2) {
-    if (typeof json2.attr != "string")
+  static fromJSON(schema, json) {
+    if (typeof json.attr != "string")
       throw new RangeError("Invalid input for DocAttrStep.fromJSON");
-    return new _DocAttrStep(json2.attr, json2.value);
+    return new _DocAttrStep(json.attr, json.value);
   }
 };
 Step.jsonID("docAttr", DocAttrStep);
@@ -5413,13 +5413,13 @@ var Selection = class {
   Deserialize the JSON representation of a selection. Must be
   implemented for custom classes (as a static class method).
   */
-  static fromJSON(doc3, json2) {
-    if (!json2 || !json2.type)
+  static fromJSON(doc3, json) {
+    if (!json || !json.type)
       throw new RangeError("Invalid input for Selection.fromJSON");
-    let cls = classesById[json2.type];
+    let cls = classesById[json.type];
     if (!cls)
-      throw new RangeError(`No selection type ${json2.type} defined`);
-    return cls.fromJSON(doc3, json2);
+      throw new RangeError(`No selection type ${json.type} defined`);
+    return cls.fromJSON(doc3, json);
   }
   /**
   To be able to deserialize selections from JSON, custom selection
@@ -5507,10 +5507,10 @@ var TextSelection = class _TextSelection extends Selection {
   /**
   @internal
   */
-  static fromJSON(doc3, json2) {
-    if (typeof json2.anchor != "number" || typeof json2.head != "number")
+  static fromJSON(doc3, json) {
+    if (typeof json.anchor != "number" || typeof json.head != "number")
       throw new RangeError("Invalid input for TextSelection.fromJSON");
-    return new _TextSelection(doc3.resolve(json2.anchor), doc3.resolve(json2.head));
+    return new _TextSelection(doc3.resolve(json.anchor), doc3.resolve(json.head));
   }
   /**
   Create a text selection from non-resolved positions.
@@ -5596,10 +5596,10 @@ var NodeSelection = class _NodeSelection extends Selection {
   /**
   @internal
   */
-  static fromJSON(doc3, json2) {
-    if (typeof json2.anchor != "number")
+  static fromJSON(doc3, json) {
+    if (typeof json.anchor != "number")
       throw new RangeError("Invalid input for NodeSelection.fromJSON");
-    return new _NodeSelection(doc3.resolve(json2.anchor));
+    return new _NodeSelection(doc3.resolve(json.anchor));
   }
   /**
   Create a node selection from non-resolved positions.
@@ -6105,8 +6105,8 @@ var EditorState = class _EditorState {
   to deserialize the state of plugins, by associating plugin
   instances with the property names they use in the JSON object.
   */
-  static fromJSON(config, json2, pluginFields) {
-    if (!json2)
+  static fromJSON(config, json, pluginFields) {
+    if (!json)
       throw new RangeError("Invalid input for EditorState.fromJSON");
     if (!config.schema)
       throw new RangeError("Required config field 'schema' missing");
@@ -6114,18 +6114,18 @@ var EditorState = class _EditorState {
     let instance = new _EditorState($config);
     $config.fields.forEach((field) => {
       if (field.name == "doc") {
-        instance.doc = Node.fromJSON(config.schema, json2.doc);
+        instance.doc = Node.fromJSON(config.schema, json.doc);
       } else if (field.name == "selection") {
-        instance.selection = Selection.fromJSON(instance.doc, json2.selection);
+        instance.selection = Selection.fromJSON(instance.doc, json.selection);
       } else if (field.name == "storedMarks") {
-        if (json2.storedMarks)
-          instance.storedMarks = json2.storedMarks.map(config.schema.markFromJSON);
+        if (json.storedMarks)
+          instance.storedMarks = json.storedMarks.map(config.schema.markFromJSON);
       } else {
         if (pluginFields)
           for (let prop in pluginFields) {
             let plugin = pluginFields[prop], state = plugin.spec.state;
-            if (plugin.key == field.name && state && state.fromJSON && Object.prototype.hasOwnProperty.call(json2, prop)) {
-              instance[field.name] = state.fromJSON.call(plugin, config, json2[prop], instance);
+            if (plugin.key == field.name && state && state.fromJSON && Object.prototype.hasOwnProperty.call(json, prop)) {
+              instance[field.name] = state.fromJSON.call(plugin, config, json[prop], instance);
               return;
             }
           }
@@ -10227,15 +10227,15 @@ function capturePaste(view, event) {
     target.contentEditable = "true";
   target.style.cssText = "position: fixed; left: -10000px; top: 10px";
   target.focus();
-  let plain2 = view.input.shiftKey && view.input.lastKeyCode != 45;
+  let plain = view.input.shiftKey && view.input.lastKeyCode != 45;
   setTimeout(() => {
     view.focus();
     if (target.parentNode)
       target.parentNode.removeChild(target);
     if (plainText)
-      doPaste(view, target.value, null, plain2, event);
+      doPaste(view, target.value, null, plain, event);
     else
-      doPaste(view, target.textContent, target.innerHTML, plain2, event);
+      doPaste(view, target.textContent, target.innerHTML, plain, event);
   }, 50);
 }
 function doPaste(view, text, html, preferPlain, event) {
@@ -10261,8 +10261,8 @@ editHandlers.paste = (view, _event) => {
   if (view.composing && !android)
     return;
   let data = brokenClipboardAPI ? null : event.clipboardData;
-  let plain2 = view.input.shiftKey && view.input.lastKeyCode != 45;
-  if (data && doPaste(view, getText(data), data.getData("text/html"), plain2, event))
+  let plain = view.input.shiftKey && view.input.lastKeyCode != 45;
+  if (data && doPaste(view, getText(data), data.getData("text/html"), plain, event))
     event.preventDefault();
   else
     capturePaste(view, event);
@@ -14632,8 +14632,8 @@ function isProseMirrorReplaceStep(value) {
   if (value === null || typeof value !== "object") return false;
   const step = value;
   if (!isProseMirrorStep(step)) return false;
-  const json2 = step.toJSON();
-  if (json2 === null || typeof json2 !== "object" || json2.stepType !== "replace") return false;
+  const json = step.toJSON();
+  if (json === null || typeof json !== "object" || json.stepType !== "replace") return false;
   return true;
 }
 var MappablePosition = class MappablePosition2 {
@@ -14643,8 +14643,8 @@ var MappablePosition = class MappablePosition2 {
   /**
   * Creates a MappablePosition from a JSON object.
   */
-  static fromJSON(json2) {
-    return new MappablePosition2(json2.position);
+  static fromJSON(json) {
+    return new MappablePosition2(json.position);
   }
   /**
   * Converts the MappablePosition to a JSON object.
@@ -22201,10 +22201,10 @@ var GapCursor = class _GapCursor extends Selection {
   /**
   @internal
   */
-  static fromJSON(doc3, json2) {
-    if (typeof json2.pos != "number")
+  static fromJSON(doc3, json) {
+    if (typeof json.pos != "number")
       throw new RangeError("Invalid input for GapCursor.fromJSON");
-    return new _GapCursor(doc3.resolve(json2.pos));
+    return new _GapCursor(doc3.resolve(json.pos));
   }
   /**
   @internal
@@ -22958,45 +22958,22 @@ var StarterKit = Extension.create({
   }
 });
 
-// office/contracts.js
-var forbidden = /* @__PURE__ */ new Set(["__proto__", "prototype", "constructor"]);
-var plain = (value) => value !== null && typeof value === "object" && Object.getPrototypeOf(value) === Object.prototype;
-var fail = (reason) => {
-  throw Object.assign(new Error(reason), { code: "INVALID_OFFICE_DOCUMENT" });
-};
-var json = (value, depth = 0, seen = /* @__PURE__ */ new Set()) => {
-  if (depth > 32) fail("Document is too deep");
-  if (value === null || ["string", "boolean"].includes(typeof value)) return value;
-  if (typeof value === "number" && Number.isFinite(value)) return value;
-  if (Array.isArray(value)) {
-    if (Object.keys(value).length !== value.length || Object.getOwnPropertySymbols(value).length) fail("Document array is unsafe");
-    if (seen.has(value)) fail("Document is cyclic");
-    seen.add(value);
-    const out2 = value.map((item) => json(item, depth + 1, seen));
-    seen.delete(value);
-    return out2;
-  }
-  if (!plain(value) || Object.getOwnPropertySymbols(value).length || Object.getOwnPropertyNames(value).length !== Object.keys(value).length) fail("Document object is unsafe");
-  if (seen.has(value)) fail("Document is cyclic");
-  seen.add(value);
-  const out = {};
-  for (const key of Object.keys(value)) {
-    const descriptor = Object.getOwnPropertyDescriptor(value, key);
-    if (forbidden.has(key) || !descriptor || !Object.hasOwn(descriptor, "value")) fail("Document key is unsafe");
-    out[key] = json(descriptor.value, depth + 1, seen);
-  }
-  seen.delete(value);
-  return out;
-};
-var validateDocumentSnapshot = (value) => {
-  if (!plain(value)) fail("Document snapshot must be an object");
-  return json(value);
-};
-
 // office/tiptap-source.js
+import { validateDocumentSnapshot } from "./contracts.js";
 var TIPTAP_VERSION = "3.33.1";
 var TIPTAP_SUPPORTED_NODES = Object.freeze(["doc", "paragraph", "heading", "bulletList", "orderedList", "listItem", "blockquote", "codeBlock", "hardBreak", "horizontalRule", "text"]);
-var createTiptap = ({ element, content, onUpdate }) => new Editor({ element, extensions: [StarterKit], content: validateDocumentSnapshot(content), onUpdate });
+var createTiptap = ({ element, content, onUpdate, onSelectionUpdate, onContentError }) => new Editor({
+  element,
+  extensions: [StarterKit.configure({ link: false })],
+  content: validateDocumentSnapshot(content),
+  enableContentCheck: true,
+  onUpdate,
+  onSelectionUpdate,
+  onContentError: (event) => {
+    onContentError?.(event);
+    throw event.error;
+  }
+});
 export {
   TIPTAP_SUPPORTED_NODES,
   TIPTAP_VERSION,
