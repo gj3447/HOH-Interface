@@ -43,7 +43,12 @@
     "./adapters/packaged-content": "./adapters/packaged-content.js",
     "./content/app-host.css": "./ui/app-content-host.css",
     "./office/documents": "./office/document-editor.js",
-    "./office/tiptap": "./office/tiptap.js"
+    "./office/tiptap": "./office/tiptap.js",
+    "./office/styles.css": "./office/document-editor.css",
+    "./office/contracts": {
+      "types": "./office/contracts.d.ts",
+      "import": "./office/contracts.js"
+    }
   },
   "scripts": {
     "test": "node --test test/*.test.mjs",
