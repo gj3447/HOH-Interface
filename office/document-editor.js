@@ -18,6 +18,10 @@ export function mountOfficeDocuments(root, { transport, createTiptap, confirmDis
   let editor = null, editorId = null, disposed = false, restoring = false, lastDraft = null;
   const canLeave = () => !host.state().dirty || confirmDiscard();
   const draftFromEditor = () => ({ title: title.value, body: { schema: 'hoh/office-document@1', editorKind: 'document', schemaVersion: 1, snapshot: editor.getJSON(), assets: [] } });
+  const invoke = async (action, input = {}) => {
+    try { return await host.invokeOffice({ action, context: await host.observe(), input }); }
+    catch (error) { if (!disposed) { status.textContent = errors[error.code] || '문서 상태가 바뀌었어요. 현재 내용을 확인하고 다시 시도해 주세요.'; } return null; }
+  };
   const recordEdit = () => { if (editor && !restoring) host.edit(draftFromEditor()); };
   const toolbar = [
     ['굵게', 'bold', chain => chain.toggleBold()], ['기울임', 'italic', chain => chain.toggleItalic()],
@@ -58,7 +62,7 @@ export function mountOfficeDocuments(root, { transport, createTiptap, confirmDis
         const button = el('button', { type: 'button', textContent: doc.title });
         button.dataset.officeDocumentId = doc.documentId;
         button.setAttribute('aria-current', String(doc.documentId === state.draftId));
-        button.addEventListener('click', () => { if (canLeave()) void host.open(doc.documentId); });
+        button.addEventListener('click', () => { if (canLeave()) void invoke('open', { documentId: doc.documentId, discardChanges: true }); });
         return button;
       }));
     }
@@ -89,12 +93,12 @@ export function mountOfficeDocuments(root, { transport, createTiptap, confirmDis
   };
   const unsubscribe = host.subscribe(render);
   title.addEventListener('input', recordEdit);
-  $('[data-office-new]').addEventListener('click', () => { if (canLeave()) { host.newDocument(); title.focus(); title.select(); } });
-  $('[data-office-save]').addEventListener('click', () => { void host.save(); });
-  $('[data-office-reload]').addEventListener('click', () => { const current = host.state().current; if (current && canLeave()) void host.open(current.documentId); });
-  $('[data-office-discard]').addEventListener('click', () => { if (canLeave()) void host.discard(); });
-  $('[data-office-refresh]').addEventListener('click', () => { void host.list(); });
-  $('[data-office-more]').addEventListener('click', () => { void host.list({ more: true }); });
+  $('[data-office-new]').addEventListener('click', async () => { if (canLeave() && await invoke('new', { discardChanges: true })) { title.focus(); title.select(); } });
+  $('[data-office-save]').addEventListener('click', () => { void invoke('save'); });
+  $('[data-office-reload]').addEventListener('click', () => { const current = host.state().current; if (current && canLeave()) void invoke('open', { documentId: current.documentId, discardChanges: true }); });
+  $('[data-office-discard]').addEventListener('click', () => { if (canLeave()) void invoke('discard', { discardChanges: true }); });
+  $('[data-office-refresh]').addEventListener('click', () => { void invoke('list'); });
+  $('[data-office-more]').addEventListener('click', () => { void invoke('list', { more: true }); });
   view.addEventListener('keydown', event => { if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 's') { event.preventDefault(); $('[data-office-save]').click(); } });
   const beforeUnload = event => { if (host.state().dirty) { event.preventDefault(); event.returnValue = ''; } };
   window.addEventListener('beforeunload', beforeUnload);

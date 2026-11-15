@@ -90,22 +90,28 @@ export class OfficeDocumentHost {
   }
   async observe() {
     const session = await this.#session(this.#generation);
-    const current = this.#state.current;
-    return { principalId: session.principalId, epoch: session.epoch, documentId: current?.documentId ?? null,
-      version: current?.version ?? null, generation: this.#generation, dirty: this.#state.dirty };
+    return { principalId: session.principalId, epoch: session.epoch, documentId: this.#state.draftId,
+      version: this.#state.current?.version ?? null, generation: this.#generation, editRevision: this.#edits, dirty: this.#state.dirty };
   }
-  async invokeOffice({ action, context, input } = {}) {
-    if (!['list', 'new', 'open', 'save', 'discard'].includes(action)) throw problem('INVALID_INPUT');
+  async invokeOffice(request = {}) {
+    const { action, context, input = {} } = request;
+    const actions = ['list', 'new', 'open', 'save', 'discard'];
+    if (!actions.includes(action) || Object.keys(request).some(key => !['action','context','input'].includes(key))
+      || !input || typeof input !== 'object' || Array.isArray(input)) throw problem('INVALID_INPUT');
+    const allowed = action === 'open' ? ['documentId','discardChanges'] : ['new','discard'].includes(action) ? ['discardChanges'] : action === 'list' ? ['more'] : [];
+    if (Object.keys(input).some(key => !allowed.includes(key)) || input.more !== undefined && typeof input.more !== 'boolean'
+      || input.discardChanges !== undefined && typeof input.discardChanges !== 'boolean') throw problem('INVALID_INPUT');
+    if (action === 'open' && (typeof input.documentId !== 'string' || !/^office:[A-Za-z0-9_-]{1,114}$/.test(input.documentId))) throw problem('INVALID_INPUT');
     const actual = await this.observe();
-    if (!context || context.principalId !== actual.principalId || context.epoch !== actual.epoch || context.generation !== actual.generation
-      || context.documentId !== actual.documentId || context.version !== actual.version) throw problem('STALE_OPERATION');
-    if (action === 'list') await this.list();
+    if (!context || Object.keys(context).length !== Object.keys(actual).length || Object.keys(actual).some(key => context[key] !== actual[key])) throw problem('STALE_OPERATION');
+    if (actual.dirty && ['new','open','discard'].includes(action) && input.discardChanges !== true) throw problem('DISCARD_CONFIRMATION_REQUIRED');
+    if (action === 'list') await this.list(input);
     if (action === 'new') this.newDocument();
-    if (action === 'open') { if (typeof input?.documentId !== 'string') throw problem('INVALID_INPUT'); await this.open(input.documentId); }
+    if (action === 'open') await this.open(input.documentId);
     if (action === 'save') await this.save();
-    if (action === 'discard') this.discard();
+    if (action === 'discard') await this.discard();
     const state = this.#state, current = state.current;
-    return { status: state.status, error: state.error, documentId: current?.documentId ?? null, version: current?.version ?? null,
+    return { status: state.status, error: state.error, documentId: state.draftId, version: current?.version ?? null,
       revision: current?.revision ?? null, digest: current?.digest ?? null, dirty: state.dirty };
   }
   discard() {

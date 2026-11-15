@@ -55,3 +55,21 @@ test('newer readback is a conflict and an invalid title stays editable without a
   f.host.edit({ ...f.host.state().draft, title: 'Retained draft' }); f.staleRead(); await f.host.save();
   assert.equal(f.host.state().error, 'CONFLICT'); assert.equal(f.host.state().draft.title, 'Retained draft'); assert.equal(f.host.state().dirty, true); f.host.destroy();
 });
+test('UI and trusted caller share operation dispatch and exact server readback', async () => {
+  const {host,calls} = fixture();
+  const perform = async (action,input={}) => host.invokeOffice({action,context:await host.observe(),input});
+  const created = await perform('new'); assert.match(created.documentId,/^office:/);
+  const saved = await perform('save'); assert.equal(saved.version,1); assert.equal(saved.dirty,false);
+  assert.equal(saved.digest,host.state().current.digest); assert.equal(calls.length,1); host.destroy();
+});
+test('trusted operations reject stale selection, epoch, revision and newer typing', async () => {
+  const {host,calls} = fixture(); host.newDocument(); const original = await host.observe();
+  for (const changed of [{epoch:'other'},{version:3},{documentId:'office:other'},{principalId:'forged'}])
+    await assert.rejects(host.invokeOffice({action:'save',context:{...original,...changed}}),{code:'STALE_OPERATION'});
+  host.edit({...host.state().draft,title:'Newer'});
+  await assert.rejects(host.invokeOffice({action:'save',context:original}),{code:'STALE_OPERATION'});
+  const current = await host.observe();
+  await assert.rejects(host.invokeOffice({action:'discard',context:current}),{code:'DISCARD_CONFIRMATION_REQUIRED'});
+  await assert.rejects(host.invokeOffice({action:'save',context:current,input:{ownerPrincipalId:'forged'}}),{code:'INVALID_INPUT'});
+  assert.equal(calls.length,0); assert.equal(host.state().draft.title,'Newer'); host.destroy();
+});
