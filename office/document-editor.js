@@ -86,7 +86,8 @@ export function mountOfficeDocuments(root, { transport, createTiptap, confirmDis
         try { editor.commands.setContent(state.draft.body.snapshot, { emitUpdate: false, errorOnInvalidContent: true }); }
         finally { restoring = false; }
       }
-      lastDraft = snapshot; editor.setEditable(state.status !== 'loading');
+      lastDraft = snapshot;
+      if (editor.isEditable !== (state.status !== 'loading')) editor.setEditable(state.status !== 'loading', false);
     }
     for (const {button} of toolbar) button.disabled = !editor || state.status === 'loading';
     updateToolbar();
