@@ -1,1 +1,1 @@
-{"schema":"hoh/office-tiptap-bundle@1","source":"office/tiptap-source.js","digest":"e4550daaa0b178a2e60004cd4a9c8827e7113c6f07633e4c61b2995c5e6c304a","bytes":829819,"packages":{"@tiptap/core":"3.33.1","@tiptap/starter-kit":"3.33.1","esbuild":"0.25.11"}}
+{"schema":"hoh/office-tiptap-bundle@1","source":"office/tiptap-source.js","digest":"1053a348bb058be3f1d0b86886994641aa48d1bf83d1b41cf004f37e2e51462f","bytes":829839,"packages":{"@tiptap/core":"3.33.1","@tiptap/starter-kit":"3.33.1","esbuild":"0.25.11"}}

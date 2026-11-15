@@ -6,6 +6,7 @@ export const TIPTAP_SUPPORTED_NODES = Object.freeze(["doc", "paragraph", "headin
 export const createTiptap = ({ element, content, onUpdate, onSelectionUpdate, onContentError }) => new Editor({
   element,
   extensions: [StarterKit.configure({ link: false })],
+  injectCSS: false,
   content: validateDocumentSnapshot(content),
   enableContentCheck: true,
   onUpdate,
