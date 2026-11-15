@@ -99,7 +99,7 @@ export function mountOfficeDocuments(root, { transport, createTiptap, confirmDis
   const beforeUnload = event => { if (host.state().dirty) { event.preventDefault(); event.returnValue = ''; } };
   window.addEventListener('beforeunload', beforeUnload);
   const ready = host.list();
-  return { host, ready, canLeave, isDirty: () => host.state().dirty, destroy() {
+  return { host, ready, canLeave, isDirty: () => host.state().dirty, observe: () => host.observe(), invokeOffice: request => host.invokeOffice(request), destroy() {
     disposed = true; unsubscribe(); host.destroy(); editor?.destroy(); window.removeEventListener('beforeunload', beforeUnload); root.replaceChildren();
   } };
 }

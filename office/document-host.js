@@ -88,6 +88,26 @@ export class OfficeDocumentHost {
     this.#state = { ...this.#state, draft: clone(draft), dirty: true };
     this.#publish();
   }
+  async observe() {
+    const session = await this.#session(this.#generation);
+    const current = this.#state.current;
+    return { principalId: session.principalId, epoch: session.epoch, documentId: current?.documentId ?? null,
+      version: current?.version ?? null, generation: this.#generation, dirty: this.#state.dirty };
+  }
+  async invokeOffice({ action, context, input } = {}) {
+    if (!['list', 'new', 'open', 'save', 'discard'].includes(action)) throw problem('INVALID_INPUT');
+    const actual = await this.observe();
+    if (!context || context.principalId !== actual.principalId || context.epoch !== actual.epoch || context.generation !== actual.generation
+      || context.documentId !== actual.documentId || context.version !== actual.version) throw problem('STALE_OPERATION');
+    if (action === 'list') await this.list();
+    if (action === 'new') this.newDocument();
+    if (action === 'open') { if (typeof input?.documentId !== 'string') throw problem('INVALID_INPUT'); await this.open(input.documentId); }
+    if (action === 'save') await this.save();
+    if (action === 'discard') this.discard();
+    const state = this.#state, current = state.current;
+    return { status: state.status, error: state.error, documentId: current?.documentId ?? null, version: current?.version ?? null,
+      revision: current?.revision ?? null, digest: current?.digest ?? null, dirty: state.dirty };
+  }
   discard() {
     if (this.#state.current) return this.open(this.#state.current.documentId);
     this.#generation++; this.#pending = null; this.#state = { ...empty(), documents: this.#state.documents }; this.#publish();
